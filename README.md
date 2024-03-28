@@ -1,16 +1,3 @@
-# eco_swap
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+EcoSwap is an app for exchanging and renting used objects, promoting sustainable consumption. 
+Users post ads with photos and descriptions. Sellers set rental period and daily cost, buyers choose duration and pay through the integrated platform. 
+Live chat enables direct communication for arranging details. Identity verification ensures secure transactions. Search function included.
