@@ -1,80 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:eco_swap/view/main_pages/MainPage.dart';
+import 'package:eco_swap/view/main_pages/NavigationPage.dart';
+import 'package:eco_swap/view/main_pages/LoginPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.yellow,
-          brightness: Brightness.dark,
-        ),
-      ), 
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.yellow,
-          brightness: Brightness.light,
-        ),
-      ),
-      home: MainPage(),
-    );
-  }
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class _MyAppState extends State<MyApp>{
+  
+  bool isLoggedIn = true; // Variabile di stato per tracciare lo stato dell'accesso
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+  void _login() {
     setState(() {
-      _counter++;
+      isLoggedIn = true; // Imposta isLoggedIn su true quando l'utente effettua l'accesso
+    });
+  }
+
+  void _logout() {
+    setState(() {
+      isLoggedIn = false; // Imposta isLoggedIn su false quando l'utente esegue il logout
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    Widget homePage;
+
+    // Uso esplicito di if-else per decidere quale pagina mostrare
+    if (isLoggedIn) {
+      homePage = NavigationPage(logoutCallback: _logout); // Utente loggato
+    } else {
+      homePage = LoginPage(loginCallback: _login); // Utente non loggato
+    }
+
+    return MaterialApp(
+      title: 'Flutter Demo',
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.lightBlue,
+          brightness: Brightness.dark,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), 
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.lightBlue,
+          brightness: Brightness.light,
+        ),
+      ),
+      home: homePage, // Imposta la home page in base allo stato di login
     );
   }
 }
+
