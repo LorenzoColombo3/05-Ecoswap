@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eco_swap/view/main_pages/MainPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,6 +12,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.yellow,
+          brightness: Brightness.dark,
+        ),
+      ), 
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(
@@ -18,7 +26,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }
