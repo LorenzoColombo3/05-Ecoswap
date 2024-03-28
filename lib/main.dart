@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
-import 'package:eco_swap/view/main_pages/LoginPage.dart';
+import 'package:eco_swap/view/welcome/LoginPage.dart';
 
 void main() {
   runApp(MyApp());
