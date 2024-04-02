@@ -13,7 +13,12 @@
           "package_name": "com.example.eco_swap"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "84085241175-2saibt75t6nme3hp2sq372rjvdfj5aas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCZwAFBr18SWZq99InOwxLstspl2tCS1KE"
@@ -21,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84085241175-2saibt75t6nme3hp2sq372rjvdfj5aas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "84085241175-7neclue3jvggjuge5t5m0frf1683q7gb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ecoSwap"
+              }
+            }
+          ]
         }
       }
     }

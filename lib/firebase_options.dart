@@ -65,6 +65,7 @@ class DefaultFirebaseOptions {
     projectId: 'ecoswap-64d07',
     databaseURL: 'https://ecoswap-64d07-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'ecoswap-64d07.appspot.com',
+    iosClientId: '84085241175-7neclue3jvggjuge5t5m0frf1683q7gb.apps.googleusercontent.com',
     iosBundleId: 'com.example.ecoSwap',
   );
 }
