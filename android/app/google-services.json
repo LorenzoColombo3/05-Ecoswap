@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "84085241175",
+    "firebase_url": "https://ecoswap-64d07-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ecoswap-64d07",
+    "storage_bucket": "ecoswap-64d07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84085241175:android:5c19afe9d87ab5b0f6fa12",
+        "android_client_info": {
+          "package_name": "com.example.eco_swap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZwAFBr18SWZq99InOwxLstspl2tCS1KE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
