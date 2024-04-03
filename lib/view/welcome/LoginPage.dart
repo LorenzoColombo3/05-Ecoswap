@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'RegistrationPage.dart';
+
+
 class LoginPage extends StatefulWidget {
   final VoidCallback loginCallback;
   @override
@@ -105,7 +108,8 @@ class _LoginPageState extends State<LoginPage>{
                   Text("Non hai un account? "),
                   TextButton(
                     onPressed: () {
-                      // Logica per andare alla pagina di registrazione
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => RegistrationPage()));
                     },
                     child: Text('Registrati'),
                   ),
