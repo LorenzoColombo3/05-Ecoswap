@@ -1,26 +1,13 @@
-import 'package:eco_swap/data/repository/IUserRepository.dart';
-import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
-import 'package:eco_swap/data/viewmodel/UserViewModelFactory.dart';
-import 'package:eco_swap/util/ServiceLocator.dart';
-import 'package:eco_swap/view/main_pages/HomePage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class RegistryPage extends StatefulWidget {
+  const RegistryPage({super.key});
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  State<RegistryPage> createState() => _RegistryPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
-  IUserRepository userRepository = ServiceLocator.getInstance().getUserRepository();
-  UserViewModel userViewModel = new UserViewModelFactory(userRepository).create();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool obscurePassword = true;
-
+class _RegistryPageState extends State<RegistryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,30 +45,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               const SizedBox(height: 10.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
-                  obscureText: obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 20.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child:ElevatedButton(
                   onPressed: () async {
-                    final message = await userViewModel.registration(
+                    /*final message = await userViewModel.registration(
                       email: _emailController.text,
                       password: _passwordController.text,
                     );
@@ -93,7 +62,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       SnackBar(
                         content: Text(message),
                       ),
-                    );
+                    );*/
                   },
                   child: const Text('Create Account'),
                 ),
