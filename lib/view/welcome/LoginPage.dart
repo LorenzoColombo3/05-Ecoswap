@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../data/repository/IUserRepository.dart';
+import '../../data/viewmodel/UserViewModel.dart';
+import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../util/ServiceLocator.dart';
+import '../main_pages/NavigationPage.dart';
 import 'RegistrationPage.dart';
 
 
@@ -11,7 +16,18 @@ class LoginPage extends StatefulWidget {
 }
 class _LoginPageState extends State<LoginPage>{
   bool obscurePassword = true;
+  late IUserRepository userRepository;
+  late UserViewModel userViewModel;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+    userRepository = ServiceLocator().getUserRepository();
+    userViewModel = new UserViewModelFactory(userRepository).create();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +57,8 @@ class _LoginPageState extends State<LoginPage>{
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
+                child: TextFormField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'E-mail',
                     prefixIcon: Icon(Icons.mail),
@@ -51,7 +68,8 @@ class _LoginPageState extends State<LoginPage>{
               SizedBox(height: 10.0),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
+                child: TextFormField(
+                  controller: _passwordController,
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -72,7 +90,18 @@ class _LoginPageState extends State<LoginPage>{
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Logica per il login
+                    userViewModel.login(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ).then((message) {
+                      if (message!.contains('Success')) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => NavigationPage(logoutCallback: () {},)));
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(message),),
+                      );
+                    });
                   },
                   child: Text('Login'),
                 ),

@@ -13,5 +13,10 @@ class UserRepository implements IUserRepository{
   Future<String?> registration({required String email, required String password}) {
     return _userAuthDataSource.registration(email: email, password: password);
   }
+
+ @override
+ Future<String?> login({required String email, required String password}) {
+  return _userAuthDataSource.login(email: email, password: password);
+ }
   
 }

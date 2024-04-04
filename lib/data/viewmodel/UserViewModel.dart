@@ -9,4 +9,8 @@ class UserViewModel{
   Future<String?> registration({required String email, required String password}) {
     return _userRepository.registration(email: email, password: password);
   }
+
+  Future<String?> login({required String email, required String password}) {
+    return _userRepository.login(email: email, password: password);
+  }
 }

@@ -3,6 +3,7 @@ import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
 import 'package:eco_swap/data/viewmodel/UserViewModelFactory.dart';
 import 'package:eco_swap/util/ServiceLocator.dart';
 import 'package:eco_swap/view/main_pages/HomePage.dart';
+import 'package:eco_swap/view/main_pages/NavigationPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +25,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   void initState() {
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
-    if(userRepository == null){
-      print("error");
-    }
     userViewModel = new UserViewModelFactory(userRepository).create();
   }
 
@@ -57,19 +55,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
               ),
-              const Padding(
+               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
+                child: TextFormField(
+                  controller:_emailController,
                   decoration: InputDecoration(
                     labelText: 'E-mail',
-                    prefixIcon: Icon(Icons.mail),
+                    prefixIcon:  Icon(Icons.mail),
                   ),
                 ),
               ),
               const SizedBox(height: 10.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
+                child: TextFormField(
+                  controller:_passwordController,
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -98,7 +98,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ).then((message) {
                       if (message!.contains('Success')) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomePage()));
+                            builder: (context) => NavigationPage(logoutCallback: () {},)));
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(message),),
