@@ -6,20 +6,13 @@ import 'package:eco_swap/data/source/UserAuthDataSource.dart';
 class ServiceLocator {
   static ServiceLocator? _instance;
 
-  // Costruttore privato
-  ServiceLocator._();
+  static final ServiceLocator _singleton = ServiceLocator._internal();
 
-  // Metodo per ottenere l'istanza singleton
-  static ServiceLocator getInstance() {
-    if (_instance == null) {
-      synchronized(ServiceLocator) {
-        if (_instance == null) {
-          _instance = ServiceLocator._();
-        }
-      }
-    }
-    return _instance!;
+  factory ServiceLocator() {
+    return _singleton;
   }
+
+  ServiceLocator._internal();
 
    IUserRepository getUserRepository(){
     BaseUserAuthDataSource userAuthDataSource = new UserAuthDataSource();

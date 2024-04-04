@@ -89,7 +89,6 @@ class _LoginPageState extends State<LoginPage>{
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: OutlinedButton(
                   onPressed: () {
-                    // Logica per l'accesso con Google
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

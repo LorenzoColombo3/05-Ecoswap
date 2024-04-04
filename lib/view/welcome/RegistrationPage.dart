@@ -3,7 +3,6 @@ import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
 import 'package:eco_swap/data/viewmodel/UserViewModelFactory.dart';
 import 'package:eco_swap/util/ServiceLocator.dart';
 import 'package:eco_swap/view/main_pages/HomePage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +14,21 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  IUserRepository userRepository = ServiceLocator.getInstance().getUserRepository();
-  UserViewModel userViewModel = new UserViewModelFactory(userRepository).create();
+  late IUserRepository userRepository;
+  late UserViewModel userViewModel;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    userRepository = ServiceLocator().getUserRepository();
+    if(userRepository == null){
+      print("error");
+    }
+    userViewModel = new UserViewModelFactory(userRepository).create();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +75,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
-                      icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off),
+                      icon: Icon(obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off),
                       onPressed: () {
                         setState(() {
                           obscurePassword = !obscurePassword;
@@ -79,21 +90,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
               const SizedBox(height: 20.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child:ElevatedButton(
-                  onPressed: () async {
-                    final message = await userViewModel.registration(
+                child: ElevatedButton(
+                  onPressed: () {
+                    userViewModel.registration(
                       email: _emailController.text,
                       password: _passwordController.text,
-                    );
-                    if (message!.contains('Success')) {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => HomePage()));
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                      ),
-                    );
+                    ).then((message) {
+                      if (message!.contains('Success')) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomePage()));
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(message),),
+                      );
+                    });
                   },
                   child: const Text('Create Account'),
                 ),
