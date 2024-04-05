@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 
 class DateField extends StatefulWidget {
+  final Function(DateTime)? onDateSelected;
+  const DateField({Key? key, this.onDateSelected}) : super(key: key);
   @override
   _DateFieldState createState() => _DateFieldState();
+
+  static DateTime? getSelectedDate(BuildContext context) {
+    final _DateFieldState? state = context.findAncestorStateOfType<_DateFieldState>();
+    return state?._selectedDate;
+  }
 }
 
 class _DateFieldState extends State<DateField> {
@@ -18,9 +25,11 @@ class _DateFieldState extends State<DateField> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        widget.onDateSelected?.call(_selectedDate!);
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +47,10 @@ class _DateFieldState extends State<DateField> {
         prefixIcon: Icon(Icons.calendar_today),
       ),
     );
+  }
+
+  DateTime? getSelectedDate() {
+    return _selectedDate;
   }
   
 }

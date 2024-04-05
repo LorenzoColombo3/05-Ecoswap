@@ -38,14 +38,14 @@ class _LoginPageState extends State<LoginPage>{
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                margin: EdgeInsets.all(20.0),
+                margin: const EdgeInsets.all(20.0),
                 child: Image.asset(
                   'assets/image/login_image.jpeg',
                   width: 200,
                   height: 200,
                 ),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Login:',
@@ -56,25 +56,25 @@ class _LoginPageState extends State<LoginPage>{
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'E-mail',
                     prefixIcon: Icon(Icons.mail),
                   ),
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
                   controller: _passwordController,
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off),
                       onPressed: () {
@@ -86,9 +86,9 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ElevatedButton(
                   onPressed: () {
                     userViewModel.login(
@@ -104,19 +104,19 @@ class _LoginPageState extends State<LoginPage>{
                       );
                     });
                   },
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
                   // Logica per la password dimenticata
                 },
-                child: Text('Password dimenticata?'),
+                child: const Text('Forgot password?'),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: OutlinedButton(
                   onPressed: () {
                   },
@@ -124,23 +124,23 @@ class _LoginPageState extends State<LoginPage>{
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset('assets/image/google_logo.webp', height: 20.0),
-                      SizedBox(width: 10.0),
-                      Text('Accedi con Google'),
+                      const SizedBox(width: 10.0),
+                      const Text('Accedi con Google'),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Non hai un account? "),
+                  const Text("Non hai un account? "),
                   TextButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => RegistrationPage()));
+                          MaterialPageRoute(builder: (context) => const RegistrationPage()));
                     },
-                    child: Text('Registrati'),
+                    child: const Text('Registrati'),
                   ),
                 ],
               ),

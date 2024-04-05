@@ -6,6 +6,8 @@ import 'package:eco_swap/view/main_pages/NavigationPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'RegistryPage.dart';
+
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
 
@@ -98,7 +100,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ).then((message) {
                       if (message!.contains('Success')) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => NavigationPage(logoutCallback: () {},)));
+                            builder: (context) => const RegistryPage()));
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(message),),
