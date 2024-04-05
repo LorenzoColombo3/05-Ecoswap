@@ -58,6 +58,7 @@ class _LoginPageState extends State<LoginPage>{
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
+                  keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'E-mail',

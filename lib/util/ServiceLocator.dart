@@ -4,7 +4,6 @@ import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
 import 'package:eco_swap/data/source/UserAuthDataSource.dart';
 
 class ServiceLocator {
-  static ServiceLocator? _instance;
 
   static final ServiceLocator _singleton = ServiceLocator._internal();
 

@@ -2,7 +2,6 @@ import 'package:eco_swap/data/repository/IUserRepository.dart';
 import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
 import 'package:eco_swap/data/viewmodel/UserViewModelFactory.dart';
 import 'package:eco_swap/util/ServiceLocator.dart';
-import 'package:eco_swap/view/main_pages/HomePage.dart';
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +57,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
+                  keyboardType: TextInputType.emailAddress,
                   controller:_emailController,
                   decoration: InputDecoration(
                     labelText: 'E-mail',
