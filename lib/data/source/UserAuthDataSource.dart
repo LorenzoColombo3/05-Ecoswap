@@ -51,36 +51,49 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  Future<String?> saveData({required String name,
+  Future<String?> saveData({
+    required String name,
     required String lastName,
     required String birthDate,
     required String phoneNumber,
-    required String position}) async {
+    required String position,
+  }) async {
     try {
       final DatabaseReference databaseReference =
       FirebaseDatabase.instance.reference();
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      String? idToken = await currentUser!.getIdToken();
-      Map<String, dynamic> userData = {
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final String idToken = currentUser!.uid;
+      final Map<String, dynamic> userData = {
         'username': name,
         'lastname': lastName,
         'birthDate': birthDate,
-        'email': currentUser!.email,
+        'email': currentUser.email,
         'phoneNumber': phoneNumber,
       };
-      String databasePath = 'users/' + idToken!;
-      await databaseReference.child(databasePath).set(userData).then((_) =>
-        UserModel(idToken: idToken,
-          name: name,
-          lastName: lastName,
-          email: currentUser!.email,
-          position: position,
-          birthDate: birthDate,
-          phoneNumber: phoneNumber));
-          return 'Success';
-      } catch (error)
-      {
-        return 'Error';
-      }
+      final String databasePath = 'users';
+      await databaseReference.child(databasePath).child(idToken!).set(userData).then((_) =>
+          UserModel(idToken: idToken,
+              name: name,
+              lastName: lastName,
+              email: currentUser.email,
+              position: position,
+              birthDate: birthDate,
+              phoneNumber: phoneNumber));;
+
+      return 'Success';
+    } catch (error) {
+      print(error);
+      return 'Error';
     }
+  }
+
+  @override
+  void deleteUser(){
+    FirebaseAuth.instance.currentUser?.delete();
+  }
+
+  @override
+  void updatePosition(){
+
+  }
 }

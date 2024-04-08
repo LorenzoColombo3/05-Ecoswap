@@ -23,5 +23,10 @@ class UserRepository implements IUserRepository{
   required String birthDate, required String phoneNumber, required String position}){
   return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber, position: position);
  }
+
+  @override
+  void deleteUser() {
+    _userAuthDataSource.deleteUser();
+  }
   
 }

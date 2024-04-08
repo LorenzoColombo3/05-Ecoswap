@@ -39,6 +39,8 @@ dependencies:
   firebase_database: ^10.5.0
   firebase_auth: ^4.19.0
   synchronized: ^3.0.0
+  geolocator: ^8.2.0
+  geocoding: ^2.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

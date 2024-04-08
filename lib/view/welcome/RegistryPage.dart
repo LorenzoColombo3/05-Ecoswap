@@ -1,6 +1,8 @@
+import 'package:eco_swap/view/main_pages/HomePage.dart';
 import 'package:eco_swap/widget/DateField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/UserViewModel.dart';
@@ -23,12 +25,20 @@ class _RegistryPageState extends State<RegistryPage> {
   DateTime? selectedDate;
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
+  bool dataCompleted = false;
 
   @override
   void initState() {
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = new UserViewModelFactory(userRepository).create();
+  }
+
+  void dispose() {
+    if (!dataCompleted) {
+      userViewModel.deleteUser();
+    }
+    super.dispose();
   }
 
   @override
@@ -121,8 +131,9 @@ class _RegistryPageState extends State<RegistryPage> {
                           position: _positionController.text)
                       .then((message) {
                     if (message!.contains('Success')) {
+                      dataCompleted = true;
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const RegistryPage()));
+                          builder: (context) => HomePage()));
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

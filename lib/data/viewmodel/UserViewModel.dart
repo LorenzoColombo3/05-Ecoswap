@@ -18,4 +18,6 @@ class UserViewModel{
                             required String birthDate, required String phoneNumber, required String position}){
     return _userRepository.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber, position: position);
   }
+
+  void deleteUser(){_userRepository.deleteUser();}
 }
