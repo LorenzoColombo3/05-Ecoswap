@@ -110,18 +110,20 @@ class _RegistryPageState extends State<RegistryPage> {
             Container(
               margin: const EdgeInsets.only(bottom: 30.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () {if(_nameController.text != "" && _lastnameController.text != "" &&
+                    selectedDate.toString() != "" && _phoneController.text != "") {
                   userViewModel
                       .saveData(
-                          name: _nameController.text,
-                          lastName: _lastnameController.text,
-                          birthDate: selectedDate.toString(),
-                          phoneNumber: _phoneController.text)
+                      name: _nameController.text,
+                      lastName: _lastnameController.text,
+                      birthDate: selectedDate.toString(),
+                      phoneNumber: _phoneController.text)
                       .then((message) {
                     if (message!.contains('Success')) {
                       dataCompleted = true;
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => NavigationPage(logoutCallback: () {},)));
+                          builder: (context) =>
+                              NavigationPage(logoutCallback: () {},)));
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -129,6 +131,13 @@ class _RegistryPageState extends State<RegistryPage> {
                       ),
                     );
                   });
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Fill in all fields"),
+                    ),
+                  );
+                }
                 },
                 child: const Text('Register now'),
               ),

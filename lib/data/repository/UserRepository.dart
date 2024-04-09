@@ -15,7 +15,7 @@ class UserRepository implements IUserRepository{
   }
 
   @override
-  Future<dynamic> signInWithGoogle(){
+  Future<String?> signInWithGoogle(){
    return _userAuthDataSource.signInWithGoogle();
   }
 

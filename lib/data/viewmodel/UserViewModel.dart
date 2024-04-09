@@ -10,7 +10,7 @@ class UserViewModel{
     return _userRepository.registration(email: email, password: password);
   }
 
-  Future<dynamic> signInWithGoogle(){
+  Future<String?> signInWithGoogle(){
     return _userRepository.signInWithGoogle();
   }
 

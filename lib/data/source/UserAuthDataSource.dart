@@ -33,9 +33,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
 
   @override
   Future<String?> signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     try {
       // Effettua l'accesso con Google
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
         // Ottiene l'autenticazione Google
@@ -49,11 +51,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         );
 
         // Effettua l'accesso a Firebase con le credenziali
-        final UserCredential authResult = await _firebaseAuth.signInWithCredential(credential);
+        final UserCredential authResult = await firebaseAuth.signInWithCredential(credential);
 
-        return authResult.user;
+        return "Success";
       } else {
-        // L'utente ha annullato l'accesso con Google
         print('Accesso con Google annullato.');
         return null;
       }
