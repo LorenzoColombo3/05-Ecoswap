@@ -121,9 +121,17 @@ class _LoginPageState extends State<LoginPage>{
                 child: OutlinedButton(
                   onPressed: () {
                     userViewModel.signInWithGoogle().then((value) {
-                    if (value!.contains('Success')) {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const RegistryPage()));}});
+                      if (value!.contains('Nuovo')) {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const RegistryPage()));
+                      }
+                      if(value!.contains('Accesso')){
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) =>
+                                NavigationPage(logoutCallback: () {},)));
+                      }
+                    });
+
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

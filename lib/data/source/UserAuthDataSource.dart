@@ -35,31 +35,30 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<String?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
     try {
-      // Effettua l'accesso con Google
       final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        // Ottiene l'autenticazione Google
         final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
-
-        // Crea le credenziali Firebase con i token di accesso e ID
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
+        final UserCredential authResult =
+        await firebaseAuth.signInWithCredential(credential);
 
-        // Effettua l'accesso a Firebase con le credenziali
-        final UserCredential authResult = await firebaseAuth.signInWithCredential(credential);
-
-        return "Success";
+        if (authResult.additionalUserInfo!.isNewUser) {
+          return "Nuovo utente creato con successo.";
+        } else {
+          return "Accesso con Google effettuato con successo.";
+        }
       } else {
         print('Accesso con Google annullato.');
         return null;
       }
     } catch (e) {
-      // Gestisce eventuali eccezioni
       print('Errore durante il login con Google: $e');
       return null;
     }
