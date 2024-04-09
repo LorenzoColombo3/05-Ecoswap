@@ -10,13 +10,17 @@ class UserViewModel{
     return _userRepository.registration(email: email, password: password);
   }
 
+  Future<dynamic> signInWithGoogle(){
+    return _userRepository.signInWithGoogle();
+  }
+
   Future<String?> login({required String email, required String password}) {
     return _userRepository.login(email: email, password: password);
   }
 
   Future<String?> saveData({required String name, required String lastName,
-                            required String birthDate, required String phoneNumber, required String position}){
-    return _userRepository.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber, position: position);
+                            required String birthDate, required String phoneNumber}){
+    return _userRepository.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber);
   }
 
   void deleteUser(){_userRepository.deleteUser();}

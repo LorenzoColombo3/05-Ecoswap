@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp>{
   
-  bool isLoggedIn = true; // Variabile di stato per tracciare lo stato dell'accesso
+  bool isLoggedIn = false; // Variabile di stato per tracciare lo stato dell'accesso
 
   
 

@@ -6,6 +6,7 @@ import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
 import '../main_pages/NavigationPage.dart';
 import 'RegistrationPage.dart';
+import 'RegistryPage.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -119,6 +120,10 @@ class _LoginPageState extends State<LoginPage>{
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: OutlinedButton(
                   onPressed: () {
+                    userViewModel.signInWithGoogle().then((value) {
+                    if (value!.contains('Success')) {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const RegistryPage()));}});
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -14,11 +14,16 @@ class UserRepository implements IUserRepository{
     return _userAuthDataSource.registration(email: email, password: password);
   }
 
+  @override
+  Future<dynamic> signInWithGoogle(){
+   return _userAuthDataSource.signInWithGoogle();
+  }
+
  @override
  Future<String?> login({required String email, required String password}) {
   return _userAuthDataSource.login(email: email, password: password);
  }
-
+@override
  Future<String?> saveData({required String name, required String lastName,
   required String birthDate, required String phoneNumber}){
   return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber,);

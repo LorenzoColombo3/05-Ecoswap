@@ -21,7 +21,6 @@ class _RegistryPageState extends State<RegistryPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
-  final TextEditingController _positionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   DateTime? selectedDate;
   late IUserRepository userRepository;
@@ -84,17 +83,6 @@ class _RegistryPageState extends State<RegistryPage> {
             ),
             const SizedBox(height: 20.0),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: TextFormField(
-                controller: _positionController,
-                decoration: const InputDecoration(
-                  labelText: 'Position',
-                  prefixIcon: Icon(Icons.pin_drop),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: TextFormField(
                 controller: _phoneController,
@@ -127,9 +115,8 @@ class _RegistryPageState extends State<RegistryPage> {
                       .saveData(
                           name: _nameController.text,
                           lastName: _lastnameController.text,
-                          birthDate: _birthDateController.text,
-                          phoneNumber: _phoneController.text,
-                          position: _positionController.text)
+                          birthDate: selectedDate.toString(),
+                          phoneNumber: _phoneController.text)
                       .then((message) {
                     if (message!.contains('Success')) {
                       dataCompleted = true;

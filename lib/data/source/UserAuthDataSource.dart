@@ -32,6 +32,40 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
+  Future<String?> signInWithGoogle() async {
+    try {
+      // Effettua l'accesso con Google
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        // Ottiene l'autenticazione Google
+        final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+
+        // Crea le credenziali Firebase con i token di accesso e ID
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        // Effettua l'accesso a Firebase con le credenziali
+        final UserCredential authResult = await _firebaseAuth.signInWithCredential(credential);
+
+        return authResult.user;
+      } else {
+        // L'utente ha annullato l'accesso con Google
+        print('Accesso con Google annullato.');
+        return null;
+      }
+    } catch (e) {
+      // Gestisce eventuali eccezioni
+      print('Errore durante il login con Google: $e');
+      return null;
+    }
+  }
+
+
+  @override
   Future<String?> login({
     required String email,
     required String password,
@@ -81,7 +115,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
               lastName: lastName,
               email: currentUser.email,
               birthDate: birthDate,
-              phoneNumber: phoneNumber));;
+              phoneNumber: phoneNumber));
 
       return 'Success';
     } catch (error) {
