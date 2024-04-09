@@ -1,7 +1,12 @@
+
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
 import 'package:eco_swap/model/UserModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
@@ -56,7 +61,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String lastName,
     required String birthDate,
     required String phoneNumber,
-    required String position,
   }) async {
     try {
       final DatabaseReference databaseReference =
@@ -76,7 +80,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
               name: name,
               lastName: lastName,
               email: currentUser.email,
-              position: position,
               birthDate: birthDate,
               phoneNumber: phoneNumber));;
 
@@ -93,7 +96,51 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  void updatePosition(){
-
+  Future<void> updatePosition(bool hasPermission) async {
+    String? _currentCity;
+    Position? _currentPosition;
+    if (!hasPermission) return;
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      _currentCity = await _getAddressFromLatLng(_currentPosition!);
+      final DatabaseReference databaseReference =
+      FirebaseDatabase.instance.reference();
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final String idToken = currentUser!.uid;
+      final String databasePath = 'users/$idToken/position';
+      await databaseReference.child(databasePath).set(_currentCity);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
+
+
+  Future<String?> _getAddressFromLatLng(Position position) async {
+    String? _currentCity;
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      Placemark place = placemarks[0];
+      _currentCity = place.locality;
+      return _currentCity;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
+
+  @override
+  Future<bool> signOutFromGoogle() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      return true;
+    } on Exception catch (_) {
+      return false;
+    }
+  }
+
+
 }
+

@@ -20,13 +20,23 @@ class UserRepository implements IUserRepository{
  }
 
  Future<String?> saveData({required String name, required String lastName,
-  required String birthDate, required String phoneNumber, required String position}){
-  return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber, position: position);
+  required String birthDate, required String phoneNumber}){
+  return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber,);
  }
 
   @override
   void deleteUser() {
     _userAuthDataSource.deleteUser();
+  }
+
+  @override
+  Future<void> updatePosition(bool hasPermission) async {
+    _userAuthDataSource.updatePosition(hasPermission);
+  }
+
+  @override
+  Future<bool> signOutFromGoogle() async {
+   return _userAuthDataSource.signOutFromGoogle();
   }
   
 }

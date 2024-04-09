@@ -8,6 +8,7 @@ import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
+import '../main_pages/NavigationPage.dart';
 
 class RegistryPage extends StatefulWidget {
   const RegistryPage({super.key});
@@ -133,7 +134,7 @@ class _RegistryPageState extends State<RegistryPage> {
                     if (message!.contains('Success')) {
                       dataCompleted = true;
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => HomePage()));
+                          builder: (context) => NavigationPage(logoutCallback: () {},)));
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

@@ -20,4 +20,10 @@ class UserViewModel{
   }
 
   void deleteUser(){_userRepository.deleteUser();}
+
+  Future<void> updatePosition(bool hasPermission)async { _userRepository.updatePosition(hasPermission);}
+
+  Future<bool> signOutFromGoogle() async {
+    return _userRepository.signOutFromGoogle();
+  }
 }

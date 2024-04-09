@@ -13,14 +13,13 @@ class UserModel {
     required String name,
     required String lastName,
     required String? email,
-    required String position,
     required String birthDate,
     required String phoneNumber,
   })  : _idToken = idToken,
         _name = name,
         _lastName = lastName,
         _email = email!,
-        _position = position,
+        _position = "",
         _dateField = birthDate,
         _phoneNumber = phoneNumber;
 

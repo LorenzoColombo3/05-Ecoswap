@@ -41,6 +41,7 @@ dependencies:
   synchronized: ^3.0.0
   geolocator: ^8.2.0
   geocoding: ^2.0.4
+  google_sign_in: ^6.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
