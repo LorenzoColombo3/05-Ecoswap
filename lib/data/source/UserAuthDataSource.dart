@@ -1,12 +1,16 @@
 
+import 'dart:convert';
+
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
 import 'package:eco_swap/model/UserModel.dart';
+import 'package:eco_swap/util/Result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
@@ -90,7 +94,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  Future<String?> saveData({
+  Future<Result?> saveData({
     required String name,
     required String lastName,
     required String birthDate,
@@ -100,6 +104,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference databaseReference =
       FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
+      UserModel? newUser;
       final String idToken = currentUser!.uid;
       final Map<String, dynamic> userData = {
         'username': name,
@@ -109,20 +114,29 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'phoneNumber': phoneNumber,
       };
       final String databasePath = 'users';
-      await databaseReference.child(databasePath).child(idToken!).set(userData).then((_) =>
-          UserModel(idToken: idToken,
-              name: name,
-              lastName: lastName,
-              email: currentUser.email,
-              birthDate: birthDate,
-              phoneNumber: phoneNumber));
-
-      return 'Success';
+      await databaseReference
+          .child(databasePath)
+          .child(idToken)
+          .set(userData)
+          .then((_) =>
+          newUser = UserModel(
+            idToken: idToken,
+            name: name,
+            lastName: lastName,
+            email: currentUser.email,
+            birthDate: birthDate,
+            phoneNumber: phoneNumber,
+            position: "",
+          ));
+      Result result = UserResponseSuccess(newUser!);
+      saveUserLocal(newUser!);
+      return result;
     } catch (error) {
-      print(error);
-      return 'Error';
+      Result result = ErrorResult(error.toString());
+      return result;
     }
   }
+
 
   @override
   void deleteUser(){
@@ -145,6 +159,14 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final String idToken = currentUser!.uid;
       final String databasePath = 'users/$idToken/position';
       await databaseReference.child(databasePath).set(_currentCity);
+      UserModel? user = await getUser();
+      print(user!.position.toString());
+      if (user != null) {
+        user.position=_currentCity!;
+        await saveUserLocal(user);
+      }
+      UserModel? user2 = await getUser();
+      print(user2!.position.toString());
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -175,6 +197,22 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+  Future<void> saveUserLocal(UserModel user) async{
+    SharedPreferences prefs;
+    prefs = await SharedPreferences.getInstance();
+    final Map<String, dynamic> userMap = user.toMap();
+    await prefs.setString('user', json.encode(userMap));
+  }
 
+  static Future<UserModel?> getUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userString = prefs.getString('user');
+    if (userString != null) {
+      final Map<String, dynamic> userMap = json.decode(userString);
+      return UserModel.fromMap(userMap);
+    } else {
+      return null;
+    }
+  }
 }
 

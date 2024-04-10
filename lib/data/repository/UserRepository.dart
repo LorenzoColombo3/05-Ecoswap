@@ -1,4 +1,6 @@
 import 'package:eco_swap/data/repository/IUserRepository.dart';
+import '../../model/UserModel.dart';
+import '../../util/Result.dart';
 import '../source/BaseUserAuthDataSource.dart';
 
 class UserRepository implements IUserRepository{
@@ -24,7 +26,7 @@ class UserRepository implements IUserRepository{
   return _userAuthDataSource.login(email: email, password: password);
  }
 @override
- Future<String?> saveData({required String name, required String lastName,
+Future<Result?> saveData({required String name, required String lastName,
   required String birthDate, required String phoneNumber}){
   return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber,);
  }

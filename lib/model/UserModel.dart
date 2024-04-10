@@ -15,11 +15,12 @@ class UserModel {
     required String? email,
     required String birthDate,
     required String phoneNumber,
+    required position,
   })  : _idToken = idToken,
         _name = name,
         _lastName = lastName,
         _email = email!,
-        _position = "",
+        _position = position,
         _dateField = birthDate,
         _phoneNumber = phoneNumber;
 
@@ -77,5 +78,29 @@ class UserModel {
   // Setter per il numero di telefono
   set phoneNumber(String value) {
     _phoneNumber = value;
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'idToken': _idToken,
+      'name': _name,
+      'lastName': _lastName,
+      'email': _email,
+      'position': _position,
+      'birthdate': _dateField,
+      'phoneNumber': _phoneNumber,
+    };
+  }
+
+  // Factory method per creare un oggetto User da una mappa
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      idToken: map['idToken'],
+      name: map['name'],
+      lastName: map['lastName'],
+      email: map['email'],
+      position: map['position'],
+      birthDate: map['birthdate'],
+      phoneNumber: map['phoneNumber'],
+    );
   }
 }

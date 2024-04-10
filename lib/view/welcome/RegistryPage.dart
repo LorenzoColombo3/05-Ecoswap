@@ -1,3 +1,4 @@
+import 'package:eco_swap/util/Result.dart';
 import 'package:eco_swap/view/main_pages/HomePage.dart';
 import 'package:eco_swap/widget/DateField.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../main_pages/NavigationPage.dart';
 
@@ -110,34 +112,35 @@ class _RegistryPageState extends State<RegistryPage> {
             Container(
               margin: const EdgeInsets.only(bottom: 30.0),
               child: ElevatedButton(
-                onPressed: () {if(_nameController.text != "" && _lastnameController.text != "" &&
-                    selectedDate.toString() != "" && _phoneController.text != "") {
-                  userViewModel
-                      .saveData(
-                      name: _nameController.text,
-                      lastName: _lastnameController.text,
-                      birthDate: selectedDate.toString(),
-                      phoneNumber: _phoneController.text)
-                      .then((message) {
-                    if (message!.contains('Success')) {
-                      dataCompleted = true;
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) =>
-                              NavigationPage(logoutCallback: () {},)));
-                    }
+                onPressed: () {
+                  if(_nameController.text != "" && _lastnameController.text != "" &&
+                      selectedDate.toString() != "" && _phoneController.text != "") {
+                    userViewModel
+                        .saveData(
+                        name: _nameController.text,
+                        lastName: _lastnameController.text,
+                        birthDate: selectedDate.toString(),
+                        phoneNumber: _phoneController.text)
+                        .then((result) {
+                      if (result!.isSuccess()) {
+                        dataCompleted = true;
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) =>
+                                NavigationPage(logoutCallback: () {},)));
+                      }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text((result as ErrorResult).getMessage()),
+                        ),
+                      );}
+                    });
+                  }else{
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(message),
+                        content: Text("Fill in all fields"),
                       ),
                     );
-                  });
-                }else{
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Fill in all fields"),
-                    ),
-                  );
-                }
+                  }
                 },
                 child: const Text('Register now'),
               ),
@@ -147,4 +150,6 @@ class _RegistryPageState extends State<RegistryPage> {
       ),
     );
   }
+
+
 }

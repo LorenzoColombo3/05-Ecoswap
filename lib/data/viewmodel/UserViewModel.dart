@@ -1,5 +1,8 @@
 import 'package:eco_swap/data/repository/IUserRepository.dart';
 
+import '../../model/UserModel.dart';
+import '../../util/Result.dart';
+
 class UserViewModel{
   final IUserRepository _userRepository;
 
@@ -18,7 +21,7 @@ class UserViewModel{
     return _userRepository.login(email: email, password: password);
   }
 
-  Future<String?> saveData({required String name, required String lastName,
+  Future<Result?> saveData({required String name, required String lastName,
                             required String birthDate, required String phoneNumber}){
     return _userRepository.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber);
   }
