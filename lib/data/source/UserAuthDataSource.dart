@@ -227,16 +227,21 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
+  Future<void> deleteCredential() async {
+    await _storage.delete(key: 'password');
+    await _storage.delete(key: 'email');
+    print('credential deleted!');
+  }
+
+  @override
   Future<String?> readEmail() async {
     String? email = await _storage.read(key: 'email');
-    print('Access mail: $email');
     return email;
   }
 
   @override
   Future<String?> readPassword() async {
     String? password = await _storage.read(key: 'password');
-    print('Access password: $password');
     return password;
   }
 

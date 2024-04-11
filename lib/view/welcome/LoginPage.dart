@@ -25,7 +25,6 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   void initState() {
-    super.initState();
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = UserViewModelFactory(userRepository).create();
     userViewModel.readPassword().then((password) {
@@ -34,7 +33,12 @@ class _LoginPageState extends State<LoginPage>{
           userViewModel.login(email: email, password: password).then((message) {
             if (message!.contains('Success')) {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => NavigationPage(logoutCallback: () {}),
+                builder: (context) => NavigationPage(logoutCallback: () {
+                  userViewModel.deleteCredential();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => LoginPage(loginCallback: () {}),
+                  ));
+                }),
               ));
             }
             ScaffoldMessenger.of(context).showSnackBar(
@@ -44,6 +48,7 @@ class _LoginPageState extends State<LoginPage>{
         }
       });
     });
+    super.initState();
   }
 
   @override

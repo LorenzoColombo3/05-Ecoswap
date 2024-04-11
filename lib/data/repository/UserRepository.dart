@@ -21,6 +21,11 @@ class UserRepository implements IUserRepository{
    return _userAuthDataSource.signInWithGoogle();
   }
 
+  @override
+  Future<void> deleteCredential() async {
+   _userAuthDataSource.deleteCredential();
+  }
+
  @override
  Future<String?> login({required String email, required String password}) {
   return _userAuthDataSource.login(email: email, password: password);

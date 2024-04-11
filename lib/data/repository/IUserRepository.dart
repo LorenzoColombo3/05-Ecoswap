@@ -9,6 +9,7 @@ abstract class IUserRepository{
     required String birthDate, required String phoneNumber});
   Future<String?> readEmail();
   Future<void> saveCredential(String email, String password);
+  Future<void> deleteCredential();
   Future<String?> readPassword();
   void deleteUser();
   Future<void> updatePosition(bool hasPermission);

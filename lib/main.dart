@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp>{
-  
+
   bool isLoggedIn = false; // Variabile di stato per tracciare lo stato dell'accesso
 
   void _login() {
@@ -43,8 +43,7 @@ class _MyAppState extends State<MyApp>{
     } else {
       homePage = LoginPage(loginCallback: _login); // Utente non loggato
     }
-
-    return MaterialApp(
+    homePage= MaterialApp(
       title: 'Flutter Demo',
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -62,6 +61,8 @@ class _MyAppState extends State<MyApp>{
       ),
       home: homePage, // Imposta la home page in base allo stato di login
     );
+
+    return homePage;
   }
 }
 

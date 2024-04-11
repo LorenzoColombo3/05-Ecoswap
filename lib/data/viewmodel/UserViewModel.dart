@@ -34,6 +34,10 @@ class UserViewModel{
     return _userRepository.signOutFromGoogle();
   }
 
+  Future<void> deleteCredential() async {
+    _userRepository.deleteCredential();
+  }
+
   Future<void> saveCredential(String email, String password) async {
     _userRepository.saveCredential(email, password);
   }
