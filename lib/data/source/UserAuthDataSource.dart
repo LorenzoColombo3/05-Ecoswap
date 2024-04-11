@@ -7,12 +7,16 @@ import 'package:eco_swap/util/Result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
+
+  final storage = const FlutterSecureStorage();
+
   @override
   Future<String?> registration(
       {required String email, required String password}) async {
@@ -159,14 +163,16 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final String idToken = currentUser!.uid;
       final String databasePath = 'users/$idToken/position';
       await databaseReference.child(databasePath).set(_currentCity);
-      UserModel? user = await getUser();
+      Result? res = await getUser();
+      UserModel? user = (res as UserResponseSuccess).getData();
       print(user!.position.toString());
       if (user != null) {
         user.position=_currentCity!;
         await saveUserLocal(user);
       }
-      UserModel? user2 = await getUser();
-      print(user2!.position.toString());
+      Result? res2 = await getUser();
+      user = (res2 as UserResponseSuccess).getData();
+      print(user!.position.toString());
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -204,14 +210,26 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     await prefs.setString('user', json.encode(userMap));
   }
 
-  static Future<UserModel?> getUser() async {
+  Future<void> _saveToken() async {
+    await storage.write(key: 'accessToken', value: 'your_access_token_here');
+    print('Token saved.');
+  }
+
+  Future<void> _readToken() async {
+    String? accessToken = await storage.read(key: 'accessToken');
+    print('Access Token: $accessToken');
+  }
+
+  static Future<Result?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? userString = prefs.getString('user');
     if (userString != null) {
       final Map<String, dynamic> userMap = json.decode(userString);
-      return UserModel.fromMap(userMap);
+      Result result = UserResponseSuccess(UserModel.fromMap(userMap));
+      return result;
     } else {
-      return null;
+      Result result = ErrorResult('local database error');
+      return result;
     }
   }
 }

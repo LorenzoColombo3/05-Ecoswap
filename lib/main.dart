@@ -21,8 +21,6 @@ class _MyAppState extends State<MyApp>{
   
   bool isLoggedIn = false; // Variabile di stato per tracciare lo stato dell'accesso
 
-  
-
   void _login() {
     setState(() {
       isLoggedIn = true; // Imposta isLoggedIn su true quando l'utente effettua l'accesso

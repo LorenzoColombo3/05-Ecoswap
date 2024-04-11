@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
