@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
 
-  final storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   Future<String?> registration(
@@ -78,11 +78,20 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String email,
     required String password,
   }) async {
+    print('pw' + password);
+    saveCredential(email, password);
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      String idToken = currentUser!.uid;
+
+      //TODO controllare se user non è istanza di error al posto di userResponse success
+      UserModel user = (getUserDataFirebase(idToken) as UserResponseSuccess).getData();
+      saveUserLocal(user);
+
       return 'Success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -210,14 +219,25 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     await prefs.setString('user', json.encode(userMap));
   }
 
-  Future<void> _saveToken() async {
-    await storage.write(key: 'accessToken', value: 'your_access_token_here');
-    print('Token saved.');
+  @override
+  Future<void> saveCredential(String email, String password) async {
+    await _storage.write(key: 'password', value: password);
+    await _storage.write(key: 'email', value: email);
+    print('credential saved!');
   }
 
-  Future<void> _readToken() async {
-    String? accessToken = await storage.read(key: 'accessToken');
-    print('Access Token: $accessToken');
+  @override
+  Future<String?> readEmail() async {
+    String? email = await _storage.read(key: 'email');
+    print('Access mail: $email');
+    return email;
+  }
+
+  @override
+  Future<String?> readPassword() async {
+    String? password = await _storage.read(key: 'password');
+    print('Access password: $password');
+    return password;
   }
 
   static Future<Result?> getUser() async {
@@ -232,5 +252,32 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       return result;
     }
   }
+
+  Future<Result?> getUserDataFirebase(String idToken) async {
+    Result result;
+    try {
+      final ref = FirebaseDatabase.instance.ref();
+      final snapshot = await ref.child('users/$idToken').get();
+      if (snapshot.exists) {
+        Map<dynamic, dynamic>? userData = snapshot.value as Map<dynamic, dynamic>?;
+        String name = userData?['username'];
+        String email = userData?['email'];
+        String lastName = userData?['lastName'];
+        String birthDate = userData?['birthDate'];
+        String position = userData?['position'];
+        String phoneNumber = userData?['phoneNumber'];
+        print('UID: $idToken, Nome: $name, Cognome: $lastName, Data di nascita: $birthDate, Posizione: $position, Numero di telefono: $phoneNumber');
+        result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position));
+      } else {
+        result = ErrorResult('User not found');
+        return result;
+      }
+    } catch (error) {
+      print("Errore durante il recupero dei dati dell'utente con idToken: $idToken, Errore: $error");
+      result = ErrorResult(error.toString());
+      return result;
+    }
+  }
+
 }
 

@@ -45,5 +45,20 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<bool> signOutFromGoogle() async {
    return _userAuthDataSource.signOutFromGoogle();
   }
+
+  @override
+  Future<void> saveCredential(String email, String password) async {
+    _userAuthDataSource.saveCredential(email, password);
+  }
+
+  @override
+  Future<String?> readEmail() async {
+   return _userAuthDataSource.readEmail();
+  }
+
+  @override
+  Future<String?> readPassword() async {
+   return _userAuthDataSource.readPassword();
+  }
   
 }

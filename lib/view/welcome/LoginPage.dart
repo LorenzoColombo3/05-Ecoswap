@@ -27,7 +27,23 @@ class _LoginPageState extends State<LoginPage>{
   void initState() {
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
-    userViewModel = new UserViewModelFactory(userRepository).create();
+    userViewModel = UserViewModelFactory(userRepository).create();
+    userViewModel.readPassword().then((password) {
+      userViewModel.readEmail().then((email) {
+        if (password != null && email != null) {
+          userViewModel.login(email: email, password: password).then((message) {
+            if (message!.contains('Success')) {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => NavigationPage(logoutCallback: () {}),
+              ));
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message),),
+            );
+          });
+        }
+      });
+    });
   }
 
   @override

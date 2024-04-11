@@ -33,4 +33,16 @@ class UserViewModel{
   Future<bool> signOutFromGoogle() async {
     return _userRepository.signOutFromGoogle();
   }
+
+  Future<void> saveCredential(String email, String password) async {
+    _userRepository.saveCredential(email, password);
+  }
+
+  Future<String?> readEmail() async {
+    return _userRepository.readEmail();
+  }
+
+  Future<String?> readPassword() async {
+    return _userRepository.readPassword();
+  }
 }
