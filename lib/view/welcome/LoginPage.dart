@@ -10,10 +10,9 @@ import 'RegistryPage.dart';
 
 
 class LoginPage extends StatefulWidget {
-  final VoidCallback loginCallback;
   @override
   _LoginPageState createState() => _LoginPageState();
-  const LoginPage({Key? key, required this.loginCallback}) : super(key: key);
+  const LoginPage({Key? key,}) : super(key: key);
 }
 class _LoginPageState extends State<LoginPage>{
   bool obscurePassword = true;
@@ -36,7 +35,7 @@ class _LoginPageState extends State<LoginPage>{
                 builder: (context) => NavigationPage(logoutCallback: () {
                   userViewModel.deleteCredential();
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => LoginPage(loginCallback: () {}),
+                    builder: (context) => const LoginPage(),
                   ));
                 }),
               ));
@@ -119,7 +118,13 @@ class _LoginPageState extends State<LoginPage>{
                     ).then((message) {
                       if (message!.contains('Success')) {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => NavigationPage(logoutCallback: () {},)));
+                          builder: (context) => NavigationPage(logoutCallback: () {
+                            userViewModel.deleteCredential();
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ));
+                          }),
+                        ));
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(message),),
@@ -148,8 +153,13 @@ class _LoginPageState extends State<LoginPage>{
                       }
                       if(value!.contains('Accesso')){
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) =>
-                                NavigationPage(logoutCallback: () {},)));
+                          builder: (context) => NavigationPage(logoutCallback: () {
+                            userViewModel.deleteCredential();
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ));
+                          }),
+                        ));
                       }
                     });
 

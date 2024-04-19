@@ -11,9 +11,10 @@ import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../main_pages/NavigationPage.dart';
+import 'LoginPage.dart';
 
 class RegistryPage extends StatefulWidget {
-  const RegistryPage({super.key});
+  const RegistryPage({super.key,});
 
   @override
   State<RegistryPage> createState() => _RegistryPageState();
@@ -125,8 +126,13 @@ class _RegistryPageState extends State<RegistryPage> {
                       if (result!.isSuccess()) {
                         dataCompleted = true;
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) =>
-                                NavigationPage(logoutCallback: () {},)));
+                          builder: (context) => NavigationPage(logoutCallback: () {
+                            userViewModel.deleteCredential();
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ));
+                          }),
+                        ));
                       }else{
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

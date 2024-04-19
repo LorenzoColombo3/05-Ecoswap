@@ -78,7 +78,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String email,
     required String password,
   }) async {
-    print('pw' + password);
     saveCredential(email, password);
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -87,11 +86,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       );
       final User? currentUser = FirebaseAuth.instance.currentUser;
       String idToken = currentUser!.uid;
-
-      //TODO controllare se user non è istanza di error al posto di userResponse success
-      UserModel user = (getUserDataFirebase(idToken) as UserResponseSuccess).getData();
-      saveUserLocal(user);
-
+      Result? result= await getUserDataFirebase(idToken);
+      saveUserLocal((result as UserResponseSuccess).getData());
       return 'Success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -267,14 +263,15 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         Map<dynamic, dynamic>? userData = snapshot.value as Map<dynamic, dynamic>?;
         String name = userData?['username'];
         String email = userData?['email'];
-        String lastName = userData?['lastName'];
+        String lastName = userData?['lastname'];
         String birthDate = userData?['birthDate'];
         String position = userData?['position'];
         String phoneNumber = userData?['phoneNumber'];
         print('UID: $idToken, Nome: $name, Cognome: $lastName, Data di nascita: $birthDate, Posizione: $position, Numero di telefono: $phoneNumber');
         result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position));
-      } else {
-        result = ErrorResult('User not found');
+        return result;
+      }else{
+        result = ErrorResult("user data not found");
         return result;
       }
     } catch (error) {

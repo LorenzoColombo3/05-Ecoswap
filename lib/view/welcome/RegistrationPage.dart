@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'RegistryPage.dart';
 
 class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+  const RegistrationPage({super.key,});
 
   @override
   State<RegistrationPage> createState() => _RegistrationPageState();
