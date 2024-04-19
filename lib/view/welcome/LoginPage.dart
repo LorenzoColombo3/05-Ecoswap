@@ -1,3 +1,4 @@
+import 'package:eco_swap/view/welcome/ForgotPasswordPage.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/repository/IUserRepository.dart';
@@ -40,9 +41,6 @@ class _LoginPageState extends State<LoginPage>{
                 }),
               ));
             }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message),),
-            );
           });
         }
       });
@@ -125,10 +123,11 @@ class _LoginPageState extends State<LoginPage>{
                             ));
                           }),
                         ));
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message),),
+                        );
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(message),),
-                      );
                     });
                   },
                   child: const Text('Login'),
@@ -137,7 +136,8 @@ class _LoginPageState extends State<LoginPage>{
               const SizedBox(height: 10.0),
               TextButton(
                 onPressed: () {
-                  // Logica per la password dimenticata
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const ForgotPasswordPage()));
                 },
                 child: const Text('Forgot password?'),
               ),
@@ -155,6 +155,7 @@ class _LoginPageState extends State<LoginPage>{
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => NavigationPage(logoutCallback: () {
                             userViewModel.deleteCredential();
+                            userViewModel.signOutFromGoogle();
                             Navigator.of(context).pushReplacement(MaterialPageRoute(
                               builder: (context) => const LoginPage(),
                             ));

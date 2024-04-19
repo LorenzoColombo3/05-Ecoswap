@@ -99,13 +99,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       password: _passwordController.text,
                     ).then((message) {
                       if (message!.contains('Success')) {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const RegistryPage()));
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(message),),
-                      );
                     });
+
                   },
                   child: const Text('Create Account'),
                 ),

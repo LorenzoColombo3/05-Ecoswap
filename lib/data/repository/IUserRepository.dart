@@ -11,6 +11,7 @@ abstract class IUserRepository{
   Future<void> saveCredential(String email, String password);
   Future<void> deleteCredential();
   Future<String?> readPassword();
+  Future<void> resetPassword(String email);
   void deleteUser();
   Future<void> updatePosition(bool hasPermission);
   Future<bool> signOutFromGoogle();

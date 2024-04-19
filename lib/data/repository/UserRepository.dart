@@ -65,5 +65,10 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<String?> readPassword() async {
    return _userAuthDataSource.readPassword();
   }
+
+  @override
+  Future<void> resetPassword(String email) async{
+    return _userAuthDataSource.resetPassword(email);
+  }
   
 }

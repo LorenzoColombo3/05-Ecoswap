@@ -60,6 +60,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         if (authResult.additionalUserInfo!.isNewUser) {
           return "Nuovo utente creato con successo.";
         } else {
+          final User? currentUser = FirebaseAuth.instance.currentUser;
+          String idToken = currentUser!.uid;
+          Result? result= await getUserDataFirebase(idToken);
+          saveUserLocal((result as UserResponseSuccess).getData());
           return "Accesso con Google effettuato con successo.";
         }
       } else {
@@ -170,14 +174,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       await databaseReference.child(databasePath).set(_currentCity);
       Result? res = await getUser();
       UserModel? user = (res as UserResponseSuccess).getData();
-      print(user!.position.toString());
       if (user != null) {
         user.position=_currentCity!;
         await saveUserLocal(user);
       }
-      Result? res2 = await getUser();
-      user = (res2 as UserResponseSuccess).getData();
-      print(user!.position.toString());
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -267,7 +267,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         String birthDate = userData?['birthDate'];
         String position = userData?['position'];
         String phoneNumber = userData?['phoneNumber'];
-        print('UID: $idToken, Nome: $name, Cognome: $lastName, Data di nascita: $birthDate, Posizione: $position, Numero di telefono: $phoneNumber');
         result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position));
         return result;
       }else{
@@ -280,6 +279,19 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       return result;
     }
   }
+
+  @override
+  Future<void> resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      // L'email per il ripristino della password è stata inviata con successo
+      print("Email di ripristino della password inviata con successo");
+    } catch (e) {
+      // Si è verificato un errore durante l'invio dell'email di ripristino della password
+      print("Errore durante l'invio dell'email di ripristino della password: $e");
+    }
+  }
+
 
 }
 
