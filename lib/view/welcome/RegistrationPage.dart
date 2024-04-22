@@ -101,6 +101,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       if (message!.contains('Success')) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const RegistryPage()));
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message),),
+                        );
                       }
                     });
 

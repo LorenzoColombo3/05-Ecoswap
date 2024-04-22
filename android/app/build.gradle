@@ -26,7 +26,7 @@ android {
     namespace "com.example.eco_swap"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
-    compileSdkVersion 31
+    compileSdkVersion 33
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

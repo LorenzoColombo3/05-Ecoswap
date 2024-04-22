@@ -26,9 +26,15 @@ class _NavigationPageState extends State<NavigationPage> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (_selectedIndex == index) {
+      // Se l'utente è già sulla stessa pagina, forza l'aggiornamento
+      setState(() {});
+    } else {
+      // Altrimenti, aggiorna l'indice selezionato normalmente
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override

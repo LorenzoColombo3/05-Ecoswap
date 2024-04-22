@@ -39,11 +39,13 @@ dependencies:
   firebase_database: ^10.5.0
   firebase_auth: ^4.19.1
   synchronized: ^3.0.0
-  geolocator: ^8.2.0
+  geolocator: ^11.0.0
+  image_picker: ^1.1.0
   shared_preferences: ^2.2.2
-  geocoding: ^2.0.4
+  geocoding: ^3.0.0
   google_sign_in: ^6.2.1
-  flutter_secure_storage: ^4.2.0
+  flutter_secure_storage: ^ 9.0.0
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:
