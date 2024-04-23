@@ -32,11 +32,23 @@ class _ImagePickerButtonState extends State<ImagePickerButton> {
     return GestureDetector(
       onTap: _getImage,
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.white.withOpacity(0.7),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 2.0,
+              spreadRadius: 0.0,
+              offset: Offset(2.0, 2.0), // shadow direction: bottom right
+            )
+          ],
+        ),
         width: 200,
         height: 200,
-        color: Colors.grey.withOpacity(0.5),
+        //color: Colors.black.withOpacity(0.8),
         child: _imageFile != null
-            ? Image.file(_imageFile!, fit: BoxFit.cover)
+            ? Image.file(_imageFile!, fit: BoxFit.contain)
             : Icon(Icons.add, size: 50, color: Colors.white),
       ),
     );

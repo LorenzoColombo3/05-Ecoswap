@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../widget/ImagePickerButton.dart';
 
@@ -29,35 +30,49 @@ class _LoadRentalState extends State<LoadRentalPage> {
           children: [
             ImagePickerButton(
               onImageSelected: (File imageFile) {
-
+                print(imageFile.path);
               },
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _textInputController1,
               decoration: InputDecoration(
-                labelText: 'Testo 1',
+                border: OutlineInputBorder(),
+                hintText: 'Title',
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.7),
               ),
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _textInputController2,
               decoration: InputDecoration(
-                labelText: 'Testo 2',
+                border: OutlineInputBorder(),
+                hintText: 'Description',
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.7),
               ),
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _textInputController3,
+              keyboardType: TextInputType.phone,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
               decoration: InputDecoration(
-                labelText: 'Testo 3',
+                labelText: 'Daily cost',
               ),
             ),
             SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _textInputController4,
+              keyboardType: TextInputType.phone,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
               decoration: InputDecoration(
-                labelText: 'Testo 4',
+                labelText: 'Max days rent',
               ),
             ),
             SizedBox(height: 24.0),
@@ -65,7 +80,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
               onPressed: () {
                 // Azione da eseguire quando viene premuto il pulsante
               },
-              child: Text('Invia'),
+              child: Text('Save'),
             ),
           ],
         ),
