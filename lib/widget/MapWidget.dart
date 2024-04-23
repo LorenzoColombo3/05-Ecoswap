@@ -3,9 +3,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapWidget extends StatefulWidget {
+  final LatLng initialPosition;  // Aggiunto per prendere la posizione iniziale come input
   final Function(LatLng) onPositionChanged;
 
   MapWidget({
+    required this.initialPosition, // Questo sarà il nuovo parametro per la posizione iniziale
     required this.onPositionChanged,
   });
 
@@ -14,19 +16,25 @@ class MapWidget extends StatefulWidget {
 }
 
 class _MapWidgetState extends State<MapWidget> {
-  LatLng _selectedPosition = LatLng(45.4554, 8.8908);
+  late LatLng _selectedPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPosition = widget.initialPosition; // Imposta la posizione iniziale dal parametro
+  }
 
   @override
   Widget build(BuildContext context) {
     return FlutterMap(
       options: MapOptions(
-        initialCenter: LatLng(45.4554, 8.8908),
+        initialCenter: _selectedPosition,
         initialZoom: 9.2,
         onTap: _handleTap,
       ),
       children: [
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}&key=<YOUR_API_KEY>',
           userAgentPackageName: 'com.example.app',
         ),
         MarkerLayer(

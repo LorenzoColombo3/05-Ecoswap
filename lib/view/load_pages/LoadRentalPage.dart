@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import '../../widget/ImagePickerButton.dart';
 import '../../widget/MapWidget.dart';
@@ -17,8 +17,14 @@ class _LoadRentalState extends State<LoadRentalPage> {
   TextEditingController _descriptionInputController = TextEditingController();
   TextEditingController _dailyCostInputController = TextEditingController();
   TextEditingController _maxDaysInputController = TextEditingController();
-  //RentalDataSource testFirebase = RentalDataSource();
-  LatLng _selectedPosition = LatLng(0, 0); // Posizione iniziale
+  LatLng? _selectedPosition;
+  late LatLng _currentPosition = LatLng(45.4554, 8.8908); // Impostazione iniziale a una posizione predefinita
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePosition();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,19 +100,47 @@ class _LoadRentalState extends State<LoadRentalPage> {
             ),
             SizedBox(height: 24.0),
             SizedBox(
-              height: 300, // Altezza desiderata
-              child: MapWidget(
-                onPositionChanged: (LatLng position) {
-                  setState(() {
-                    _selectedPosition = position;
-                  });
-                },
+              height: 300,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: FutureBuilder<LatLng>(
+                    future: getPositionAsLatLng(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return MapWidget(
+                          initialPosition: snapshot.data!,
+                          onPositionChanged: (LatLng position) {
+                            setState(() {
+                              _selectedPosition = position;
+                            });
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
-                // Azione da eseguire quando viene premuto il pulsante
+                print('position $_selectedPosition');
               },
               child: Text('Save'),
             ),
@@ -123,5 +157,25 @@ class _LoadRentalState extends State<LoadRentalPage> {
     _dailyCostInputController.dispose();
     _maxDaysInputController.dispose();
     super.dispose();
+  }
+
+  Future<LatLng> getPositionAsLatLng() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      return LatLng(position.latitude, position.longitude);
+    } catch (e) {
+      throw Exception('Failed to get current position: $e');
+    }
+  }
+
+  void _initializePosition() async {
+    try {
+      LatLng position = await getPositionAsLatLng();
+      setState(() {
+        _currentPosition = position;
+      });
+    } catch (e) {
+      print('Failed to initialize position: $e');
+    }
   }
 }
