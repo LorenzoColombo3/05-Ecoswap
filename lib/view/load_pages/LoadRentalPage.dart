@@ -1,12 +1,9 @@
 import 'dart:io';
-
-import 'package:eco_swap/data/source/RentalDataSource.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../widget/ImagePickerButton.dart';
 import '../../widget/MapWidget.dart';
 
@@ -20,12 +17,8 @@ class _LoadRentalState extends State<LoadRentalPage> {
   TextEditingController _descriptionInputController = TextEditingController();
   TextEditingController _dailyCostInputController = TextEditingController();
   TextEditingController _maxDaysInputController = TextEditingController();
-  RentalDataSource testFirebase = RentalDataSource();
-
-  @override
-  void initState(){
-
-  }
+  //RentalDataSource testFirebase = RentalDataSource();
+  LatLng _selectedPosition = LatLng(0, 0); // Posizione iniziale
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +59,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
                 filled: false,
                 labelText: 'Description',
                 fillColor: Colors.white.withOpacity(0.7),
-                floatingLabelBehavior: FloatingLabelBehavior.always, // Imposta l'etichetta fluttuante sempre visibile
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
             SizedBox(height: 16.0),
@@ -100,7 +93,16 @@ class _LoadRentalState extends State<LoadRentalPage> {
               ),
             ),
             SizedBox(height: 24.0),
-            MapWidget(),
+            SizedBox(
+              height: 300, // Altezza desiderata
+              child: MapWidget(
+                onPositionChanged: (LatLng position) {
+                  setState(() {
+                    _selectedPosition = position;
+                  });
+                },
+              ),
+            ),
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
