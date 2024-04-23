@@ -46,6 +46,9 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_secure_storage: ^ 9.0.0
   modal_bottom_sheet: ^3.0.0
+  firebase_storage: ^11.7.3
+  flutter_map: ^0.13.1
+  latlong2: ^0.8.0
 
 dev_dependencies:
   flutter_test:

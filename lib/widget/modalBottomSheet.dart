@@ -37,7 +37,7 @@ class ModalBottomSheet extends StatelessWidget {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => LoadRentalPage()),);
                       },
-                      child: Text("Load new Rental"),
+                      child: Text("Load new 4Rental"),
                     ),
                   ),
                   SizedBox(width: 20),

@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:eco_swap/data/source/RentalDataSource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../widget/ImagePickerButton.dart';
+import '../../widget/MapWidget.dart';
 
 class LoadRentalPage extends StatefulWidget {
   @override
@@ -11,11 +16,16 @@ class LoadRentalPage extends StatefulWidget {
 }
 
 class _LoadRentalState extends State<LoadRentalPage> {
-  TextEditingController _imageInputController = TextEditingController();
-  TextEditingController _textInputController1 = TextEditingController();
-  TextEditingController _textInputController2 = TextEditingController();
-  TextEditingController _textInputController3 = TextEditingController();
-  TextEditingController _textInputController4 = TextEditingController();
+  TextEditingController _titleInputController = TextEditingController();
+  TextEditingController _descriptionInputController = TextEditingController();
+  TextEditingController _dailyCostInputController = TextEditingController();
+  TextEditingController _maxDaysInputController = TextEditingController();
+  RentalDataSource testFirebase = RentalDataSource();
+
+  @override
+  void initState(){
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,46 +45,62 @@ class _LoadRentalState extends State<LoadRentalPage> {
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              controller: _textInputController1,
-              decoration: InputDecoration(
+              controller: _titleInputController,
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
+                filled: false,
+                labelText: 'Title',
                 hintText: 'Title',
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.7),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              controller: _textInputController2,
+              minLines: 4,
+              maxLines: null,
+              maxLength: 5000,
+              controller: _descriptionInputController,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 hintText: 'Description',
-                filled: true,
+                filled: false,
+                labelText: 'Description',
                 fillColor: Colors.white.withOpacity(0.7),
+                floatingLabelBehavior: FloatingLabelBehavior.always, // Imposta l'etichetta fluttuante sempre visibile
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              controller: _textInputController3,
+              controller: _dailyCostInputController,
               keyboardType: TextInputType.phone,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
               ],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                filled: false,
+                hintText: 'DailyCost',
                 labelText: 'Daily cost',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              controller: _textInputController4,
+              controller: _maxDaysInputController,
               keyboardType: TextInputType.phone,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
               ],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                filled: false,
+                hintText: 'Max days rent',
                 labelText: 'Max days rent',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
+            SizedBox(height: 24.0),
+            MapWidget(),
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
@@ -90,11 +116,10 @@ class _LoadRentalState extends State<LoadRentalPage> {
 
   @override
   void dispose() {
-    _imageInputController.dispose();
-    _textInputController1.dispose();
-    _textInputController2.dispose();
-    _textInputController3.dispose();
-    _textInputController4.dispose();
+    _titleInputController.dispose();
+    _descriptionInputController.dispose();
+    _dailyCostInputController.dispose();
+    _maxDaysInputController.dispose();
     super.dispose();
   }
 }
