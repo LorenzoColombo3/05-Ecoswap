@@ -1,4 +1,3 @@
-import 'package:eco_swap/widget/ModalBottomSheet.dart';
 import 'package:flutter/material.dart';
 
 import '../load_pages/LoadExchangePage.dart';
@@ -13,10 +12,12 @@ class LoadAdPage extends StatefulWidget {
 
 class _LoadAdPageState extends State<LoadAdPage> {
   late int _selectedIndex;
+  Color rentalButtonColor = Colors.blue.withOpacity(0.2);
+  Color exchangeButtonColor = Colors.transparent;
   @override
   void initState() {
     super.initState();
-    _selectedIndex = 1;
+    _selectedIndex = 0;
   }
   @override
   Widget build(BuildContext context) {
@@ -24,35 +25,53 @@ class _LoadAdPageState extends State<LoadAdPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedIndex = 0; // Imposta _selectedIndex a 0 quando viene premuto il pulsante Rental
-                    });
-                  },
-                  child: const Text('Rental'),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 0;
+                        rentalButtonColor = Colors.blue.withOpacity(0.2);
+                        exchangeButtonColor = Colors.transparent;
+                      });
+                    },
+                    child: Text(
+                      'Rental',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
+                    ),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedIndex = 1; // Imposta _selectedIndex a 1 quando viene premuto il pulsante Exchange
-                    });
-                  },
-                  child: const Text('Exchange'),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 1;
+                        exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                        rentalButtonColor = Colors.transparent;
+                      });
+                    },
+                    child: Text(
+                      'Exchange',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
+                    ),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
             IndexedStack(
               index: _selectedIndex,
-              children: [
+              children: <Widget> [
                 LoadRentalPage(),
-                LoadExchangePage(),
+                LoadExchangePage()
               ],
             ),
           ],
