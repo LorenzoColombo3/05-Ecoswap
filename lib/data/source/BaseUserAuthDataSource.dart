@@ -15,4 +15,5 @@ abstract class BaseUserAuthDataSource{
   Future<void> updatePosition(bool hasPermission);
   Future<bool> signOutFromGoogle();
   Future<void> resetPassword(String email);
+  Future<Result?> getUser();
 }

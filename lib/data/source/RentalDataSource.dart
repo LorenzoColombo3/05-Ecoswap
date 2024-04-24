@@ -6,24 +6,31 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../model/Rental.dart';
 
-class RentalDataSource implements BaseRentalDataSource {
-  final storageRef = FirebaseStorage.instance.ref(); // Rimuovi questa riga
-  final DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+class RentalDataSource extends BaseRentalDataSource {
+  final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
   @override
   Future<String?> loadRental(Rental rental) async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
-
-    return 'A';
+    try {
+      final String databasePath = 'rentals';
+      String imageUrl = await uploadImage(rental.imagePath);
+      rental.imageUrl = imageUrl; // Aggiungi l'URL dell'immagine all'oggetto Rental
+      await _databaseReference.child(databasePath).child(rental.idToken).set(rental.toMap());
+      return 'Success';
+    } catch (error) {
+      print('Errore durante il caricamento del rental: $error');
+      return 'Errore durante il caricamento del rental: $error';
+    }
   }
 
   @override
-  Future<String> uploadImage(File imageFile) async {
+  Future<String> uploadImage(String imagePath) async {
     try {
-      String fileName = imageFile.path;
+      File imageFile = File(imagePath);
+      String fileName = imageFile.path.split('/').last;
       String filePath = 'rental/$fileName';
-      await storageRef.child(filePath).putFile(imageFile);
-      String downloadURL = await storageRef.child(filePath).getDownloadURL();
+      await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
+      String downloadURL = await FirebaseStorage.instance.ref(filePath).getDownloadURL();
       return downloadURL;
     } catch (e) {
       print('Errore durante il caricamento dell\'immagine: $e');

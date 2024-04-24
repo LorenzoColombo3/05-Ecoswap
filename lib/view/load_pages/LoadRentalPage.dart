@@ -1,9 +1,20 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:eco_swap/data/repository/IAdRepository.dart';
+import 'package:uuid/uuid.dart';
+import 'package:eco_swap/model/Rental.dart';
+import 'package:eco_swap/util/Result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import '../../data/repository/IUserRepository.dart';
+import '../../data/viewmodel/AdViewModel.dart';
+import '../../data/viewmodel/AdViewModelFactory.dart';
+import '../../data/viewmodel/UserViewModel.dart';
+import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/UserModel.dart';
+import '../../util/ServiceLocator.dart';
 import '../../widget/ImagePickerButton.dart';
 import '../../widget/MapWidget.dart';
 
@@ -17,6 +28,12 @@ class _LoadRentalState extends State<LoadRentalPage> {
   TextEditingController _descriptionInputController = TextEditingController();
   TextEditingController _dailyCostInputController = TextEditingController();
   TextEditingController _maxDaysInputController = TextEditingController();
+  late UserModel currentUser;
+  late String imagePath;
+  late IUserRepository userRepository;
+  late UserViewModel userViewModel;
+  late IAdRepository adRepository;
+  late AdViewModel adViewModel;
   LatLng? _selectedPosition;
   late LatLng _currentPosition = LatLng(45.4554, 8.8908); // Impostazione iniziale a una posizione predefinita
 
@@ -24,14 +41,18 @@ class _LoadRentalState extends State<LoadRentalPage> {
   void initState() {
     super.initState();
     _initializePosition();
+    userRepository = ServiceLocator().getUserRepository();
+    userViewModel = UserViewModelFactory(userRepository).create();
+    adRepository = ServiceLocator().getAdRepository();
+    adViewModel = AdViewModelFactory(adRepository).create();
+    userViewModel.getUser().then((user){
+      currentUser = (user as UserResponseSuccess).getData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Load new rental'),
-      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -39,7 +60,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
           children: [
             ImagePickerButton(
               onImageSelected: (File imageFile) {
-                print(imageFile.path);
+               imagePath = imageFile.path;
               },
             ),
             SizedBox(height: 16.0),
@@ -140,7 +161,13 @@ class _LoadRentalState extends State<LoadRentalPage> {
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
-                print('position $_selectedPosition');
+                Rental rental = Rental(imagePath, currentUser.idToken,
+                    _titleInputController.value.text,
+                    _descriptionInputController.value.text,
+                    _selectedPosition!.latitude, _selectedPosition!.longitude,
+                    _dailyCostInputController.value.text,
+                    _maxDaysInputController.value.text, Uuid().v4());
+                adViewModel.loadRental(rental);
               },
               child: Text('Save'),
             ),

@@ -53,4 +53,8 @@ class UserViewModel{
   Future<void> resetPassword(String email) async{
     return _userRepository.resetPassword(email);
   }
+
+  Future<Result?> getUser() async{
+    return _userRepository.getUser();
+  }
 }

@@ -5,20 +5,22 @@ class Rental implements AdInterface {
   String _userId;
   String _title;
   String _description;
-  String _position;
-  int _dailyCost;
-  int _maxDaysRent;
+  double _lat;
+  double _long;
+  String _dailyCost;
+  String _maxDaysRent;
   String _idToken;
+  String? _imageUrl;
 
-  Rental(
-      this._imagePath,
-      this._userId,
-      this._title,
-      this._description,
-      this._position,
-      this._dailyCost,
-      this._maxDaysRent,
-      this._idToken);
+  Rental(this._imagePath, this._userId, this._title, this._description,
+      this._lat, this._long, this._dailyCost, this._maxDaysRent, this._idToken,
+      {String? imageUrl});
+
+  String? get imageUrl => _imageUrl;
+
+  set imageUrl(String? value) {
+    _imageUrl = value;
+  }
 
   String get imagePath => _imagePath;
   set imagePath(String value) => _imagePath = value;
@@ -37,16 +39,17 @@ class Rental implements AdInterface {
   String get description => _description;
   set description(String value) => _description = value;
 
-  String get position => _position;
-  set position(String value) {
-    _position = value;
-  }
+  double get lat => _lat;
+  set lat(double value) => _lat = value;
 
-  int get dailyCost => _dailyCost;
-  set dailyCost(int value) => _dailyCost = value;
+  double get long => _long;
+  set long(double value) => _long = value;
 
-  int get maxDaysRent => _maxDaysRent;
-  set maxDaysRent(int value) => _maxDaysRent = value;
+  String get dailyCost => _dailyCost;
+  set dailyCost(String value) => _dailyCost = value;
+
+  String get maxDaysRent => _maxDaysRent;
+  set maxDaysRent(String value) => _maxDaysRent = value;
 
   Map<String, dynamic> toMap() {
     return {
@@ -54,23 +57,27 @@ class Rental implements AdInterface {
       'userId': _userId,
       'title': _title,
       'description': _description,
-      'position': _position,
+      'lat': _lat,
+      'long': _long,
       'dailyCost': _dailyCost,
       'maxDaysRent': _maxDaysRent,
       'idToken': _idToken,
+      'imageUrl' : _imageUrl,
     };
   }
 
   factory Rental.fromMap(Map<String, dynamic> map) {
     return Rental(
-      map['imagePath'],
-      map['userId'],
-      map['title'],
-      map['description'],
-      map['position'],
-      map['dailyCost'],
-      map['maxDaysRent'],
-      map['idToken'],
+        map['imagePath'],
+        map['userId'],
+        map['title'],
+        map['description'],
+        map['lat'],
+        map['long'],
+        map['dailyCost'],
+        map['maxDaysRent'],
+        map['idToken'],
+        imageUrl: map['imageUrl'],
     );
   }
 }

@@ -15,4 +15,5 @@ abstract class IUserRepository{
   void deleteUser();
   Future<void> updatePosition(bool hasPermission);
   Future<bool> signOutFromGoogle();
+  Future<Result?> getUser();
 }

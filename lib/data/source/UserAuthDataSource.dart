@@ -241,7 +241,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     return password;
   }
 
-  static Future<Result?> getUser() async {
+  @override
+   Future<Result?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? userString = prefs.getString('user');
     if (userString != null) {
@@ -291,6 +292,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       print("Errore durante l'invio dell'email di ripristino della password: $e");
     }
   }
+
 
 
 }
