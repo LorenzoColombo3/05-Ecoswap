@@ -26,30 +26,14 @@ class _NavigationPageState extends State<NavigationPage> {
   ];
 
   void _onItemTapped(int index) {
-    if (_selectedIndex == index) {
-      // Se l'utente è già sulla stessa pagina, forza l'aggiornamento
-      setState(() {});
-    } else {
-      // Altrimenti, aggiorna l'indice selezionato normalmente
       setState(() {
         _selectedIndex = index;
       });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(''),
-        actions: [
-          IconButton(
-            onPressed: widget.logoutCallback,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

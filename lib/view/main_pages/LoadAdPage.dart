@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../load_pages/LoadExchangePage.dart';
 import '../load_pages/LoadRentalPage.dart';
+import 'NavigationPage.dart';
+import 'ProfilePage.dart';
 
 class LoadAdPage extends StatefulWidget {
   const LoadAdPage({Key? key}) : super(key: key);
@@ -14,11 +16,13 @@ class _LoadAdPageState extends State<LoadAdPage> {
   late int _selectedIndex;
   Color rentalButtonColor = Colors.blue.withOpacity(0.2);
   Color exchangeButtonColor = Colors.transparent;
+
   @override
   void initState() {
     super.initState();
     _selectedIndex = 0;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,8 +74,28 @@ class _LoadAdPageState extends State<LoadAdPage> {
             IndexedStack(
               index: _selectedIndex,
               children: <Widget> [
-                LoadRentalPage(),
-                LoadExchangePage()
+                LoadRentalPage(
+                  onButtonPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => NavigationPage(logoutCallback: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ));
+                      }),
+                    ));
+                  },
+                ),
+                LoadExchangePage(
+                  onButtonPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => NavigationPage(logoutCallback: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ));
+                      }),
+                    ));
+                  },
+                )
               ],
             ),
           ],

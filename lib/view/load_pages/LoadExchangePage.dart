@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:eco_swap/data/repository/IAdRepository.dart';
 import 'package:uuid/uuid.dart';
-import 'package:eco_swap/model/Rental.dart';
 import 'package:eco_swap/util/Result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +12,7 @@ import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/Exchange.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/ImagePickerButton.dart';
@@ -20,15 +20,17 @@ import '../../widget/MapWidget.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoadExchangePage extends StatefulWidget {
+  final VoidCallback onButtonPressed;
+
   @override
   State<LoadExchangePage> createState() => _LoadExchangePageState();
+
+  const LoadExchangePage({Key? key, required this.onButtonPressed}) : super(key: key);
 }
 
 class _LoadExchangePageState extends State<LoadExchangePage> {
   TextEditingController _titleInputController = TextEditingController();
   TextEditingController _descriptionInputController = TextEditingController();
-  TextEditingController _dailyCostInputController = TextEditingController();
-  TextEditingController _maxDaysInputController = TextEditingController();
   late UserModel currentUser;
   late String imagePath;
   late IUserRepository userRepository;
@@ -36,8 +38,6 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
   LatLng? _selectedPosition;
-  late LatLng _currentPosition = LatLng(
-      45.4554, 8.8908); // Impostazione iniziale a una posizione predefinita
 
   @override
   void initState() {
@@ -132,17 +132,39 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
           SizedBox(height: 24.0),
           ElevatedButton(
             onPressed: () {
-              Rental rental = Rental(
-                  imagePath,
-                  currentUser.idToken,
-                  _titleInputController.value.text,
-                  _descriptionInputController.value.text,
-                  _selectedPosition!.latitude,
-                  _selectedPosition!.longitude,
-                  _dailyCostInputController.value.text,
-                  _maxDaysInputController.value.text,
-                  Uuid().v4());
-              adViewModel.loadRental(rental);
+              if (imagePath == "" ||
+                  _titleInputController.value.text == "" ||
+                  _descriptionInputController.value.text == "") {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Fill in all fields"),
+                  ),
+                );
+              } else {
+                try {
+                  Exchange exchange = Exchange(
+                      imagePath,
+                      currentUser.idToken,
+                      _titleInputController.value.text,
+                      _descriptionInputController.value.text,
+                      _selectedPosition!.latitude,
+                      _selectedPosition!.longitude,
+                      Uuid().v4());
+                  adViewModel.loadExchange(exchange).then((message) {
+                    if (message!.contains('Success')) {
+                      widget.onButtonPressed();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(message),
+                        ),
+                      );
+                    }
+                  });
+                } catch (e) {
+                  print(e.toString());
+                }
+              }
             },
             child: Text('Save'),
           ),
@@ -155,8 +177,6 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
   void dispose() {
     _titleInputController.dispose();
     _descriptionInputController.dispose();
-    _dailyCostInputController.dispose();
-    _maxDaysInputController.dispose();
     super.dispose();
   }
 
@@ -173,7 +193,7 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
     try {
       LatLng position = await getPositionAsLatLng();
       setState(() {
-        _currentPosition = position;
+        _selectedPosition = position;
       });
     } catch (e) {
       print('Failed to initialize position: $e');

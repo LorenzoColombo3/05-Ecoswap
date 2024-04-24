@@ -1,5 +1,6 @@
 import 'package:eco_swap/data/repository/IAdRepository.dart';
 
+import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 
 class AdViewModel{
@@ -11,7 +12,15 @@ class AdViewModel{
     return _adRepository.loadRental(rental);
   }
 
-  Future<String> uploadImage(String imagePath) {
-    return _adRepository.uploadImage(imagePath);
+  Future<String> uploadImageRental(String imagePath) {
+    return _adRepository.uploadImageRental(imagePath);
+  }
+
+  Future<String?> loadExchange(Exchange exchange) {
+    return _adRepository.loadExchange(exchange);
+  }
+
+  Future<String> uploadImageExchange(String imagePath) {
+    return _adRepository.uploadImageExchange(imagePath);
   }
 }

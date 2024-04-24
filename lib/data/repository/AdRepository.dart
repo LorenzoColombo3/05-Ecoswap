@@ -1,6 +1,7 @@
 import 'package:eco_swap/data/repository/IAdRepository.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/data/source/BaseRentalDataSource.dart';
+import 'package:eco_swap/model/Exchange.dart';
 import 'package:eco_swap/model/Rental.dart';
 
 class AdRepository implements IAdRepository{
@@ -15,8 +16,18 @@ class AdRepository implements IAdRepository{
   }
 
   @override
-  Future<String> uploadImage(String imagePath) {
+  Future<String> uploadImageRental(String imagePath) {
     return _rentalDataSource.uploadImage(imagePath);
+  }
+
+  @override
+  Future<String?> loadExchange(Exchange exchange) {
+    return _exchangeDataSource.loadExchange(exchange);
+  }
+
+  @override
+  Future<String> uploadImageExchange(String imagePath) {
+    return _exchangeDataSource.uploadImage(imagePath);
   }
 
 

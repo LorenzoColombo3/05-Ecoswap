@@ -9,18 +9,24 @@ import '../../model/Rental.dart';
 class RentalDataSource extends BaseRentalDataSource {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
+
   @override
   Future<String?> loadRental(Rental rental) async {
     try {
       final String databasePath = 'rentals';
       String imageUrl = await uploadImage(rental.imagePath);
-      rental.imageUrl = imageUrl; // Aggiungi l'URL dell'immagine all'oggetto Rental
+      rental.imageUrl = imageUrl;
       await _databaseReference.child(databasePath).child(rental.idToken).set(rental.toMap());
       return 'Success';
     } catch (error) {
       print('Errore durante il caricamento del rental: $error');
       return 'Errore durante il caricamento del rental: $error';
     }
+  }
+
+  @override
+  Future<void> loadLocal(Rental rental) async {
+
   }
 
   @override
