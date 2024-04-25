@@ -7,9 +7,7 @@ import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
 
 class ExchangeDataSource extends BaseExchangeDataSource {
-  late Database _database;
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
-  bool _isDatabaseInitialized = false;
 
   @override
   Future<String?> loadExchange(Exchange exchange) async {
@@ -18,6 +16,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       String imageUrl = await uploadImage(exchange.imagePath);
       exchange.imageUrl = imageUrl;
       await _databaseReference.child(databasePath).child(exchange.idToken).set(exchange.toMap());
+      await loadLocal(exchange);
       return 'Success';
     } catch (error) {
       print('Errore durante il caricamento dell\'exchange: $error');
@@ -25,92 +24,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     }
   }
 
-  @override
-  Future<void> loadLocal(Exchange exchange) async {
-    try {
-      if (!_isDatabaseInitialized) {
-        await _initializeDatabase();
-      }
-
-      await _database.insert('exchanges', exchange.toMap());
-    } catch (error) {
-      print('Errore durante il caricamento locale dell\'exchange: $error');
-    }
-  }
-
-  @override
-  Future<List<Exchange>> getLocalExchanges() async {
-    try {
-      if (!_isDatabaseInitialized) {
-        await _initializeDatabase();
-      }
-
-      final List<Map<String, dynamic>> maps = await _database.query('exchanges');
-      return List.generate(maps.length, (i) {
-        return Exchange.fromMap(maps[i]);
-      });
-    } catch (error) {
-      print('Errore durante il recupero degli exchange locali: $error');
-      return [];
-    }
-  }
-
-  @override
-  Future<void> updateLocalExchange(Exchange exchange) async {
-    try {
-      if (!_isDatabaseInitialized) {
-        await _initializeDatabase();
-      }
-
-      await _database.update(
-        'exchanges',
-        exchange.toMap(),
-        where: 'idToken = ?',
-        whereArgs: [exchange.idToken],
-      );
-    } catch (error) {
-      print('Errore durante l\'aggiornamento dell\'exchange locale: $error');
-    }
-  }
-
-  @override
-  Future<void> deleteLocalExchange(String idToken) async {
-    try {
-      if (!_isDatabaseInitialized) {
-        await _initializeDatabase();
-      }
-
-      await _database.delete(
-        'exchanges',
-        where: 'idToken = ?',
-        whereArgs: [idToken],
-      );
-    } catch (error) {
-      print('Errore durante l\'eliminazione dell\'exchange locale: $error');
-    }
-  }
-
-  Future<void> _initializeDatabase() async {
-    _database = await openDatabase(
-      join(await getDatabasesPath(), 'exchanges_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE exchanges('
-              'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-              'imagePath TEXT, '
-              'userId TEXT, '
-              'title TEXT, '
-              'description TEXT, '
-              'latitude REAL, '
-              'longitude REAL, '
-              'idToken TEXT, '
-              'imageUrl TEXT)',
-        );
-      },
-      version: 1,
-    );
-    _isDatabaseInitialized = true;
-  }
 
   @override
   Future<String> uploadImage(String imagePath) async {
@@ -125,5 +38,11 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       print('Errore durante il caricamento dell\'immagine: $e');
       return '';
     }
+  }
+
+  @override
+  Future<void> loadFromFirebaseToLocal(Exchange exchange) {
+    // TODO: implement loadFromFirebaseToLocal
+    throw UnimplementedError();
   }
 }
