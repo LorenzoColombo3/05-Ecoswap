@@ -19,7 +19,7 @@ class RentalDataSource extends BaseRentalDataSource {
       String imageUrl = await uploadImage(rental.imagePath);
       rental.imageUrl = imageUrl;
       await _databaseReference.child(databasePath).child(rental.idToken).set(rental.toMap());
-      await loadLocal(rental);
+      onLoadFinished(rental);
       return 'Success';
     } catch (error) {
       print('Errore durante il caricamento del rental: $error');

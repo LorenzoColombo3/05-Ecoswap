@@ -13,8 +13,8 @@ class AdRepository implements IAdRepository{
   final BaseRentalLocalDataSource _rentalLocalDataSource;
 
   AdRepository(this._exchangeDataSource, this._rentalDataSource, this._exchangeLocalDataSource, this._rentalLocalDataSource){
-    _exchangeDataSource.setCallback(callback());
-    _rentalLocalDataSource.setCallback(callback());
+    _exchangeDataSource.setCallback(loadLocalExchange);
+    _rentalDataSource.setCallback(loadLocalRental);
   }
 
   @override
@@ -37,7 +37,11 @@ class AdRepository implements IAdRepository{
     return _exchangeDataSource.uploadImage(imagePath);
   }
 
-  void callback(){
-    print("a");
+  void loadLocalExchange(Exchange exchange){
+    _exchangeLocalDataSource.loadLocal(exchange);
+  }
+
+  void loadLocalRental(Rental rental){
+    _rentalLocalDataSource.loadLocal(rental);
   }
 }

@@ -1,9 +1,10 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseManager{
+class DatabaseManager {
   static final DatabaseManager instance = DatabaseManager._internal();
   static Database? _database;
+
   DatabaseManager._internal();
 
   Future<Database> get database async {
@@ -25,7 +26,7 @@ class DatabaseManager{
   }
 
   Future<void> _createDatabase(Database db, int version) async {
-    return await  db.execute(
+    await db.execute(
       'CREATE TABLE rentals('
           'imagePath TEXT, '
           'userId TEXT, '
@@ -38,7 +39,7 @@ class DatabaseManager{
           'idToken TEXT PRIMARY KEY, '
           'imageUrl TEXT)',
     );
-    db.execute(
+    await db.execute(
       'CREATE TABLE exchanges('
           'imagePath TEXT, '
           'userId TEXT, '
@@ -51,9 +52,10 @@ class DatabaseManager{
     );
   }
 
+
   Future<void> deleteLocalDatabase() async {
     String databasesPath = await getDatabasesPath();
     String databasePath = join(databasesPath, 'ecoSwap_database.db');
     await deleteDatabase(databasePath);
-
   }
+}
