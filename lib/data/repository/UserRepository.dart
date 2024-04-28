@@ -72,7 +72,7 @@ Future<Result?> saveData({required String name, required String lastName,
   }
 
   @override
-  Future<Result?> getUser() {
+  Future<UserModel?> getUser() {
     return _userAuthDataSource.getUser();
   }
   

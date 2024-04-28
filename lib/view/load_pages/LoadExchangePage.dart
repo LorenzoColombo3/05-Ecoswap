@@ -48,7 +48,7 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.getUser().then((user) {
-      currentUser = (user as UserResponseSuccess).getData();
+      currentUser = user!;
     });
   }
 

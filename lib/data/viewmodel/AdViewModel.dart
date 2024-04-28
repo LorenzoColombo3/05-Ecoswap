@@ -23,4 +23,8 @@ class AdViewModel{
   Future<String> uploadImageExchange(String imagePath) {
     return _adRepository.uploadImageExchange(imagePath);
   }
+
+  Future<void> loadFromFirebaseToLocal(String userId)async {
+    _adRepository.loadFromFirebaseToLocal(userId);
+  }
 }

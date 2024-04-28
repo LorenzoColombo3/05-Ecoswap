@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
+import '../../data/viewmodel/AdViewModel.dart';
+import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 
 
@@ -15,6 +19,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>{
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
+  late IAdRepository adRepository;
+  late AdViewModel adViewModel;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool obscurePassword = true;
@@ -24,6 +30,8 @@ class _HomePageState extends State<HomePage>{
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = new UserViewModelFactory(userRepository).create();
+    adRepository = ServiceLocator().getAdRepository();
+    adViewModel = AdViewModelFactory(adRepository).create();
     _handleLocationPermission().then((bool hasPermission){
       userViewModel.updatePosition(hasPermission);
     });

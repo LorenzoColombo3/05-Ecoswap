@@ -172,8 +172,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final String idToken = currentUser!.uid;
       final String databasePath = 'users/$idToken/position';
       await databaseReference.child(databasePath).set(_currentCity);
-      Result? res = await getUser();
-      UserModel? user = (res as UserResponseSuccess).getData();
+      UserModel? user = await getUser();
       if (user != null) {
         user.position=_currentCity!;
         await saveUserLocal(user);
@@ -242,16 +241,14 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-   Future<Result?> getUser() async {
+   Future<UserModel?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? userString = prefs.getString('user');
     if (userString != null) {
       final Map<String, dynamic> userMap = json.decode(userString);
-      Result result = UserResponseSuccess(UserModel.fromMap(userMap));
-      return result;
+      return UserModel.fromMap(userMap);
     } else {
-      Result result = ErrorResult('local database error');
-      return result;
+      return null;
     }
   }
 

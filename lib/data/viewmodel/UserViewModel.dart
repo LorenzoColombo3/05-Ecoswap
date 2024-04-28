@@ -54,7 +54,7 @@ class UserViewModel{
     return _userRepository.resetPassword(email);
   }
 
-  Future<Result?> getUser() async{
+  Future<UserModel?> getUser() async{
     return _userRepository.getUser();
   }
 }

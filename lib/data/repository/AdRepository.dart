@@ -13,8 +13,8 @@ class AdRepository implements IAdRepository{
   final BaseRentalLocalDataSource _rentalLocalDataSource;
 
   AdRepository(this._exchangeDataSource, this._rentalDataSource, this._exchangeLocalDataSource, this._rentalLocalDataSource){
-    _exchangeDataSource.setCallback(loadLocalExchange);
-    _rentalDataSource.setCallback(loadLocalRental);
+    _exchangeDataSource.setCallback(loadLocalExchange, _loadAllExchanges);
+    _rentalDataSource.setCallback(loadLocalRental, _loadAllRentals);
   }
 
   @override
@@ -37,11 +37,25 @@ class AdRepository implements IAdRepository{
     return _exchangeDataSource.uploadImage(imagePath);
   }
 
+  @override
+  Future<void> loadFromFirebaseToLocal(String userId) async{
+    _exchangeDataSource.loadFromFirebaseToLocal(userId);
+    _rentalDataSource.loadFromFirebaseToLocal(userId);
+  }
+
   void loadLocalExchange(Exchange exchange){
     _exchangeLocalDataSource.loadLocal(exchange);
   }
 
   void loadLocalRental(Rental rental){
     _rentalLocalDataSource.loadLocal(rental);
+  }
+
+  void _loadAllExchanges(List<Exchange> exchanges){
+    _exchangeLocalDataSource.loadAll(exchanges);
+  }
+
+  void _loadAllRentals(List<Rental> rentals){
+    _rentalLocalDataSource.loadAll(rentals);
   }
 }

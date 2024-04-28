@@ -13,7 +13,7 @@ class RentalLocalDataSource extends BaseRentalLocalDataSource{
   }
 
   Future<void> initializeDatabase() async {
-    this._database= await DatabaseManager.instance.database;
+    _database= await DatabaseManager.instance.database;
   }
 
   @override
@@ -61,6 +61,21 @@ class RentalLocalDataSource extends BaseRentalLocalDataSource{
       );
     } catch (error) {
       rethrow;
+    }
+  }
+
+  @override
+  Future<void> loadAll(List<Rental> rentals)async {
+    try {
+      await _database.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (var rental in rentals) {
+          batch.insert('rentals', rental.toMap());
+        }
+        await batch.commit(noResult: true);
+      });
+    }catch(error){
+      print(error.toString());
     }
   }
 

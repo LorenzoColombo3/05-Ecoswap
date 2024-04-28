@@ -50,7 +50,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.getUser().then((user) {
-      currentUser = (user as UserResponseSuccess).getData();
+      currentUser = user!;
     });
     imagePath = "";
   }

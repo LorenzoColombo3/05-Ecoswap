@@ -63,4 +63,15 @@ class ExchangeLocalDataSource extends BaseExchangeLocalDataSource {
     }
   }
 
+  @override
+  Future<void> loadAll(List<Exchange> exchanges)async {
+    await _database.transaction((txn) async {
+      Batch batch = txn.batch();
+      for (var exchange in exchanges) {
+        batch.insert('exchanges', exchange.toMap());
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
 }

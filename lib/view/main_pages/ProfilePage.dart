@@ -41,19 +41,19 @@ class _ProfilePageState extends State<ProfilePage> {
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.getUser().then((user){
-      currentUser = (user as UserResponseSuccess).getData();
+      currentUser = user!;
     });
     imagePath = "";
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Result?>(
+    return FutureBuilder<UserModel?>(
       future: userViewModel.getUser(), // Ottieni l'utente
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           // Verifica se lo snapshot ha completato il caricamento dei dati
-          currentUser = (snapshot.data as UserResponseSuccess).getData();
+          currentUser = snapshot.data!;
           return buildContent(); // Costruisci il widget principale
         } else {
           return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa

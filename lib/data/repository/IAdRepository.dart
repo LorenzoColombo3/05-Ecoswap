@@ -6,5 +6,5 @@ abstract class IAdRepository{
   Future<String> uploadImageRental(String imagePath);
   Future<String?> loadExchange(Exchange exchange);
   Future<String> uploadImageExchange(String imagePath);
-
+  Future<void> loadFromFirebaseToLocal(String idToken);
 }
