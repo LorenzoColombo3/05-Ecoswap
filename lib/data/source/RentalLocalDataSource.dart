@@ -2,7 +2,6 @@
 import 'package:eco_swap/data/database/DatabaseManager.dart';
 import 'package:eco_swap/model/Rental.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'BaseRentalLocalDataSource.dart';
 
 class RentalLocalDataSource extends BaseRentalLocalDataSource{
@@ -30,9 +29,13 @@ class RentalLocalDataSource extends BaseRentalLocalDataSource{
   }
 
   @override
-  Future<List<Rental>> getLocal() async{
+  Future<List<Rental>> getLocalRental(String userId) async{
     try {
-      final List<Map<String, dynamic>> maps = await _database.query('rentals');
+      List<Map<String, dynamic>> maps = await _database.query(
+        'rentals',
+        where: 'userId = ?',
+        whereArgs: [userId],
+      );
       return List.generate(maps.length, (i) {
         return Rental.fromMap(maps[i]);
       });
@@ -67,17 +70,38 @@ class RentalLocalDataSource extends BaseRentalLocalDataSource{
   @override
   Future<void> loadAll(List<Rental> rentals)async {
     try {
+      bool exists = false;
       await _database.transaction((txn) async {
         Batch batch = txn.batch();
         for (var rental in rentals) {
-          batch.insert('rentals', rental.toMap());
+          exists = await isRentalExists(txn, rental.idToken);
+          if(!exists) {
+            batch.insert('rentals', rental.toMap());
+          }
         }
         await batch.commit(noResult: true);
       });
     }catch(error){
       print(error.toString());
+      rethrow;
     }
   }
+
+  @override
+  Future<bool> isRentalExists(Transaction txn, String idToken) async {
+    try {
+      List<Map<String, dynamic>> result = await txn.query(
+        'rentals',
+        where: 'idToken = ?',
+        whereArgs: [idToken],
+      );
+      return result.isNotEmpty;
+    } catch (error) {
+      print('Errore durante il controllo della presenza del rental nel database locale: $error');
+      return false;
+    }
+  }
+
 
 
 }

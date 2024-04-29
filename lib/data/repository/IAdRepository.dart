@@ -7,4 +7,6 @@ abstract class IAdRepository{
   Future<String?> loadExchange(Exchange exchange);
   Future<String> uploadImageExchange(String imagePath);
   Future<void> loadFromFirebaseToLocal(String idToken);
+  Future<List<Rental>> getLocalRental(String userId);
+  Future<List<Exchange>> getLocalExchange(String userId);
 }

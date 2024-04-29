@@ -49,6 +49,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
 
   @override
   Future<List<Exchange>> getAllExchanges() async {
+    //TODO rifare i metodo di getAll sulla base della posizione e ricerca
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
       Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;

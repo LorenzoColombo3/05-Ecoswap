@@ -44,6 +44,7 @@ class RentalDataSource extends BaseRentalDataSource {
 
   @override
   Future<List<Rental>> getAllRentals() async{
+    //TODO rifare i metodo di getAll sulla base della posizione e ricerca
     try {
       DataSnapshot snapshot = await _databaseReference.child('rentals').get();
       Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;

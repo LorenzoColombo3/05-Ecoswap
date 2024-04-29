@@ -29,9 +29,13 @@ class ExchangeLocalDataSource extends BaseExchangeLocalDataSource {
   }
 
   @override
-  Future<List<Exchange>> getLocal() async {
+  Future<List<Exchange>> getLocalExchange(String userId) async {
     try {
-      final List<Map<String, dynamic>> maps = await _database.query('exchanges');
+      List<Map<String, dynamic>> maps = await _database.query(
+        'exchanges',
+        where: 'userId = ?',
+        whereArgs: [userId],
+      );
       return List.generate(maps.length, (i) {
         return Exchange.fromMap(maps[i]);
       });
@@ -65,13 +69,38 @@ class ExchangeLocalDataSource extends BaseExchangeLocalDataSource {
 
   @override
   Future<void> loadAll(List<Exchange> exchanges)async {
-    await _database.transaction((txn) async {
-      Batch batch = txn.batch();
-      for (var exchange in exchanges) {
-        batch.insert('exchanges', exchange.toMap());
-      }
-      await batch.commit(noResult: true);
-    });
+    try {
+      bool exists = false;
+      await _database.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (var exchange in exchanges) {
+          exists = await isExchangeExists(txn, exchange.idToken);
+          if(!exists) {
+            batch.insert('exchanges', exchange.toMap());
+          }
+        }
+        await batch.commit(noResult: true);
+      });
+    }catch(error){
+      print(error.toString());
+      rethrow;
+    }
   }
+
+  @override
+  Future<bool> isExchangeExists(Transaction txn, String idToken) async {
+    try {
+      List<Map<String, dynamic>> result = await txn.query(
+        'exchanges',
+        where: 'idToken = ?',
+        whereArgs: [idToken],
+      );
+      return result.isNotEmpty;
+    } catch (error) {
+      print('Errore durante il controllo della presenza del exchange nel database locale: $error');
+      return false;
+    }
+  }
+
 
 }

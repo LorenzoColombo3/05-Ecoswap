@@ -282,11 +282,9 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> resetPassword(String email) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      // L'email per il ripristino della password è stata inviata con successo
-      print("Email di ripristino della password inviata con successo");
     } catch (e) {
-      // Si è verificato un errore durante l'invio dell'email di ripristino della password
-      print("Errore durante l'invio dell'email di ripristino della password: $e");
+      print(e.toString());
+      rethrow;
     }
   }
 

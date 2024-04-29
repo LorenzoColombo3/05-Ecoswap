@@ -1,7 +1,10 @@
 import 'package:eco_swap/view/welcome/ForgotPasswordPage.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
+import '../../data/viewmodel/AdViewModel.dart';
+import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
@@ -19,6 +22,8 @@ class _LoginPageState extends State<LoginPage>{
   bool obscurePassword = true;
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
+  late IAdRepository adRepository;
+  late AdViewModel adViewModel;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -27,6 +32,8 @@ class _LoginPageState extends State<LoginPage>{
   void initState() {
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = UserViewModelFactory(userRepository).create();
+    adRepository = ServiceLocator().getAdRepository();
+    adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.readPassword().then((password) {
       userViewModel.readEmail().then((email) {
         if (password != null && email != null) {
@@ -115,6 +122,7 @@ class _LoginPageState extends State<LoginPage>{
                       password: _passwordController.text,
                     ).then((message) {
                       if (message!.contains('Success')) {
+                        userViewModel.getUser().then((user) => adViewModel.loadFromFirebaseToLocal(user!.idToken));
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => NavigationPage(logoutCallback: () {
                             userViewModel.deleteCredential();
@@ -152,6 +160,7 @@ class _LoginPageState extends State<LoginPage>{
                           builder: (context) => const RegistryPage()));
                       }
                       if(value!.contains('Accesso')){
+                        userViewModel.getUser().then((user) => adViewModel.loadFromFirebaseToLocal(user!.idToken));
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) => NavigationPage(logoutCallback: () {
                             userViewModel.deleteCredential();

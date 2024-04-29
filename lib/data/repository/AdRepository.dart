@@ -58,4 +58,14 @@ class AdRepository implements IAdRepository{
   void _loadAllRentals(List<Rental> rentals){
     _rentalLocalDataSource.loadAll(rentals);
   }
+
+  @override
+  Future<List<Exchange>> getLocalExchange(String userId) {
+    return _exchangeLocalDataSource.getLocalExchange(userId);
+  }
+
+  @override
+  Future<List<Rental>> getLocalRental(String userId) {
+    return _rentalLocalDataSource.getLocalRental(userId);
+  }
 }

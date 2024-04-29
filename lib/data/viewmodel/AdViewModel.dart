@@ -27,4 +27,14 @@ class AdViewModel{
   Future<void> loadFromFirebaseToLocal(String userId)async {
     _adRepository.loadFromFirebaseToLocal(userId);
   }
+
+  @override
+  Future<List<Exchange>> getLocalExchange(String userId) {
+    return _adRepository.getLocalExchange(userId);
+  }
+
+  @override
+  Future<List<Rental>> getLocalRental(String userId) {
+    return _adRepository.getLocalRental(userId);
+  }
 }
