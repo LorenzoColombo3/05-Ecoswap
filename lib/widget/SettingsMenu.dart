@@ -1,3 +1,4 @@
+import 'package:eco_swap/view/profile_pages/SettingsPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,8 @@ class _SettingsMenuState extends State<SettingsMenu> {
             builder: (context) => const LoginPage(),
           ));
         } else if (value == 'settings') {
-          // Azione per andare alla pagina dei settaggi
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const SettingsPage()));
         }
       },
       itemBuilder: (context) => [
