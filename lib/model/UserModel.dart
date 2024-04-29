@@ -1,4 +1,5 @@
 class UserModel {
+  String? _imagePath;
   String _idToken;
   String _name;
   String _lastName;
@@ -6,26 +7,40 @@ class UserModel {
   String _position;
   String _dateField;
   String _phoneNumber;
+  String? _imageUrl;
 
   // Costruttore della classe
   UserModel({
-    required String idToken,
-    required String name,
-    required String lastName,
-    required String? email,
-    required String birthDate,
-    required String phoneNumber,
-    required position,
-  })  : _idToken = idToken,
-        _name = name,
-        _lastName = lastName,
-        _email = email!,
-        _position = position,
-        _dateField = birthDate,
-        _phoneNumber = phoneNumber;
+            required String idToken,
+            required String name,
+            required String lastName,
+            required String? email,
+            required String birthDate,
+            required String phoneNumber,
+            required position,
+            imageUrl, imagePath
+            })  : _idToken = idToken,
+                  _name = name,
+                  _lastName = lastName,
+                  _email = email!,
+                  _position = position,
+                  _dateField = birthDate,
+                  _phoneNumber = phoneNumber,
+                  _imageUrl = imageUrl,
+                  _imagePath = imagePath;
 
   // Getter per idToken
   String get idToken => _idToken;
+
+  // Setter per idToken
+  set imagePath(String? value) {
+    _imagePath = value;
+  }
+
+  // Setter per idToken
+  set imageUrl(String? value) {
+    _imageUrl = value;
+  }
 
   // Setter per idToken
   set idToken(String value) {
@@ -75,6 +90,11 @@ class UserModel {
   //getter per il numero di telefono
   String get phoneNumber => _phoneNumber;
 
+
+  String? get imageUrl => _imageUrl;
+
+  String? get imagePath => _imagePath;
+
   // Setter per il numero di telefono
   set phoneNumber(String value) {
     _phoneNumber = value;
@@ -88,6 +108,8 @@ class UserModel {
       'position': _position,
       'birthdate': _dateField,
       'phoneNumber': _phoneNumber,
+      'imageUrl' : _imageUrl,
+      'imagePath' : _imagePath,
     };
   }
 
@@ -101,6 +123,8 @@ class UserModel {
       position: map['position'],
       birthDate: map['birthdate'],
       phoneNumber: map['phoneNumber'],
+      imagePath: map['imagePath'],
+      imageUrl: map['imageUrl']
     );
   }
 }

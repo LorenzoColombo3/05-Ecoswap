@@ -32,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
   Color rentalButtonColor = Colors.blue.withOpacity(0.2);
   Color exchangeButtonColor = Colors.transparent;
+  late Future<String?> imageUrl;
 
   @override
   void initState() {
@@ -44,6 +45,8 @@ class _ProfilePageState extends State<ProfilePage> {
       currentUser = user!;
     });
     imagePath = "";
+    imageUrl=userViewModel.getProfileImage();
+    print('ciao2 $imageUrl');
   }
 
   @override
@@ -61,83 +64,104 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
-
   Widget buildContent() {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(''),
-        actions: const [
-          SettingsMenu(),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ClipOval(
-              child: Image.network(
-                'https://cc-prod.scene7.com/is/image/CCProdAuthor/FF-SEO-text-to-image-marquee-1x?\$pjpeg\$&jpegSize=100&wid=600',
-                width: 150, // Imposta la larghezza dell'immagine
-                height: 150, // Imposta l'altezza dell'immagine
-                fit: BoxFit.cover, // Scala l'immagine per adattarla al widget Image
+    return FutureBuilder<UserModel?>(
+      future: userViewModel.getUser(), // Ottieni l'utente
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // Verifica se lo snapshot ha completato il caricamento dei dati
+          currentUser = snapshot.data!;
+          return Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(''),
+              actions: const [
+                SettingsMenu(),
+              ],
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  FutureBuilder<String?>(
+                    future: imageUrl,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
+                      } else if (snapshot.hasData) {
+                        return ClipOval(
+                          child: Image.network(
+                            snapshot.data!,
+                            width: 150, // Imposta la larghezza dell'immagine
+                            height: 150, // Imposta l'altezza dell'immagine
+                            fit: BoxFit.cover, // Scala l'immagine per adattarla al widget Image
+                          ),
+                        );
+                      } else {
+                        return const SizedBox(); // Gestisci il caso in cui non ci sia alcun URL immagine
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    currentUser.name, // Sostituisci con il nome utente reale
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                              rentalButtonColor = Colors.blue.withOpacity(0.2);
+                              exchangeButtonColor = Colors.transparent;
+                            });
+                          },
+                          child: Text(
+                            'Rental',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                              exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                              rentalButtonColor = Colors.transparent;
+                            });
+                          },
+                          child: Text(
+                            'Exchange',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  IndexedStack(
+                    index: _selectedIndex,
+                    children: <Widget> [
+                      LoadRentalPage(onButtonPressed: () {  },),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              currentUser.name, // Sostituisci con il nome utente reale
-              style: const TextStyle(fontSize: 24),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 0;
-                        rentalButtonColor = Colors.blue.withOpacity(0.2);
-                        exchangeButtonColor = Colors.transparent;
-                      });
-                    },
-                    child: Text(
-                      'Rental',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 1;
-                        exchangeButtonColor = Colors.blue.withOpacity(0.2);
-                        rentalButtonColor = Colors.transparent;
-                      });
-                    },
-                    child: Text(
-                      'Exchange',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            IndexedStack(
-              index: _selectedIndex,
-              children: <Widget> [
-                LoadRentalPage(onButtonPressed: () {  },),
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        } else {
+          return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
+        }
+      },
     );
   }
 }

@@ -6,12 +6,15 @@ import 'package:eco_swap/model/UserModel.dart';
 import 'package:eco_swap/util/Result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
 
@@ -76,6 +79,47 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+  @override
+  Future<String> setProfileImage(String imagePath) async{
+    try {
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      File imageFile = File(imagePath);
+      String fileName = currentUser!.uid;
+      String filePath = 'userImage/$fileName';
+      await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
+      String downloadURL = await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+      DatabaseReference databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String idToken = currentUser.uid;
+      databaseReference.child('users').child(idToken).child('imageUrl').set(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('Errore durante il caricamento dell\'immagine: $e');
+      return '';
+    }
+  }
+
+  Future<String?> getProfileImage() async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    final String idToken = currentUser!.uid;
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+
+    try {
+      DataSnapshot snapshot = await databaseReference.child('users').child(idToken).child('imageUrl').get();
+
+      if (snapshot.value != null) {
+        String imageUrl = snapshot.value.toString();
+        print('ciao $imageUrl');
+        return imageUrl;
+      } else {
+        print('L\'URL dell\'immagine non è presente nel database.');
+        return null;
+      }
+    } catch (error) {
+      print('Si è verificato un errore durante il recupero dei dati: $error');
+      return null;
+    }
+  }
 
   @override
   Future<String?> login({
@@ -265,7 +309,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         String birthDate = userData?['birthDate'];
         String position = userData?['position'];
         String phoneNumber = userData?['phoneNumber'];
-        result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position));
+        String imageUrl = userData?['imageUrl'];
+        result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position, imageUrl: imageUrl));
         return result;
       }else{
         result = ErrorResult("user data not found");

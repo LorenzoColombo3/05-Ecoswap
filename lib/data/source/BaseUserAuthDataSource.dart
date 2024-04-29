@@ -16,4 +16,6 @@ abstract class BaseUserAuthDataSource{
   Future<bool> signOutFromGoogle();
   Future<void> resetPassword(String email);
   Future<UserModel?> getUser();
+  Future<String> setProfileImage(String imagePath);
+  Future<String?> getProfileImage();
 }

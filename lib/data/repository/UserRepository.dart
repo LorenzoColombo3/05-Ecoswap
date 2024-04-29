@@ -36,6 +36,16 @@ Future<Result?> saveData({required String name, required String lastName,
   return _userAuthDataSource.saveData(name: name, lastName: lastName, birthDate: birthDate, phoneNumber: phoneNumber,);
  }
 
+ @override
+ Future<String?> getProfileImage(){
+   return _userAuthDataSource.getProfileImage();
+ }
+
+ @override
+ Future<String> setProfileImage(String imageUrl){
+   return _userAuthDataSource.setProfileImage(imageUrl);
+ }
+
   @override
   void deleteUser() {
     _userAuthDataSource.deleteUser();

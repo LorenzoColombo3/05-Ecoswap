@@ -16,4 +16,6 @@ abstract class IUserRepository{
   Future<void> updatePosition(bool hasPermission);
   Future<bool> signOutFromGoogle();
   Future<UserModel?> getUser();
+  Future<String> setProfileImage(String imageUrl);
+  Future<String?> getProfileImage();
 }

@@ -34,8 +34,16 @@ class UserViewModel{
     return _userRepository.signOutFromGoogle();
   }
 
+  Future<String> setProfileImage(String imagePath){
+    return _userRepository.setProfileImage(imagePath);
+  }
+
   Future<void> deleteCredential() async {
     _userRepository.deleteCredential();
+  }
+
+  Future<String?> getProfileImage(){
+    return _userRepository.getProfileImage();
   }
 
   Future<void> saveCredential(String email, String password) async {

@@ -1,7 +1,10 @@
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/UserViewModel.dart';
@@ -28,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late UserViewModel userViewModel;
   DateTime? selectedDate;
   bool dataCompleted = false;
+  late File _imageFile;
 
   @override
   void initState() {
@@ -59,6 +63,14 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<void> _getImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _imageFile = File(pickedFile.path);
+    }
+  }
+
   Widget buildContent() {
     return Scaffold(
       appBar: AppBar(),
@@ -67,13 +79,49 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ClipOval(
-                child: Image.network(
-                  'https://cc-prod.scene7.com/is/image/CCProdAuthor/FF-SEO-text-to-image-marquee-1x?\$pjpeg\$&jpegSize=100&wid=600',
-                  width: 150, // Imposta la larghezza dell'immagine
-                  height: 150, // Imposta l'altezza dell'immagine
-                  fit: BoxFit.cover, // Scala l'immagine per adattarla al widget Image
-                ),
+              Stack(
+                alignment: Alignment.bottomRight, // Allinea il widget alla parte inferiore destra
+                children: [
+                  ClipOval(
+                    child: Image.network(
+                      'https://cc-prod.scene7.com/is/imag/CCProdAuthor/FF-SEO-text-to-image-marquee-1x?\$pjpeg\$&jpegSize=100&wid=600',
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child; // Se l'immagine è stata caricata con successo, restituisci l'immagine
+                        } else {
+                          return CircularProgressIndicator(); // Altrimenti, mostra un indicatore di caricamento
+                        }
+                      },
+                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                        return ClipOval(
+                          child: Image.asset(
+                            'assets/image/profile.jpg',
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8, right: 8),
+                    child: ClipOval(// Padding per spostare il pulsante
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          _getImage();
+                          imagePath= _imageFile.path;
+                          userViewModel.setProfileImage(imagePath);
+                        },
+                        child: Icon(Icons.edit), // Icona del pulsante
+                        backgroundColor: Colors.blue, // Colore di sfondo del pulsante
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Text(
