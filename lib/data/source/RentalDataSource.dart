@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import '../../model/Rental.dart';
@@ -44,7 +47,6 @@ class RentalDataSource extends BaseRentalDataSource {
 
   @override
   Future<List<Rental>> getAllRentals() async{
-    //TODO rifare i metodo di getAll sulla base della posizione e ricerca
     try {
       DataSnapshot snapshot = await _databaseReference.child('rentals').get();
       Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;
@@ -114,6 +116,41 @@ class RentalDataSource extends BaseRentalDataSource {
       return null;
     }
   }
+
+  double _calculateDistance(double latUser, double longUser, double latRent, double longRent) {
+    const int earthRadiusKm = 6371; // Raggio medio della Terra in chilometri
+
+    double lat1Rad = radians(latUser);
+    double lat2Rad = radians(latRent);
+    double lon1Rad = radians(longUser);
+    double lon2Rad = radians(longRent);
+    double deltaLat = lat2Rad - lat1Rad;
+    double deltaLon = lon2Rad - lon1Rad;
+
+    double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+        cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2) * sin(deltaLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadiusKm * c;
+  }
+
+  double radians(double degrees) {
+    return degrees * pi / 180;
+  }
+
+  @override
+  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm) async {
+    List<Rental> rentalsInRadius = [];
+    List<Rental> allRentals = await getAllRentals();
+    for (var rental in allRentals) {
+      double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
+      if (distance <= radiusKm) {
+        rentalsInRadius.add(rental);
+      }
+    }
+    return rentalsInRadius;
+  }
+
 }
   
 

@@ -9,4 +9,6 @@ abstract class IAdRepository{
   Future<void> loadFromFirebaseToLocal(String idToken);
   Future<List<Rental>> getLocalRental(String userId);
   Future<List<Exchange>> getLocalExchange(String userId);
+  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm);
+  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm);
 }

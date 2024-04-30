@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
@@ -49,7 +51,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
 
   @override
   Future<List<Exchange>> getAllExchanges() async {
-    //TODO rifare i metodo di getAll sulla base della posizione e ricerca
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
       Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;
@@ -116,6 +117,40 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       print('Errore durante il recupero dell\'exchange da Firebase: $error');
       return null;
     }
+  }
+
+  double _calculateDistance(double latUser, double longUser, double latExch, double longExch) {
+    const int earthRadiusKm = 6371; // Raggio medio della Terra in chilometri
+
+    double lat1Rad = radians(latUser);
+    double lat2Rad = radians(latExch);
+    double lon1Rad = radians(longUser);
+    double lon2Rad = radians(longExch);
+    double deltaLat = lat2Rad - lat1Rad;
+    double deltaLon = lon2Rad - lon1Rad;
+
+    double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+        cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2) * sin(deltaLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadiusKm * c;
+  }
+
+  double radians(double degrees) {
+    return degrees * pi / 180;
+  }
+
+  @override
+  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm) async {
+    List<Exchange> exchangesInRadius = [];
+    List<Exchange> allExchanges = await getAllExchanges();
+    for (var exchange in allExchanges) {
+      double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
+      if (distance <= radiusKm) {
+        exchangesInRadius.add(exchange);
+      }
+    }
+    return exchangesInRadius;
   }
 
 }

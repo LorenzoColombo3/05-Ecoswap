@@ -4,47 +4,46 @@ class UserModel {
   String _name;
   String _lastName;
   String _email;
-  String _position;
+  double _latitude;
+  double _longitude;
   String _dateField;
   String _phoneNumber;
   String? _imageUrl;
 
   // Costruttore della classe
   UserModel({
-            required String idToken,
-            required String name,
-            required String lastName,
-            required String? email,
-            required String birthDate,
-            required String phoneNumber,
-            required position,
-            imageUrl, imagePath
-            })  : _idToken = idToken,
-                  _name = name,
-                  _lastName = lastName,
-                  _email = email!,
-                  _position = position,
-                  _dateField = birthDate,
-                  _phoneNumber = phoneNumber,
-                  _imageUrl = imageUrl,
-                  _imagePath = imagePath;
+    required String idToken,
+    required String name,
+    required String lastName,
+    required String? email,
+    required double latitude,
+    required double longitude,
+    required String birthDate,
+    required String phoneNumber,
+    imageUrl,
+    imagePath,
+  })  : _idToken = idToken,
+        _name = name,
+        _lastName = lastName,
+        _email = email!,
+        _latitude = latitude,
+        _longitude = longitude,
+        _dateField = birthDate,
+        _phoneNumber = phoneNumber,
+        _imageUrl = imageUrl,
+        _imagePath = imagePath;
 
   // Getter per idToken
   String get idToken => _idToken;
 
-  // Setter per idToken
+  // Setter per imagePath
   set imagePath(String? value) {
     _imagePath = value;
   }
 
-  // Setter per idToken
+  // Setter per imageUrl
   set imageUrl(String? value) {
     _imageUrl = value;
-  }
-
-  // Setter per idToken
-  set idToken(String value) {
-    _idToken = value;
   }
 
   // Getter per name
@@ -71,12 +70,20 @@ class UserModel {
     _email = value;
   }
 
-  // Getter per position
-  String get position => _position;
+  // Getter per latitude
+  double get latitude => _latitude;
 
-  // Setter per position
-  set position(String value) {
-    _position = value;
+  // Setter per latitude
+  set latitude(double value) {
+    _latitude = value;
+  }
+
+  // Getter per longitude
+  double get longitude => _longitude;
+
+  // Setter per longitude
+  set longitude(double value) {
+    _longitude = value;
   }
 
   // Getter per dateField
@@ -87,44 +94,47 @@ class UserModel {
     birthdate = value;
   }
 
-  //getter per il numero di telefono
+  // Getter per phoneNumber
   String get phoneNumber => _phoneNumber;
 
+  // Setter per phoneNumber
+  set phoneNumber(String value) {
+    _phoneNumber = value;
+  }
 
   String? get imageUrl => _imageUrl;
 
   String? get imagePath => _imagePath;
 
-  // Setter per il numero di telefono
-  set phoneNumber(String value) {
-    _phoneNumber = value;
-  }
+  // Metodo per convertire l'oggetto UserModel in una mappa
   Map<String, dynamic> toMap() {
     return {
       'idToken': _idToken,
       'name': _name,
       'lastName': _lastName,
       'email': _email,
-      'position': _position,
+      'latitude': _latitude,
+      'longitude': _longitude,
       'birthdate': _dateField,
       'phoneNumber': _phoneNumber,
-      'imageUrl' : _imageUrl,
-      'imagePath' : _imagePath,
+      'imageUrl': _imageUrl,
+      'imagePath': _imagePath,
     };
   }
 
-  // Factory method per creare un oggetto User da una mappa
+  // Metodo factory per creare un oggetto UserModel da una mappa
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       idToken: map['idToken'],
       name: map['name'],
       lastName: map['lastName'],
       email: map['email'],
-      position: map['position'],
+      latitude: map['latitude'],
+      longitude: map['longitude'],
       birthDate: map['birthdate'],
       phoneNumber: map['phoneNumber'],
       imagePath: map['imagePath'],
-      imageUrl: map['imageUrl']
+      imageUrl: map['imageUrl'],
     );
   }
 }

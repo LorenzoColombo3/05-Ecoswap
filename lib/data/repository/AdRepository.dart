@@ -68,4 +68,14 @@ class AdRepository implements IAdRepository{
   Future<List<Rental>> getLocalRental(String userId) {
     return _rentalLocalDataSource.getLocalRental(userId);
   }
+
+  @override
+  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm) {
+    return _exchangeDataSource.getExchangesInRadius(latUser, longUser, radiusKm);
+  }
+
+  @override
+  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm) {
+    return _rentalDataSource.getRentalsInRadius(latUser, longUser, radiusKm);
+  }
 }

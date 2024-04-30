@@ -12,7 +12,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
@@ -65,8 +64,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         } else {
           final User? currentUser = FirebaseAuth.instance.currentUser;
           String idToken = currentUser!.uid;
-          Result? result= await getUserDataFirebase(idToken);
-          saveUserLocal((result as UserResponseSuccess).getData());
+          UserModel? user= await getUserDataFirebase(idToken);
+          saveUserLocal(user!);
           return "Accesso con Google effettuato con successo.";
         }
       } else {
@@ -109,7 +108,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
 
       if (snapshot.value != null) {
         String imageUrl = snapshot.value.toString();
-        print('ciao $imageUrl');
         return imageUrl;
       } else {
         print('L\'URL dell\'immagine non è presente nel database.');
@@ -134,8 +132,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       );
       final User? currentUser = FirebaseAuth.instance.currentUser;
       String idToken = currentUser!.uid;
-      Result? result= await getUserDataFirebase(idToken);
-      saveUserLocal((result as UserResponseSuccess).getData());
+      UserModel? user= await getUserDataFirebase(idToken);
+      saveUserLocal(user!);
       return 'Success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -181,9 +179,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             name: name,
             lastName: lastName,
             email: currentUser.email,
+            latitude:0,
+            longitude:0,
             birthDate: birthDate,
             phoneNumber: phoneNumber,
-            position: "",
           ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
@@ -202,29 +201,32 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
 
   @override
   Future<void> updatePosition(bool hasPermission) async {
-    String? _currentCity;
     Position? _currentPosition;
+    String databasePath;
     if (!hasPermission) return;
     try {
       _currentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      _currentCity = await _getAddressFromLatLng(_currentPosition!);
       final DatabaseReference databaseReference =
       FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
       final String idToken = currentUser!.uid;
-      final String databasePath = 'users/$idToken/position';
-      await databaseReference.child(databasePath).set(_currentCity);
+      databasePath = 'users/$idToken/lat';
+      await databaseReference.child(databasePath).set(_currentPosition.latitude);
+      databasePath = 'users/$idToken/long';
+      await databaseReference.child(databasePath).set(_currentPosition.longitude);
       UserModel? user = await getUser();
       if (user != null) {
-        user.position=_currentCity!;
+        user.latitude=_currentPosition.latitude;
+        user.longitude=_currentPosition.longitude;
         await saveUserLocal(user);
       }
     } catch (e) {
       debugPrint(e.toString());
     }
   }
+
 
 
   Future<String?> _getAddressFromLatLng(Position position) async {
@@ -296,7 +298,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-  Future<Result?> getUserDataFirebase(String idToken) async {
+  Future<UserModel?> getUserDataFirebase(String idToken) async {
     Result result;
     try {
       final ref = FirebaseDatabase.instance.ref();
@@ -307,19 +309,17 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         String email = userData?['email'];
         String lastName = userData?['lastname'];
         String birthDate = userData?['birthDate'];
-        String position = userData?['position'];
+        double lat = userData?['lat'];
+        double long = userData?['long'];
         String phoneNumber = userData?['phoneNumber'];
         String imageUrl = userData?['imageUrl'];
-        result = UserResponseSuccess(UserModel(idToken: idToken, name: name, lastName: lastName, email: email, birthDate: birthDate, phoneNumber: phoneNumber, position: position, imageUrl: imageUrl));
-        return result;
+        return UserModel(idToken: idToken, name: name, lastName: lastName, email: email, latitude: lat, longitude: long, birthDate: birthDate, phoneNumber: phoneNumber);
       }else{
-        result = ErrorResult("user data not found");
-        return result;
+        return null;
       }
     } catch (error) {
       print("Errore durante il recupero dei dati dell'utente con idToken: $idToken, Errore: $error");
-      result = ErrorResult(error.toString());
-      return result;
+      return null;
     }
   }
 
