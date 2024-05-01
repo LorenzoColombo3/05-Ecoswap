@@ -36,11 +36,15 @@ class AdViewModel{
     return _adRepository.getLocalRental(userId);
   }
 
-  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm) {
-    return _adRepository.getExchangesInRadius(latUser, longUser, radiusKm);
+  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex) {
+    return _adRepository.getExchangesInRadius(latUser, longUser, radiusKm,  startIndex);
   }
 
-  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm) {
-    return _adRepository.getRentalsInRadius(latUser, longUser, radiusKm);
+  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex) {
+    return _adRepository.getRentalsInRadius(latUser, longUser, radiusKm,  startIndex);
+  }
+
+  Future<List<Rental>> getAllUserRentals(String userId) {
+    return _adRepository.getAllUserRentals(userId);
   }
 }

@@ -139,10 +139,12 @@ class RentalDataSource extends BaseRentalDataSource {
   }
 
   @override
-  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm) async {
+  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex) async {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
-    for (var rental in allRentals) {
+    Rental rental;
+    for (int i=startIndex; i<=startIndex+10; i++) {
+      rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
       if (distance <= radiusKm) {
         rentalsInRadius.add(rental);

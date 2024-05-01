@@ -183,6 +183,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             longitude:0,
             birthDate: birthDate,
             phoneNumber: phoneNumber,
+            imageUrl: "",
           ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
@@ -312,7 +313,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         double lat = userData?['lat'];
         double long = userData?['long'];
         String phoneNumber = userData?['phoneNumber'];
-        String imageUrl = userData?['imageUrl'];
         return UserModel(idToken: idToken, name: name, lastName: lastName, email: email, latitude: lat, longitude: long, birthDate: birthDate, phoneNumber: phoneNumber);
       }else{
         return null;

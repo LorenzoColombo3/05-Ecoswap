@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +9,7 @@ import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 import '../../util/ServiceLocator.dart';
@@ -33,6 +36,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Color rentalButtonColor = Colors.blue.withOpacity(0.2);
   Color exchangeButtonColor = Colors.transparent;
   late Future<String?> imageUrl;
+  late Future<List<Rental>> _rentalsFuture; // Future per recuperare i noleggi
+  List<Rental> _rentals = [];
 
   @override
   void initState() {
@@ -41,29 +46,31 @@ class _ProfilePageState extends State<ProfilePage> {
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    userViewModel.getUser().then((user){
+
+    userViewModel.getUser().then((user) {
       currentUser = user!;
+      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
     });
     imagePath = "";
-    imageUrl=userViewModel.getProfileImage();
+    imageUrl = userViewModel.getProfileImage();
     print('ciao2 $imageUrl');
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserModel?>(
-      future: userViewModel.getUser(), // Ottieni l'utente
+      future: userViewModel.getUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          // Verifica se lo snapshot ha completato il caricamento dei dati
           currentUser = snapshot.data!;
-          return buildContent(); // Costruisci il widget principale
+          return buildContent();
         } else {
           return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
         }
       },
     );
   }
+
   Widget buildContent() {
     return FutureBuilder<UserModel?>(
       future: userViewModel.getUser(), // Ottieni l'utente
@@ -88,17 +95,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
-                      } else if (snapshot.hasData) {
+                      } else if (snapshot.hasData && snapshot.data != "") {
                         return ClipOval(
                           child: Image.network(
                             snapshot.data!,
                             width: 150, // Imposta la larghezza dell'immagine
                             height: 150, // Imposta l'altezza dell'immagine
-                            fit: BoxFit.cover, // Scala l'immagine per adattarla al widget Image
+                            fit: BoxFit
+                                .cover, // Scala l'immagine per adattarla al widget Image
                           ),
                         );
                       } else {
-                        return const SizedBox(); // Gestisci il caso in cui non ci sia alcun URL immagine
+                        return ClipOval(
+                          child: Image.asset(
+                            'assets/image/profile.jpg',
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        ); // Gestisci il caso in cui non ci sia alcun URL immagine
                       }
                     },
                   ),
@@ -124,7 +139,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             style: TextStyle(color: Colors.black),
                           ),
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
+                            backgroundColor: MaterialStateProperty.resolveWith<
+                                Color>((states) => rentalButtonColor),
                           ),
                         ),
                       ),
@@ -133,7 +149,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {
                             setState(() {
                               _selectedIndex = 1;
-                              exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                              exchangeButtonColor =
+                                  Colors.blue.withOpacity(0.2);
                               rentalButtonColor = Colors.transparent;
                             });
                           },
@@ -142,7 +159,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             style: TextStyle(color: Colors.black),
                           ),
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
+                            backgroundColor: MaterialStateProperty.resolveWith<
+                                Color>((states) => exchangeButtonColor),
                           ),
                         ),
                       ),
@@ -150,8 +168,51 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   IndexedStack(
                     index: _selectedIndex,
-                    children: <Widget> [
-                      LoadRentalPage(onButtonPressed: () {  },),
+                    children: <Widget>[
+                      FutureBuilder<List<Rental>>(
+                        future: _rentalsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState
+                              .waiting) {
+                            // Se la Future è in attesa, mostra l'indicatore di caricamento
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
+                            return Center(child: Text(
+                                'Errore durante il recupero dei dati'));
+                          } else if (snapshot.data!.isEmpty) {
+                            return Center(
+                                child: Text('Nessun noleggio disponibile'));
+                          } else
+                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            _rentals = snapshot.data!;
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _rentals.length,
+                              itemBuilder: (context, index) {
+                                print(index);
+                                final rental = _rentals[index];
+                                return ListTile(
+                                  onTap: () {
+                                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                                  },
+                                  title: Text(rental.title),
+                                  leading: CircleAvatar(
+                                    backgroundImage: FileImage(
+                                        File(rental.imagePath)),
+                                  ),
+                                  subtitle: Text("€" + rental.dailyCost),
+                                );
+                              },
+                            );
+                          } else {
+                            return Center(
+                                child: Text('Nessun noleggio disponibile'));
+                          }
+                        },
+                      ),
+
                     ],
                   ),
                 ],

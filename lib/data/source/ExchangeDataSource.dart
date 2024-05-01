@@ -141,10 +141,12 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   }
 
   @override
-  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm) async {
+  Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex) async {
     List<Exchange> exchangesInRadius = [];
     List<Exchange> allExchanges = await getAllExchanges();
-    for (var exchange in allExchanges) {
+    Exchange exchange;
+    for (int i=startIndex; i<=startIndex+10; i++) {
+      exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
       if (distance <= radiusKm) {
         exchangesInRadius.add(exchange);

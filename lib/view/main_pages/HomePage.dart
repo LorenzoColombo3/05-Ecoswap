@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage>{
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
+  late UserModel currentUser;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool obscurePassword = true;
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage>{
     _handleLocationPermission().then((bool hasPermission){
       userViewModel.updatePosition(hasPermission);
     });
+    userViewModel.getUser().then((value) => currentUser=value!);
   }
 
   Future<bool> _handleLocationPermission() async {
