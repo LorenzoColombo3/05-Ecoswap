@@ -53,7 +53,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
-    print('ciao2 $imageUrl');
   }
 
   @override

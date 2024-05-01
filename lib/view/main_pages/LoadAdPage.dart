@@ -30,6 +30,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            SizedBox(height: 30.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

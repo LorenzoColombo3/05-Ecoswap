@@ -102,10 +102,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     final String idToken = currentUser!.uid;
     DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
-
     try {
       DataSnapshot snapshot = await databaseReference.child('users').child(idToken).child('imageUrl').get();
-
       if (snapshot.value != null) {
         String imageUrl = snapshot.value.toString();
         return imageUrl;

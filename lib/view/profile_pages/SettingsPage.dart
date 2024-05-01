@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -32,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
   DateTime? selectedDate;
   bool dataCompleted = false;
   late File _imageFile;
+  late Future<String?> imageUrl;
 
   @override
   void initState() {
@@ -41,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
     userViewModel.getUser().then((user){
       currentUser = user!;
     });
+    imageUrl = userViewModel.getProfileImage();
     imagePath = "";
   }
 
@@ -82,20 +83,23 @@ class _SettingsPageState extends State<SettingsPage> {
               Stack(
                 alignment: Alignment.bottomRight, // Allinea il widget alla parte inferiore destra
                 children: [
-                  ClipOval(
-                    child: Image.network(
-                      'https://cc-prod.scene7.com/is/imag/CCProdAuthor/FF-SEO-text-to-image-marquee-1x?\$pjpeg\$&jpegSize=100&wid=600',
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child; // Se l'immagine è stata caricata con successo, restituisci l'immagine
-                        } else {
-                          return CircularProgressIndicator(); // Altrimenti, mostra un indicatore di caricamento
-                        }
-                      },
-                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+
+                  FutureBuilder<String?>(
+                    future: imageUrl,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
+                      } else if (snapshot.hasData && snapshot.data != "") {
+                        return ClipOval(
+                          child: Image.network(
+                            snapshot.data!,
+                            width: 150, // Imposta la larghezza dell'immagine
+                            height: 150, // Imposta l'altezza dell'immagine
+                            fit: BoxFit
+                                .cover, // Scala l'immagine per adattarla al widget Image
+                          ),
+                        );
+                      } else {
                         return ClipOval(
                           child: Image.asset(
                             'assets/image/profile.jpg',
@@ -103,9 +107,9 @@ class _SettingsPageState extends State<SettingsPage> {
                             height: 150,
                             fit: BoxFit.cover,
                           ),
-                        );
-                      },
-                    ),
+                        ); // Gestisci il caso in cui non ci sia alcun URL immagine
+                      }
+                    },
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 8, right: 8),
@@ -115,6 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           _getImage();
                           imagePath= _imageFile.path;
                           userViewModel.setProfileImage(imagePath);
+                          imageUrl = userViewModel.getProfileImage();
                         },
                         child: Icon(Icons.edit), // Icona del pulsante
                         backgroundColor: Colors.blue, // Colore di sfondo del pulsante
@@ -188,16 +193,16 @@ class _SettingsPageState extends State<SettingsPage> {
                           birthDate: selectedDate.toString(),
                           phoneNumber: _phoneController.text)
                           .then((result) {
-                            if (result!.isSuccess()) {
-                              dataCompleted = true;
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  content: Text('Data updated successfully')));
-                            }else{
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text((result as ErrorResult).getMessage()),
-                                ),
-                              );}
+                        if (result!.isSuccess()) {
+                          dataCompleted = true;
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Data updated successfully')));
+                        }else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text((result as ErrorResult).getMessage()),
+                            ),
+                          );}
                       });
                     }else{
                       ScaffoldMessenger.of(context).showSnackBar(

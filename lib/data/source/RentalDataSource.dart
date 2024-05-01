@@ -49,9 +49,14 @@ class RentalDataSource extends BaseRentalDataSource {
   Future<List<Rental>> getAllRentals() async{
     try {
       DataSnapshot snapshot = await _databaseReference.child('rentals').get();
-      Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;
+      Map<Object?, Object?>? data =snapshot.value as Map<Object?, Object?>?;
+      List<Rental> rentals = [];
       if (data != null) {
-        List<Rental> rentals = data.values.map((value) => Rental.fromMap(value)).toList();
+        data.forEach((key, data) {
+          Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+          Rental rental = Rental.fromMap(data2);
+          rentals.add(rental);
+        });
         return rentals;
       } else {
         return [];
@@ -119,7 +124,6 @@ class RentalDataSource extends BaseRentalDataSource {
 
   double _calculateDistance(double latUser, double longUser, double latRent, double longRent) {
     const int earthRadiusKm = 6371; // Raggio medio della Terra in chilometri
-
     double lat1Rad = radians(latUser);
     double lat2Rad = radians(latRent);
     double lon1Rad = radians(longUser);
@@ -143,7 +147,9 @@ class RentalDataSource extends BaseRentalDataSource {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
-    for (int i=startIndex; i<=startIndex+10; i++) {
+    print(latUser);
+    print(longUser);
+    for (int i=startIndex; i<startIndex+10 && i < allRentals.length; i++) {
       rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
       if (distance <= radiusKm) {
