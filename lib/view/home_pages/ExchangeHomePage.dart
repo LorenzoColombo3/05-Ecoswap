@@ -93,66 +93,72 @@ class _ExchangeHomePageState extends State<ExchangeHomePage> {
   }
 
   Widget _buildExchangeItem(Exchange exchange) {
-    return Container(
-      padding: const EdgeInsets.all( 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Column(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: FadeInImage(
-              placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
-              height: 200,
-              image: NetworkImage(exchange.imageUrl), // URL dell'immagine principale
-              fit: BoxFit.cover, // Adatta l'immagine all'interno del container
+    return GestureDetector(
+        onTap: () {
+      // Azione da eseguire quando il Container viene toccato
+      print('Container toccato!');
+    },
+    child: Container(
+        padding: const EdgeInsets.all( 10.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
             ),
-          ),Stack(
-            children: [
-              ListTile(
-                onTap: () {
-                  // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-                },
-                title: Text(
-                  exchange.title,
-                  overflow: TextOverflow.ellipsis, // Testo non va a capo
-                ),
-                subtitle: Text(
-                  "inserire qualcosa",
-                  overflow: TextOverflow.ellipsis, // Testo non va a capo
-                ),
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: FadeInImage(
+                placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
+                height: 200,
+                image: NetworkImage(exchange.imageUrl), // URL dell'immagine principale
+                fit: BoxFit.cover, // Adatta l'immagine all'interno del container
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: InkWell(
+            ),Stack(
+              children: [
+                ListTile(
                   onTap: () {
-                    // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                    // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
                   },
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
-                    child: Icon(
-                      Icons.favorite, // Icona del cuore come preferito
-                      color: Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
-                      size: 24.0, // Dimensione dell'icona personalizzata
+                  title: Text(
+                    exchange.title,
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                  subtitle: Text(
+                    "inserire qualcosa",
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
+                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
+                      child: Icon(
+                        Icons.favorite, // Icona del cuore come preferito
+                        color: Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
+                        size: 24.0, // Dimensione dell'icona personalizzata
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

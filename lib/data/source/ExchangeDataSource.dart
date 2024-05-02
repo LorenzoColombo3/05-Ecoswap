@@ -10,7 +10,6 @@ import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
 //TODO: controllare se i getter per gli exchange da remoto funzionano, perchè dannoun rttore nel logcat
 class ExchangeDataSource extends BaseExchangeDataSource {
- */
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
 
