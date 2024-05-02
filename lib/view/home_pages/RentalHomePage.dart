@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -70,6 +68,7 @@ class _RentalHomePageState extends State<RentalHomePage> {
               crossAxisCount: 2,
               mainAxisSpacing: 8.0,
               crossAxisSpacing: 8.0,
+              mainAxisExtent: 300,
             ),
             itemBuilder: (BuildContext context, int index) {
               if (index < _rentals.length) {
@@ -85,7 +84,6 @@ class _RentalHomePageState extends State<RentalHomePage> {
       ),
     );
   }
-
 
   @override
   void dispose() {
@@ -112,70 +110,49 @@ class _RentalHomePageState extends State<RentalHomePage> {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.network(
-                rental.imageUrl, // URL dell'immagine remota
+              child: FadeInImage(
+                placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
+                height: 200,
+                image: NetworkImage(rental.imageUrl), // URL dell'immagine principale
                 fit: BoxFit.cover, // Adatta l'immagine all'interno del container
               ),
-            ),
-            ListTile(
-              onTap: () {
-                // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-              },
-              title: Text(rental.title),
-              subtitle: Text("€" + rental.dailyCost),
+            ),Stack(
+              children: [
+                ListTile(
+                  onTap: () {
+                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                  },
+                  title: Text(
+                    rental.title,
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                  subtitle: Text(
+                    "€${rental.dailyCost}",
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
+                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
+                      child: Icon(
+                        Icons.favorite, // Icona del cuore come preferito
+                        color: Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
+                        size: 24.0, // Dimensione dell'icona personalizzata
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       );
   }
 }
-/*
-Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Inserire qui l'immagine
-          Image.network(
-            rental.imageUrl, // URL dell'immagine
-            width: 100, // Larghezza dell'immagine
-            height: 100, // Altezza dell'immagine
-            fit: BoxFit.cover, // Modalità di adattamento dell'immagine
-          ),
-          Text(
-            rental.title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            rental.description,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.favorite, color: Colors.red),
-              SizedBox(width: 4),
-            ],
-          ),
-        ],
-      ),
-    );
- */
-

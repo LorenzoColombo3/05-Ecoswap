@@ -109,32 +109,32 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(height: 50.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedIndex = 0;
-                                rentalButtonColor = Colors.blue.withOpacity(0.2);
-                                exchangeButtonColor = Colors.transparent;
-                              });
-                            },
-                            child: Text(
-                              'Rental',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
-                              side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
-                            ),
+                      children: [Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                              rentalButtonColor = Colors.blue.withOpacity(0.2);
+                              exchangeButtonColor = Colors.transparent;
+                            });
+                          },
+                          child: Text(
+                            'Rental',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith<
+                                Color>((states) => rentalButtonColor),
                           ),
                         ),
+                      ),
                         Expanded(
                           child: TextButton(
                             onPressed: () {
                               setState(() {
                                 _selectedIndex = 1;
-                                exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                                exchangeButtonColor =
+                                    Colors.blue.withOpacity(0.2);
                                 rentalButtonColor = Colors.transparent;
                               });
                             },
@@ -143,8 +143,8 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(color: Colors.black),
                             ),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
-                              side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
+                              backgroundColor: MaterialStateProperty.resolveWith<
+                                  Color>((states) => exchangeButtonColor),
                             ),
                           ),
                         ),

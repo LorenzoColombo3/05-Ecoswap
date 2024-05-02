@@ -47,4 +47,7 @@ class AdViewModel{
   Future<List<Rental>> getAllUserRentals(String userId) {
     return _adRepository.getAllUserRentals(userId);
   }
+  Future<List<Exchange>> getAllUserExchanges(String userId) {
+    return _adRepository.getAllUserExchanges(userId);
+  }
 }

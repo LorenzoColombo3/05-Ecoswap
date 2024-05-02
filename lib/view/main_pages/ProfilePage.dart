@@ -9,6 +9,7 @@ import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
@@ -38,7 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<String?> imageUrl;
   late Future<List<Rental>> _rentalsFuture; // Future per recuperare i noleggi
   List<Rental> _rentals = [];
-
+  late Future<List<Exchange>> _exchangeFuture; // Future per recuperare i noleggi
+  List<Exchange> _exchange = [];
   @override
   void initState() {
     super.initState();
@@ -50,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     userViewModel.getUser().then((user) {
       currentUser = user!;
       _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
+      _exchangeFuture = adViewModel.getAllUserExchanges(currentUser.idToken);
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
@@ -212,7 +215,48 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                         },
                       ),
-
+                      FutureBuilder<List<Exchange>>(
+                        future: _exchangeFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState
+                              .waiting) {
+                            // Se la Future è in attesa, mostra l'indicatore di caricamento
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
+                            return Center(child: Text(
+                                'Errore durante il recupero dei dati'));
+                          } else if (snapshot.data!.isEmpty) {
+                            return Center(
+                                child: Text('Nessun noleggio disponibile'));
+                          } else
+                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            _exchange = snapshot.data!;
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _exchange.length,
+                              itemBuilder: (context, index) {
+                                final rental = _rentals[index];
+                                return ListTile(
+                                  onTap: () {
+                                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                                  },
+                                  title: Text(rental.title),
+                                  leading: CircleAvatar(
+                                    backgroundImage: FileImage(
+                                        File(rental.imagePath)),
+                                  ),
+                                  subtitle: Text("€" + rental.dailyCost),
+                                );
+                              },
+                            );
+                          } else {
+                            return Center(
+                                child: Text('Nessun noleggio disponibile'));
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],

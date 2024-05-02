@@ -79,6 +79,7 @@ flutter:
     - assets/image/login_image.jpeg
     - assets/image/google_logo.webp
     - assets/image/profile.jpg
+    - assets/image/loading_indicator.gif
 
   # To add assets to your application, add an assets section, like this:
   # assets:

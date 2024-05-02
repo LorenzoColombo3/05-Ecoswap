@@ -8,8 +8,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
-
+//TODO: controllare se i getter per gli exchange da remoto funzionano, perchè dannoun rttore nel logcat
 class ExchangeDataSource extends BaseExchangeDataSource {
+ */
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
 
@@ -53,7 +54,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   Future<List<Exchange>> getAllExchanges() async {
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
-      Map<String, dynamic>? data = snapshot.value as Map<String, dynamic>?;
+      Map<String?, dynamic>? data = snapshot.value as Map<String?, dynamic>?;
       if (data != null) {
         List<Exchange> exchanges = data.values.map((value) => Exchange.fromMap(value)).toList();
         return exchanges;
@@ -76,7 +77,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
           .get();
 
       List<Exchange> exchanges = [];
-      Map<Object?, Object?>? values =snapshot.value as Map<Object?, Object?>?;
+      Map<Object?, Object>? values =snapshot.value as Map<Object?, Object>? ;
       if (values != null) {
         values.forEach((key, data) {
           Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);

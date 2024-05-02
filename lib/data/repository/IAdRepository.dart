@@ -12,4 +12,5 @@ abstract class IAdRepository{
   Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex);
   Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex);
   Future<List<Rental>> getAllUserRentals(String userId);
+  Future<List<Exchange>> getAllUserExchanges(String userId);
 }
