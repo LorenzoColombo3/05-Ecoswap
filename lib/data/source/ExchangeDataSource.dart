@@ -107,7 +107,8 @@ class ExchangeDataSource extends BaseExchangeDataSource {
         double latitude = exchangeData?['latitude'];
         double longitude = exchangeData?['longitude'];
         String idToken = exchangeData?['idToken'];
-        exchange = Exchange(imagePath, userId, title, description, latitude, longitude, idToken);
+        String imageUrl = exchangeData?['imageUrl'];
+        exchange = Exchange(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl);
         return exchange;
       } else {
         print('No data available.');

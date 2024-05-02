@@ -186,7 +186,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
                       _selectedPosition!.longitude,
                       _dailyCostInputController.value.text,
                       _maxDaysInputController.value.text,
-                      Uuid().v4());
+                      Uuid().v4(),"");
                   adViewModel.loadRental(rental).then((message) {
                     if (message!.contains('Success')) {
                           widget.onButtonPressed();

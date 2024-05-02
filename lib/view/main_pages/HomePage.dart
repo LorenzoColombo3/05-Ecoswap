@@ -114,64 +114,63 @@ class _HomePageState extends State<HomePage> {
                   );
                 }
                 UserModel user = snapshot.data!;
-                return SingleChildScrollView(
+                return ListView(
                   padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _selectedIndex = 0;
-                                  rentalButtonColor = Colors.blue.withOpacity(0.2);
-                                  exchangeButtonColor = Colors.transparent;
-                                });
-                              },
-                              child: Text(
-                                'Rental',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
-                                side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
-                              ),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                                rentalButtonColor = Colors.blue.withOpacity(0.2);
+                                exchangeButtonColor = Colors.transparent;
+                              });
+                            },
+                            child: Text(
+                              'Rental',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
+                              side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
                             ),
                           ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _selectedIndex = 1;
-                                  exchangeButtonColor = Colors.blue.withOpacity(0.2);
-                                  rentalButtonColor = Colors.transparent;
-                                });
-                              },
-                              child: Text(
-                                'Exchange',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
-                                side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
-                              ),
+                        ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 1;
+                                exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                                rentalButtonColor = Colors.transparent;
+                              });
+                            },
+                            child: Text(
+                              'Exchange',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),
+                              side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Colors.black, width: 1.0)),
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 20.0), // Spazio tra i pulsanti e l'IndexedStack
-                      IndexedStack(
-                        index: _selectedIndex,
-                        children: <Widget>[
-                          RentalHomePage(currentUser: user),
-                          ExchangeHomePage(currentUser: user),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.0), // Spazio tra i pulsanti e l'IndexedStack
+                    IndexedStack(
+                      index: _selectedIndex,
+                      children: <Widget>[
+                        RentalHomePage(currentUser: user),
+                        ExchangeHomePage(currentUser: user),
+                      ],
+                    ),
+                  ],
                 );
+
               },
             ),
           ),

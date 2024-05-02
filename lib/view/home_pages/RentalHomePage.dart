@@ -55,32 +55,42 @@ class _RentalHomePageState extends State<RentalHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GridView.builder(
-        controller: _scrollController,
-        itemCount: _rentals.length + (_isLoading ? 1 : 0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 8.0,
-          crossAxisSpacing: 8.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Altri widget o spazi vuoti se necessario prima della GridView
+        Expanded(
+          child: GridView.builder(
+            shrinkWrap: false,
+            controller: _scrollController,
+            itemCount: _rentals.length + (_isLoading ? 1 : 0),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              if (index < _rentals.length) {
+                return _buildRentalItem(_rentals[index]);
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
         ),
-        itemBuilder: (BuildContext context, int index) {
-          print("");
-          if (index < _rentals.length) {
-            return _buildRentalItem(_rentals[index]);
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      ],
     );
   }
+
+
   /* @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+
+    return _buildRentalItem(_rentals[0]);
   }*/
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -115,7 +125,7 @@ class _RentalHomePageState extends State<RentalHomePage> {
           SizedBox(height: 8),
           // Inserire qui l'immagine
           Image.network(
-            rental.imageUrl!, // URL dell'immagine
+            rental.imageUrl, // URL dell'immagine
             width: 100, // Larghezza dell'immagine
             height: 100, // Altezza dell'immagine
             fit: BoxFit.cover, // Modalità di adattamento dell'immagine

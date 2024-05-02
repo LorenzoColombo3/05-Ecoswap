@@ -110,7 +110,8 @@ class RentalDataSource extends BaseRentalDataSource {
         double lat = exchangeData?['lat'];
         double long= exchangeData?['long'];
         String idToken = exchangeData?['idToken'];
-        rental = Rental(imagePath, userId, title, description, lat, long, dailyCost, maxDaysRent, idToken);
+        String imageUrl = exchangeData?['imageUrl'];
+        rental = Rental(imagePath, userId, title, description, lat, long, dailyCost, maxDaysRent, idToken, imageUrl);
         return rental;
       } else {
         print('No data available.');
@@ -147,8 +148,6 @@ class RentalDataSource extends BaseRentalDataSource {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
-    print(latUser);
-    print(longUser);
     for (int i=startIndex; i<startIndex+10 && i < allRentals.length; i++) {
       rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);

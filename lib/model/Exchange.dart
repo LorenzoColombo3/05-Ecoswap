@@ -10,7 +10,7 @@ class Exchange implements AdInterface {
   double _latitude;
   double _longitude;
   String _idToken;
-  String? _imageUrl;
+  String _imageUrl;
 
   Exchange(
       this._imagePath,
@@ -19,9 +19,9 @@ class Exchange implements AdInterface {
       this._description,
       this._latitude,
       this._longitude,
-      this._idToken, {
-        String? imageUrl,
-      }) : _imageUrl = imageUrl;
+      this._idToken,
+      this._imageUrl,
+      );
 
   String get imagePath => _imagePath;
   set imagePath(String value) => _imagePath = value;
@@ -44,8 +44,8 @@ class Exchange implements AdInterface {
   String get idToken => _idToken;
   set idToken(String value) => _idToken = value;
 
-  String? get imageUrl => _imageUrl;
-  set imageUrl(String? value) => _imageUrl = value;
+  String get imageUrl => _imageUrl;
+  set imageUrl(String value) => _imageUrl = value;
 
   @override
   Map<String, dynamic> toMap() {
@@ -70,7 +70,7 @@ class Exchange implements AdInterface {
       map['latitude'],
       map['longitude'],
       map['idToken'],
-      imageUrl: map['imageUrl'],
+      map['imageUrl'],
     );
   }
 }

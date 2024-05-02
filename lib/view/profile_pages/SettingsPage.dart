@@ -115,11 +115,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     padding: EdgeInsets.only(bottom: 8, right: 8),
                     child: ClipOval(// Padding per spostare il pulsante
                       child: FloatingActionButton(
-                        onPressed: () {
-                          _getImage();
+                        onPressed: () async{
+                          await _getImage();
                           imagePath= _imageFile.path;
                           userViewModel.setProfileImage(imagePath);
                           imageUrl = userViewModel.getProfileImage();
+                         setState(() {
+
+                         });
                         },
                         child: Icon(Icons.edit), // Icona del pulsante
                         backgroundColor: Colors.blue, // Colore di sfondo del pulsante

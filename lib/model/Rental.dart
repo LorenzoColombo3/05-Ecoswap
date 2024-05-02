@@ -10,15 +10,15 @@ class Rental implements AdInterface {
   String _dailyCost;
   String _maxDaysRent;
   String _idToken;
-  String? _imageUrl;
+  String _imageUrl;
 
   Rental(this._imagePath, this._userId, this._title, this._description,
       this._lat, this._long, this._dailyCost, this._maxDaysRent, this._idToken,
-      {String? imageUrl});
+      this._imageUrl);
 
-  String? get imageUrl => _imageUrl;
+  String get imageUrl => _imageUrl;
 
-  set imageUrl(String? value) {
+  set imageUrl(String value) {
     _imageUrl = value;
   }
 
@@ -77,7 +77,7 @@ class Rental implements AdInterface {
         map['dailyCost'],
         map['maxDaysRent'],
         map['idToken'],
-        imageUrl: map['imageUrl'],
+         map['imageUrl'],
     );
   }
 }
