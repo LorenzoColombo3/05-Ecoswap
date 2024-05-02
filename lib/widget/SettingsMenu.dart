@@ -9,7 +9,9 @@ import '../util/ServiceLocator.dart';
 import '../view/welcome/LoginPage.dart';
 
 class SettingsMenu extends StatefulWidget {
-  const SettingsMenu({super.key});
+  final VoidCallback callback;
+
+  const SettingsMenu( {Key? key, required this.callback}) : super(key: key);
 
   @override
   State<SettingsMenu> createState() => _SettingsMenuState();
@@ -37,7 +39,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
           ));
         } else if (value == 'settings') {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const SettingsPage()));
+              MaterialPageRoute(builder: (context) => const SettingsPage())).then((value) => widget.callback);
         }
       },
       itemBuilder: (context) => [

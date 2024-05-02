@@ -20,7 +20,7 @@ import '../../widget/MapWidget.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoadExchangePage extends StatefulWidget {
-  final VoidCallback onButtonPressed;
+  final  VoidCallback onButtonPressed;
 
   @override
   State<LoadExchangePage> createState() => _LoadExchangePageState();

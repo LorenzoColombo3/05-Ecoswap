@@ -81,8 +81,10 @@ class _ProfilePageState extends State<ProfilePage> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(''),
-              actions: const [
-                SettingsMenu(),
+              actions:  [
+                SettingsMenu(callback: (){setState(() {
+
+                });}),
               ],
             ),
             body: SingleChildScrollView(
@@ -190,7 +192,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _rentals.length,
                               itemBuilder: (context, index) {
-                                print(index);
                                 final rental = _rentals[index];
                                 return ListTile(
                                   onTap: () {
@@ -224,4 +225,7 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
-}
+
+
+
+  }

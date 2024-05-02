@@ -12,6 +12,7 @@ import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/DateField.dart';
+import '../main_pages/ProfilePage.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -45,6 +46,11 @@ class _SettingsPageState extends State<SettingsPage> {
     imagePath = "";
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+
+  }
 
 
 
@@ -118,11 +124,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         onPressed: () async{
                           await _getImage();
                           imagePath= _imageFile.path;
-                          userViewModel.setProfileImage(imagePath);
+                          await userViewModel.setProfileImage(imagePath);
                           imageUrl = userViewModel.getProfileImage();
-                         setState(() {
-
-                         });
+                          setState(() {});
                         },
                         child: Icon(Icons.edit), // Icona del pulsante
                         backgroundColor: Colors.blue, // Colore di sfondo del pulsante

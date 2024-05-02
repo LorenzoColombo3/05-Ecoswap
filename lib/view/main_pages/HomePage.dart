@@ -68,55 +68,45 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 50.0), // Padding dall'alto dello schermo
-          Container(
-            padding: EdgeInsets.all(4.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: '    Search...',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // Action to perform when search icon is pressed
-                  },
-                  icon: Icon(Icons.search),
-                ),
-              ],
-            ),
-          ),
-          // Spazio tra la barra di ricerca e i pulsanti
-          Expanded(
-            child: FutureBuilder<UserModel?>(
-              future: currentUser,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (snapshot.hasError || snapshot.data == null) {
-                  return Center(
-                    child: Text('Error loading user data'),
-                  );
-                }
-                UserModel user = snapshot.data!;
-                return ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+      body: FutureBuilder<UserModel?>(
+        future: userViewModel.getUser(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            print("Data loaded successfully");
+            UserModel user = snapshot.data!;
+            return
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
                   children: [
+                    const SizedBox(height: 50.0),
+                    Container(
+                      padding: EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: '    Search...',
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              // Action to perform when search icon is pressed
+                            },
+                            icon: Icon(Icons.search),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 50.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -160,7 +150,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20.0), // Spazio tra i pulsanti e l'IndexedStack
                     IndexedStack(
                       index: _selectedIndex,
                       children: <Widget>[
@@ -169,12 +158,12 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ],
-                );
-
-              },
-            ),
-          ),
-        ],
+                ),
+              );
+          } else {
+            return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
+          }
+        },
       ),
     );
   }
