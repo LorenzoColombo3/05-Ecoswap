@@ -50,4 +50,12 @@ class AdViewModel{
   Future<List<Exchange>> getAllUserExchanges(String userId) {
     return _adRepository.getAllUserExchanges(userId);
   }
+
+  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query) {
+    return  _adRepository.searchRentalItems(latUser, longUser, query);
+  }
+
+  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query) {
+    return  _adRepository.searchExchangeItems(latUser, longUser, query);
+  }
 }

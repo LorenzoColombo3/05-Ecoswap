@@ -86,4 +86,14 @@ class AdRepository implements IAdRepository{
   Future<List<Exchange>> getAllUserExchanges(String userId) {
     return _exchangeDataSource.getAllUserExchanges(userId);
   }
+
+  @override
+  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query) {
+   return _rentalDataSource.searchItems(latUser, longUser, query);
+  }
+
+  @override
+  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query) {
+    return _exchangeDataSource.searchItems(latUser, longUser, query);
+  }
 }

@@ -148,7 +148,7 @@ class RentalDataSource extends BaseRentalDataSource {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
-    for (int i=startIndex; i<startIndex+10 && i < allRentals.length; i++) {
+    for (int i=startIndex; i<=startIndex+5 && i < allRentals.length; i++) {
       rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
       if (distance <= radiusKm) {
@@ -157,6 +157,43 @@ class RentalDataSource extends BaseRentalDataSource {
     }
     return rentalsInRadius;
   }
+
+  @override
+  Future<List<Rental>> searchItems(double latUser, double longUser, String query) async {
+    List<Rental> rentals = [];
+    // Fetch rentals data from Firebase Realtime Database
+    DataSnapshot snapshot = await _databaseReference.child('rentals').get();
+    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
+    if (data != null) {
+      data.forEach((key, data) {
+        Map<String, dynamic> dataMap =
+        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+        if (dataMap['title'].toString().contains(query) ||
+            dataMap['description'].toString().contains(query)) {
+          Rental rental = Rental.fromMap(dataMap);
+          rentals.add(rental);
+        }
+      });
+    }
+    rentals.sort((a, b) {
+      double distanceA = _calculateDistance(
+        latUser,
+        longUser,
+        a.lat,
+        a.long,
+      );
+      double distanceB = _calculateDistance(
+        latUser,
+        longUser,
+        b.lat,
+        b.long,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    return rentals;
+  }
+
+
 
 }
   

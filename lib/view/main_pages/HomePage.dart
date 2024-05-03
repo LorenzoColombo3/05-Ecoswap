@@ -20,22 +20,37 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
+  late IAdRepository adRepository;
+  late AdViewModel adViewModel;
   late Future<UserModel?> currentUser;
   int _selectedIndex = 0;
   Color rentalButtonColor = Colors.blue.withOpacity(0.2);
   Color exchangeButtonColor = Colors.transparent;
   bool obscurePassword = true;
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey<RentalHomePageState> _rentalHomePageKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = new UserViewModelFactory(userRepository).create();
+    adRepository = ServiceLocator().getAdRepository();
+    adViewModel = AdViewModelFactory(adRepository).create();
     currentUser = userViewModel.getUser();
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);
     });
     _selectedIndex = 0;
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      _rentalHomePageKey.currentState?.loadMoreData(0);
+      print("a");
+    }
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -68,18 +83,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<UserModel?>(
-        future: userViewModel.getUser(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            print("Data loaded successfully");
-            UserModel user = snapshot.data!;
-            return
-              SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: FutureBuilder<UserModel?>(
+          future: userViewModel.getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              print("Data loaded successfully");
+              UserModel user = snapshot.data!;
+              return Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 50.0),
+                    SizedBox(height: 50.0),
                     Container(
                       padding: EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
@@ -89,8 +107,9 @@ class _HomePageState extends State<HomePage> {
                       margin: EdgeInsets.symmetric(horizontal: 16.0),
                       child: Row(
                         children: [
-                          const Expanded(
-                            child: TextField(
+                          Expanded(
+                            child: TextFormField(
+                              controller: _searchController,
                               decoration: InputDecoration(
                                 hintText: '    Search...',
                                 border: InputBorder.none,
@@ -99,7 +118,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           IconButton(
                             onPressed: () {
-                              // Action to perform when search icon is pressed
+                               adViewModel.searchRentalItems(user.latitude, user.longitude, _searchController.text).then((value){
+
+                               });
                             },
                             icon: Icon(Icons.search),
                           ),
@@ -109,25 +130,26 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(height: 50.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = 0;
-                              rentalButtonColor = Colors.blue.withOpacity(0.2);
-                              exchangeButtonColor = Colors.transparent;
-                            });
-                          },
-                          child: Text(
-                            'Rental',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<
-                                Color>((states) => rentalButtonColor),
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                                rentalButtonColor = Colors.blue.withOpacity(0.2);
+                                exchangeButtonColor = Colors.transparent;
+                              });
+                            },
+                            child: Text(
+                              'Rental',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.resolveWith<
+                                  Color>((states) => rentalButtonColor),
+                            ),
                           ),
                         ),
-                      ),
                         Expanded(
                           child: TextButton(
                             onPressed: () {
@@ -160,11 +182,14 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               );
-          } else {
-            return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
-          }
-        },
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+  ),
       ),
     );
+
   }
+
 }

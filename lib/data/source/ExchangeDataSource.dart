@@ -8,7 +8,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
-//TODO: controllare se i getter per gli exchange da remoto funzionano, perchè dannoun rttore nel logcat
+
 class ExchangeDataSource extends BaseExchangeDataSource {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
@@ -53,13 +53,17 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   Future<List<Exchange>> getAllExchanges() async {
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
-      Map<String?, dynamic>? data = snapshot.value as Map<String?, dynamic>?;
-      if (data != null) {
-        List<Exchange> exchanges = data.values.map((value) => Exchange.fromMap(value)).toList();
-        return exchanges;
-      } else {
-        return [];
+      List<Exchange> exchanges = [];
+      Map<Object?, Object?>? values =snapshot.value as Map<Object?, Object?>? ;
+      if (values != null) {
+        values.forEach((key, data) {
+          Map<String, dynamic> data2 = Map<String, dynamic>.from(
+              data as Map<dynamic, dynamic>);
+          Exchange exchange = Exchange.fromMap(data2);
+          exchanges.add(exchange);
+        });
       }
+      return exchanges;
     } catch (error) {
       print('Errore durante il recupero di tutti gli exchange da Firebase: $error');
       return [];
@@ -146,7 +150,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     List<Exchange> exchangesInRadius = [];
     List<Exchange> allExchanges = await getAllExchanges();
     Exchange exchange;
-    for (int i=startIndex; i<=startIndex+10; i++) {
+    for (int i=startIndex; i<startIndex+10 && i < allExchanges.length; i++) {
       exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
       if (distance <= radiusKm) {
@@ -154,6 +158,40 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       }
     }
     return exchangesInRadius;
+  }
+
+  @override
+  Future<List<Exchange>> searchItems(double latUser, double longUser, String query) async {
+    List<Exchange> exchanges = [];
+    DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
+    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
+    if (data != null) {
+      data.forEach((key, data) {
+        Map<String, dynamic> dataMap =
+        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+        if (dataMap['title'].toString().contains(query) ||
+            dataMap['description'].toString().contains(query)) {
+          Exchange exchange = Exchange.fromMap(dataMap);
+          exchanges.add(exchange);
+        }
+      });
+    }
+    exchanges.sort((a, b) {
+      double distanceA = _calculateDistance(
+        latUser,
+        longUser,
+        a.latitude,
+        a.longitude,
+      );
+      double distanceB = _calculateDistance(
+        latUser,
+        longUser,
+        b.latitude,
+        b.longitude,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    return exchanges;
   }
 
 }
