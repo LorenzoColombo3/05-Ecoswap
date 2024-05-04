@@ -1,6 +1,6 @@
-import 'package:eco_swap/model/AdInterface.dart';
 
-class Rental implements AdInterface {
+
+class Rental {
   String _imagePath;
   String _userId;
   String _title;

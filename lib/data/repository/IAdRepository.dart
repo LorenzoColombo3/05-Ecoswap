@@ -13,6 +13,6 @@ abstract class IAdRepository{
   Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex);
   Future<List<Rental>> getAllUserRentals(String userId);
   Future<List<Exchange>> getAllUserExchanges(String userId);
-  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query);
-  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query);
+  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query, int startIndex);
+  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query, int startIndex);
 }

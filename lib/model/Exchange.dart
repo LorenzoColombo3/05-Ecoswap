@@ -1,8 +1,6 @@
-import 'package:eco_swap/model/AdInterface.dart';
 
-import 'package:eco_swap/model/AdInterface.dart';
 
-class Exchange implements AdInterface {
+class Exchange {
   String _imagePath;
   String _userId;
   String _title;

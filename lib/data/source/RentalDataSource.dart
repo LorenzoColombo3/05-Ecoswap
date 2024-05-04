@@ -148,7 +148,7 @@ class RentalDataSource extends BaseRentalDataSource {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
-    for (int i=startIndex; i<=startIndex+5 && i < allRentals.length; i++) {
+    for (int i=startIndex; i<=startIndex+8 && i < allRentals.length; i++) {
       rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
       if (distance <= radiusKm) {
@@ -159,21 +159,11 @@ class RentalDataSource extends BaseRentalDataSource {
   }
 
   @override
-  Future<List<Rental>> searchItems(double latUser, double longUser, String query) async {
+  Future<List<Rental>> searchItems(double latUser, double longUser, String query, int startIndex) async {
     List<Rental> rentals = [];
-    // Fetch rentals data from Firebase Realtime Database
-    DataSnapshot snapshot = await _databaseReference.child('rentals').get();
-    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
-    if (data != null) {
-      data.forEach((key, data) {
-        Map<String, dynamic> dataMap =
-        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-        if (dataMap['title'].toString().contains(query) ||
-            dataMap['description'].toString().contains(query)) {
-          Rental rental = Rental.fromMap(dataMap);
-          rentals.add(rental);
-        }
-      });
+    List<Rental> rentalsApp = await _searchOnKeyword(query);
+    for (int i=startIndex; i<=startIndex+5 && i < rentalsApp.length; i++) {
+      rentals.add(rentalsApp[i]);
     }
     rentals.sort((a, b) {
       double distanceA = _calculateDistance(
@@ -193,7 +183,23 @@ class RentalDataSource extends BaseRentalDataSource {
     return rentals;
   }
 
-
+  Future<List<Rental>> _searchOnKeyword(String query) async {
+    List<Rental> rentals = [];
+    DataSnapshot snapshot = await _databaseReference.child('rentals').get();
+    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
+    if (data != null) {
+      data.forEach((key, data) {
+        Map<String, dynamic> dataMap =
+        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+        if (dataMap['title'].toString().contains(query) ||
+            dataMap['description'].toString().contains(query)) {
+          Rental rental = Rental.fromMap(dataMap);
+          rentals.add(rental);
+        }
+      });
+    }
+    return rentals;
+  }
 
 }
   

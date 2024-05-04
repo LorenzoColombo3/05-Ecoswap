@@ -33,11 +33,12 @@ class RentalHomePageState extends State<RentalHomePage> {
     loadMoreData(index);
   }
 
+
+
   Future<void> loadMoreData(int index) async {
     setState(() {
       _isLoading = true;
     });
-    print("b");
     adViewModel
         .getRentalsInRadius(widget.currentUser.latitude,
             widget.currentUser.longitude, 30, _rentals.length)
@@ -45,7 +46,6 @@ class RentalHomePageState extends State<RentalHomePage> {
               setState(() {
                 _rentals.addAll(value);
                 _isLoading = false;
-                print(_rentals.length);
               })
             });
   }

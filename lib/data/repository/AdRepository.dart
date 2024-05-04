@@ -88,12 +88,12 @@ class AdRepository implements IAdRepository{
   }
 
   @override
-  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query) {
-   return _rentalDataSource.searchItems(latUser, longUser, query);
+  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query, int startIndex) {
+   return _rentalDataSource.searchItems(latUser, longUser, query,  startIndex);
   }
 
   @override
-  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query) {
-    return _exchangeDataSource.searchItems(latUser, longUser, query);
+  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query, int startIndex) {
+    return _exchangeDataSource.searchItems(latUser, longUser, query,  startIndex);
   }
 }

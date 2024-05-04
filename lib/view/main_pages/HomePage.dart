@@ -1,3 +1,4 @@
+import 'package:eco_swap/view/searchPages/Search_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../data/repository/IAdRepository.dart';
@@ -6,11 +7,12 @@ import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/Exchange.dart';
+import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../home_pages/ExchangeHomePage.dart';
 import '../home_pages/RentalHomePage.dart';
-
 
 class HomePage extends StatefulWidget {
   @override
@@ -47,9 +49,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      _rentalHomePageKey.currentState?.loadMoreData(0);
-      print("a");
+    GlobalKey<RentalHomePageState> _rentalHomePageKey = GlobalKey();
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      if (_rentalHomePageKey.currentState?.mounted ?? false) {
+        _rentalHomePageKey.currentState?.loadMoreData(0);
+      } else {
+        print('Lo stato di RentalHomePage non è ancora montato.');
+      }
     }
   }
 
@@ -60,7 +67,8 @@ class _HomePageState extends State<HomePage> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location services are disabled. Please enable the services')));
+          content: Text(
+              'Location services are disabled. Please enable the services')));
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -74,7 +82,8 @@ class _HomePageState extends State<HomePage> {
     }
     if (permission == LocationPermission.deniedForever) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location permissions are permanently denied, we cannot request permissions.')));
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
@@ -110,19 +119,21 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: TextFormField(
                               controller: _searchController,
-                              decoration: InputDecoration(
-                                hintText: '    Search...',
+                              decoration: const InputDecoration(
+                                hintText: 'Search...',
+                                prefixIcon: Icon(Icons.search),
                                 border: InputBorder.none,
                               ),
+                              onEditingComplete: () async {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SearchPage(
+                                              search: _searchController.text,
+                                              currentUser: user,
+                                            )));
+                              },
                             ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                               adViewModel.searchRentalItems(user.latitude, user.longitude, _searchController.text).then((value){
-
-                               });
-                            },
-                            icon: Icon(Icons.search),
                           ),
                         ],
                       ),
@@ -136,7 +147,8 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () {
                               setState(() {
                                 _selectedIndex = 0;
-                                rentalButtonColor = Colors.blue.withOpacity(0.2);
+                                rentalButtonColor =
+                                    Colors.blue.withOpacity(0.2);
                                 exchangeButtonColor = Colors.transparent;
                               });
                             },
@@ -145,8 +157,9 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(color: Colors.black),
                             ),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<
-                                  Color>((states) => rentalButtonColor),
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                      (states) => rentalButtonColor),
                             ),
                           ),
                         ),
@@ -165,8 +178,9 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(color: Colors.black),
                             ),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<
-                                  Color>((states) => exchangeButtonColor),
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                      (states) => exchangeButtonColor),
                             ),
                           ),
                         ),
@@ -186,10 +200,8 @@ class _HomePageState extends State<HomePage> {
               return Center(child: CircularProgressIndicator());
             }
           },
-  ),
+        ),
       ),
     );
-
   }
-
 }

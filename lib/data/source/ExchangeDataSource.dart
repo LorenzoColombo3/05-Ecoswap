@@ -161,20 +161,11 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   }
 
   @override
-  Future<List<Exchange>> searchItems(double latUser, double longUser, String query) async {
+  Future<List<Exchange>> searchItems(double latUser, double longUser, String query, int startIndex) async {
     List<Exchange> exchanges = [];
-    DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
-    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
-    if (data != null) {
-      data.forEach((key, data) {
-        Map<String, dynamic> dataMap =
-        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-        if (dataMap['title'].toString().contains(query) ||
-            dataMap['description'].toString().contains(query)) {
-          Exchange exchange = Exchange.fromMap(dataMap);
-          exchanges.add(exchange);
-        }
-      });
+    List<Exchange> exchangesApp = await _searchOnKeyword(query);
+    for (int i=startIndex; i<=startIndex+5 && i < exchangesApp.length; i++) {
+      exchanges.add(exchangesApp[i]);
     }
     exchanges.sort((a, b) {
       double distanceA = _calculateDistance(
@@ -192,6 +183,24 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       return distanceA.compareTo(distanceB);
     });
     return exchanges;
+  }
+
+  Future<List<Exchange>> _searchOnKeyword(String query) async {
+    List<Exchange> rentals = [];
+    DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
+    Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
+    if (data != null) {
+      data.forEach((key, data) {
+        Map<String, dynamic> dataMap =
+        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+        if (dataMap['title'].toString().contains(query) ||
+            dataMap['description'].toString().contains(query)) {
+          Exchange exchange = Exchange.fromMap(dataMap);
+          rentals.add(exchange);
+        }
+      });
+    }
+    return rentals;
   }
 
 }
