@@ -51,8 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     userViewModel.getUser().then((user) {
       currentUser = user!;
-      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
       _exchangeFuture = adViewModel.getAllUserExchanges(currentUser.idToken);
+      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
@@ -183,10 +183,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           } else if (snapshot.hasError) {
                             // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
                             return Center(child: Text(
-                                'Errore durante il recupero dei dati'));
+                                'Error during recoverage of data'));
                           } else if (snapshot.data!.isEmpty) {
                             return Center(
-                                child: Text('Nessun noleggio disponibile'));
+                                child: Text('No rentals available'));
                           } else
                           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                             _rentals = snapshot.data!;
@@ -211,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           } else {
                             return Center(
-                                child: Text('Nessun noleggio disponibile'));
+                                child: Text('No rentals available'));
                           }
                         },
                       ),
@@ -225,10 +225,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           } else if (snapshot.hasError) {
                             // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
                             return Center(child: Text(
-                                'Errore durante il recupero dei dati'));
-                          } else if (snapshot.data!.isEmpty) {
-                            return Center(
-                                child: Text('Nessun noleggio disponibile'));
+                                'Error during recoverage of data'));
                           } else
                           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                             _exchange = snapshot.data!;
@@ -237,23 +234,22 @@ class _ProfilePageState extends State<ProfilePage> {
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: _exchange.length,
                               itemBuilder: (context, index) {
-                                final rental = _rentals[index];
+                                final exchange = _exchange[index];
                                 return ListTile(
                                   onTap: () {
                                     // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
                                   },
-                                  title: Text(rental.title),
+                                  title: Text(exchange.title),
                                   leading: CircleAvatar(
                                     backgroundImage: FileImage(
-                                        File(rental.imagePath)),
+                                        File(exchange.imagePath)),
                                   ),
-                                  subtitle: Text("€" + rental.dailyCost),
                                 );
                               },
                             );
                           } else {
                             return Center(
-                                child: Text('Nessun noleggio disponibile'));
+                                child: Text('No exchanges available'));
                           }
                         },
                       ),

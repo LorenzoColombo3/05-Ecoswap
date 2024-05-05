@@ -31,9 +31,12 @@ class _HomePageState extends State<HomePage> {
   Color exchangeButtonColor = Colors.transparent;
   bool obscurePassword = true;
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  bool _isLoading = false;
+  final ScrollController _scrollControllerRental = ScrollController();
+  final ScrollController _scrollControllerExchange = ScrollController();
+  bool _isLoadingRental = false;
   List<Rental> _rentals = [];
+  List<Exchange> _exchanges = [];
+  bool _isLoadingExchange=false;
 
   @override
   void initState() {
@@ -44,31 +47,55 @@ class _HomePageState extends State<HomePage> {
     adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.getUser().then((value) {
       currentUser = value!;
-      loadMoreData(currentUser);
+      loadMoreRental(currentUser);
+      loadMoreExchange(currentUser);
     });
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);
     });
     _selectedIndex = 0;
-    _scrollController.addListener(_scrollListener);
+    _scrollControllerRental.addListener(_scrollRentalListener);
+    _scrollControllerExchange.addListener(_scrollExchangeListener);
   }
 
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      loadMoreData(currentUser);
-    } else {}
+  void _scrollRentalListener() {
+    if (_scrollControllerRental.position.pixels ==
+        _scrollControllerRental.position.maxScrollExtent) {
+      loadMoreRental(currentUser);
+      print('rental');
+    } else {
+    }
   }
 
-  Future<void> loadMoreData(UserModel user) async {
+  void _scrollExchangeListener() {
+    if (_scrollControllerExchange.position.pixels ==
+        _scrollControllerExchange.position.maxScrollExtent) {
+      loadMoreExchange(currentUser);
+      print('exchange');
+    } else {
+    }
+  }
+
+  Future<void> loadMoreRental(UserModel user) async {
     setState(() {
-      _isLoading = true;
+      _isLoadingRental = true;
     });
     List<Rental> rentals = await adViewModel.getRentalsInRadius(
         user.latitude, user.longitude, 30, _rentals.length);
     _rentals.addAll(rentals);
     setState(() {
-      _isLoading = false;
+      _isLoadingRental = false;
+    });
+  }
+  Future<void> loadMoreExchange(UserModel user) async{
+    setState(() {
+      _isLoadingExchange = true;
+    });
+    List<Exchange> exchanges = await adViewModel.getExchangesInRadius(
+        user.latitude, user.longitude, 30, _exchanges.length);
+    _exchanges.addAll(exchanges);
+    setState(() {
+      _isLoadingExchange = false;
     });
   }
 
@@ -110,7 +137,6 @@ class _HomePageState extends State<HomePage> {
         Container(
           padding: EdgeInsets.all(4.0),
           decoration: BoxDecoration(
-            color: Colors.grey[200],
             borderRadius: BorderRadius.circular(30.0),
           ),
           margin: EdgeInsets.symmetric(horizontal: 16.0),
@@ -140,7 +166,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        SizedBox(height: 16.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -186,35 +211,53 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        SizedBox(height: 16.0),
-        Expanded( // Utilizzo di Expanded per far espandere il Container
-          child: Container(
-            child: IndexedStack(
-              index: _selectedIndex,
-              children: <Widget>[
-                GridView.builder(
-                  controller: _scrollController,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: _rentals.length + (_isLoading ? 1 : 0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                    mainAxisExtent: 300,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index < _rentals.length) {
-                      return _buildRentalItem(_rentals[index]);
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
+        Expanded(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: <Widget>[
+              GridView.builder(
+                controller: _scrollControllerRental,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: _rentals.length + (_isLoadingRental ? 1 : 0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 2.0,
+                  crossAxisSpacing: 2.0,
+                  mainAxisExtent: 300,
                 ),
-              ],
-            ),
+                itemBuilder: (BuildContext context, int index) {
+                  if (index < _rentals.length) {
+                    return _buildRentalItem(_rentals[index]);
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+              GridView.builder(
+                controller: _scrollControllerExchange,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: _exchanges.length + (_isLoadingExchange ? 1 : 0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 2.0,
+                  crossAxisSpacing: 2.0,
+                  mainAxisExtent: 300,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  if (index < _exchanges.length) {
+                    return _buildExchangeItem(_exchanges[index]);
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ],
@@ -225,18 +268,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRentalItem(Rental rental) {
     return Container(
-      padding: const EdgeInsets.all(10.0),
+      margin: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
       ),
       child: Column(
         children: <Widget>[
@@ -286,6 +322,69 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildExchangeItem(Exchange exchange) {
+    return GestureDetector(
+      onTap: () {
+        print('Container toccato!');
+      },
+      child: Container(
+        margin: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: FadeInImage(
+                placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
+                height: 200,
+                image: NetworkImage(exchange.imageUrl), // URL dell'immagine principale
+                fit: BoxFit.cover, // Adatta l'immagine all'interno del container
+              ),
+            ),Stack(
+              children: [
+                ListTile(
+                  onTap: () {
+                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                  },
+                  title: Text(
+                    exchange.title,
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                  subtitle: Text(
+                    "inserire qualcosa",
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
+                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
+                      child: Icon(
+                        Icons.favorite, // Icona del cuore come preferito
+                        color: Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
+                        size: 24.0, // Dimensione dell'icona personalizzata
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -49,18 +49,17 @@ class ExchangeDataSource extends BaseExchangeDataSource {
      getAllUserExchanges(userId).then((firebaseList) => loadAllExchange(firebaseList));
   }
 
-  @override
   Future<List<Exchange>> getAllExchanges() async {
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
       List<Exchange> exchanges = [];
-      Map<Object?, Object?>? values =snapshot.value as Map<Object?, Object?>? ;
-      if (values != null) {
+      var values = snapshot.value; // Rimuovi il cast esplicito per ora
+      if (values != null && values is Map) { // Verifica se i valori sono una mappa
         values.forEach((key, data) {
-          Map<String, dynamic> data2 = Map<String, dynamic>.from(
-              data as Map<dynamic, dynamic>);
-          Exchange exchange = Exchange.fromMap(data2);
-          exchanges.add(exchange);
+          if (data is Map<String, dynamic>) { // Verifica se i dati sono mappa di stringhe dinamiche
+            Exchange exchange = Exchange.fromMap(data);
+            exchanges.add(exchange);
+          }
         });
       }
       return exchanges;
@@ -70,22 +69,20 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     }
   }
 
+
   @override
   Future<List<Exchange>> getAllUserExchanges(String userId) async{
-    try {
-      DataSnapshot snapshot = await _databaseReference
-          .child('exchanges')
-          .orderByChild('userId')
-          .equalTo(userId)
-          .get();
 
+    try {
+      DataSnapshot snapshot = await _databaseReference.child('exchanges').orderByChild('userId').equalTo(userId).get();
       List<Exchange> exchanges = [];
-      Map<Object?, Object>? values =snapshot.value as Map<Object?, Object>? ;
-      if (values != null) {
+      var values = snapshot.value; // Rimuovi il cast esplicito per ora
+      if (values is Map) { // Verifica se i valori sono una mappa
         values.forEach((key, data) {
-          Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-          Exchange exchange = Exchange.fromMap(data2);
-          exchanges.add(exchange);
+          if (data is Map<String, dynamic>) { // Verifica se i dati sono mappa di stringhe dinamiche
+            Exchange exchange = Exchange.fromMap(data);
+            exchanges.add(exchange);
+          }
         });
       }
 
@@ -95,7 +92,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       return [];
     }
 
-    }
+  }
 
   @override
   Future<Exchange?> getExchange(String idToken) async {
@@ -165,7 +162,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       );
       return distanceA.compareTo(distanceB);
     });
-    for (int i=startIndex; i<startIndex+10 && i < allExchanges.length; i++) {
+    for (int i=startIndex; i<startIndex+5 && i < allExchanges.length; i++) {
       exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
       if (distance <= radiusKm) {
