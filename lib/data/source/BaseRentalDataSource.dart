@@ -16,6 +16,6 @@ abstract class BaseRentalDataSource{
   Future<List<Rental>> getAllRentals();
   Future<List<Rental>> getAllUserRentals(String userId);
   Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex);
-  Future<List<Rental>> searchItems(double latUser, double longUser, String query, int startIndex);
+  Future<List<Rental>> searchItems(double latUser, double longUser, String query);
 
 }

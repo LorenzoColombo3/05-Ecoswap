@@ -10,7 +10,7 @@ import 'BaseRentalDataSource.dart';
 
 class RentalDataSource extends BaseRentalDataSource {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
-
+  int _lastPositionSeach = 0;
 
   @override
   Future<String?> loadRental(Rental rental) async {
@@ -152,20 +152,20 @@ class RentalDataSource extends BaseRentalDataSource {
       double distanceA = _calculateDistance(
         latUser,
         longUser,
-        a.lat,
-        a.long,
+        a.latitude,
+        a.longitude,
       );
       double distanceB = _calculateDistance(
         latUser,
         longUser,
-        b.lat,
-        b.long,
+        b.latitude,
+        b.longitude,
       );
       return distanceA.compareTo(distanceB);
     });
     for (int i=startIndex; i<=startIndex+8 && i < allRentals.length; i++) {
       rental=allRentals[i];
-      double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);
+      double distance = _calculateDistance(latUser, longUser, rental.latitude, rental.longitude);
       if (distance <= radiusKm) {
         rentalsInRadius.add(rental);
       }
@@ -174,27 +174,13 @@ class RentalDataSource extends BaseRentalDataSource {
   }
 
   @override
-  Future<List<Rental>> searchItems(double latUser, double longUser, String query, int startIndex) async {
+  Future<List<Rental>> searchItems(double latUser, double longUser, String query) async {
     List<Rental> rentals = [];
     List<Rental> rentalsApp = await _searchOnKeyword(query);
-    for (int i=startIndex; i<=startIndex+5 && i < rentalsApp.length; i++) {
+    for (int i=_lastPositionSeach; i<=_lastPositionSeach+5 && i < rentalsApp.length; i++) {
       rentals.add(rentalsApp[i]);
     }
-    rentals.sort((a, b) {
-      double distanceA = _calculateDistance(
-        latUser,
-        longUser,
-        a.lat,
-        a.long,
-      );
-      double distanceB = _calculateDistance(
-        latUser,
-        longUser,
-        b.lat,
-        b.long,
-      );
-      return distanceA.compareTo(distanceB);
-    });
+    _lastPositionSeach=_lastPositionSeach + rentals.length;
     return rentals;
   }
 

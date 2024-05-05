@@ -1,3 +1,4 @@
+import '../../model/AdModel.dart';
 import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,7 @@ class _SearchPageState extends State<SearchPage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  late List<Rental> rentals;
-  late List<Exchange> exchanges;
+  late List<AdModel> adList;
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
@@ -38,8 +38,7 @@ class _SearchPageState extends State<SearchPage> {
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    rentals = [];
-    exchanges = [];
+    adList = [];
     loadMoreData();
     _scrollController.addListener(_scrollListener);
   }
@@ -48,20 +47,13 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _isLoading = true;
     });
-    List<Rental> newRentals = await adViewModel.searchRentalItems(
+    List<AdModel> newAdList = await adViewModel.searchItems(
         widget.currentUser.latitude,
         widget.currentUser.longitude,
-        widget.search,
-        rentals.length);
-    List<Exchange> newExchanges = await adViewModel.searchExchangeItems(
-        widget.currentUser.latitude,
-        widget.currentUser.longitude,
-        widget.search,
-        exchanges.length);
+        widget.search);
     setState(() {
       _isLoading = false;
-      rentals.addAll(newRentals);
-      exchanges.addAll(newExchanges);
+      adList.addAll(newAdList);
     });
   }
 
@@ -106,13 +98,13 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildSearchResults() {
     return ListView.builder(
       controller: _scrollController,
-      itemCount: rentals.length + exchanges.length + (_isLoading ? 1 : 0),
+      itemCount: adList.length + (_isLoading ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index < rentals.length) {
-          return _buildRentalItem(rentals[index]);
-        } else if (index < rentals.length + exchanges.length) {
-          return _buildExchangeItem(
-              exchanges[index - rentals.length]); // Adjust the index
+        if (index < adList.length) {
+          if(adList[index] is Rental)
+             return _buildRentalItem(adList[index] as Rental);
+          else
+            return _buildExchangeItem(adList[index] as Exchange);
         } else {
           return _buildLoader();
         }

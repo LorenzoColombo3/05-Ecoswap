@@ -11,7 +11,7 @@ import 'package:eco_swap/model/Exchange.dart';
 
 class ExchangeDataSource extends BaseExchangeDataSource {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
-
+  int _lastPositionSeach = 0;
 
   @override
   Future<String?> loadExchange(Exchange exchange) async {
@@ -176,12 +176,13 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   }
 
   @override
-  Future<List<Exchange>> searchItems(double latUser, double longUser, String query, int startIndex) async {
+  Future<List<Exchange>> searchItems(double latUser, double longUser, String query) async {
     List<Exchange> exchanges = [];
     List<Exchange> exchangesApp = await _searchOnKeyword(query);
-    for (int i=startIndex; i<=startIndex+5 && i < exchangesApp.length; i++) {
+    for (int i=_lastPositionSeach; i<=_lastPositionSeach+5 && i < exchangesApp.length; i++) {
       exchanges.add(exchangesApp[i]);
     }
+    _lastPositionSeach=_lastPositionSeach + exchanges.length;
     return exchanges;
   }
 

@@ -42,7 +42,10 @@ class _HomePageState extends State<HomePage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-     userViewModel.getUser().then((value) => currentUser=value!);
+    userViewModel.getUser().then((value) {
+      currentUser = value!;
+      loadMoreData(currentUser);
+    });
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);
     });
@@ -53,24 +56,19 @@ class _HomePageState extends State<HomePage> {
   void _scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-        loadMoreData(currentUser);
-    }else {
-    }
+      loadMoreData(currentUser);
+    } else {}
   }
 
   Future<void> loadMoreData(UserModel user) async {
     setState(() {
       _isLoading = true;
     });
-
-
-      adViewModel
-        .getRentalsInRadius(user.latitude,user.longitude, 30, _rentals.length)
-        .then((value) => {
-          setState(() {
-          _rentals.addAll(value);
-          _isLoading = false;
-        })
+    List<Rental> rentals = await adViewModel.getRentalsInRadius(
+        user.latitude, user.longitude, 30, _rentals.length);
+    _rentals.addAll(rentals);
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -102,141 +100,128 @@ class _HomePageState extends State<HomePage> {
     }
     return true;
   }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: FutureBuilder<UserModel?>(
-          future: userViewModel.getUser(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              print("Data loaded successfully");
-              UserModel user = snapshot.data!;
-              return Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: 50.0),
-                    Container(
-                      padding: EdgeInsets.all(4.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(30.0),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: 50.0),
+        Container(
+          padding: EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    hintText: 'Search...',
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                  ),
+                  onEditingComplete: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchPage(
+                          search: _searchController.text,
+                          currentUser: currentUser,
+                        ),
                       ),
-                      margin: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _searchController,
-                              decoration: const InputDecoration(
-                                hintText: 'Search...',
-                                prefixIcon: Icon(Icons.search),
-                                border: InputBorder.none,
-                              ),
-                              onEditingComplete: () async {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SearchPage(
-                                              search: _searchController.text,
-                                              currentUser: user,
-                                            )));
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 50.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedIndex = 0;
-                                rentalButtonColor =
-                                    Colors.blue.withOpacity(0.2);
-                                exchangeButtonColor = Colors.transparent;
-                              });
-                            },
-                            child: Text(
-                              'Rental',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                      (states) => rentalButtonColor),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedIndex = 1;
-                                exchangeButtonColor =
-                                    Colors.blue.withOpacity(0.2);
-                                rentalButtonColor = Colors.transparent;
-                              });
-                            },
-                            child: Text(
-                              'Exchange',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                      (states) => exchangeButtonColor),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    IndexedStack(
-                      index: _selectedIndex,
-                      children: <Widget>[
-                        GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: _rentals.length + (_isLoading ? 1 : 0),
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 8.0,
-                            crossAxisSpacing: 8.0,
-                            mainAxisExtent: 300,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index < _rentals.length) {
-                              return _buildRentalItem(_rentals[index]);
-                            } else {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          },
-                        ),
-                        ExchangeHomePage(currentUser: user),
-                      ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
+              ),
+            ],
+          ),
         ),
-      ),
+        SizedBox(height: 16.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 0;
+                    rentalButtonColor = Colors.blue.withOpacity(0.2);
+                    exchangeButtonColor = Colors.transparent;
+                  });
+                },
+                child: Text(
+                  'Rental',
+                  style: TextStyle(color: Colors.black),
+                ),
+                style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.resolveWith<Color>(
+                          (states) => rentalButtonColor),
+                ),
+              ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedIndex = 1;
+                    exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                    rentalButtonColor = Colors.transparent;
+                  });
+                },
+                child: Text(
+                  'Exchange',
+                  style: TextStyle(color: Colors.black),
+                ),
+                style: ButtonStyle(
+                  backgroundColor:
+                  MaterialStateProperty.resolveWith<Color>(
+                          (states) => exchangeButtonColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.0),
+        Expanded( // Utilizzo di Expanded per far espandere il Container
+          child: Container(
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: <Widget>[
+                GridView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: _rentals.length + (_isLoading ? 1 : 0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    mainAxisExtent: 300,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index < _rentals.length) {
+                      return _buildRentalItem(_rentals[index]);
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
+
+
 
   Widget _buildRentalItem(Rental rental) {
     return Container(

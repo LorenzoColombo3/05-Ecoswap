@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:eco_swap/data/repository/IAdRepository.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/data/source/BaseRentalDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
 import 'package:eco_swap/model/Rental.dart';
+import '../../model/AdModel.dart';
 import '../source/BaseExchangeLocalDataSource.dart';
 import '../source/BaseRentalLocalDataSource.dart';
 
@@ -88,12 +91,47 @@ class AdRepository implements IAdRepository{
   }
 
   @override
-  Future<List<Rental>> searchRentalItems(double latUser, double longUser, String query, int startIndex) {
-   return _rentalDataSource.searchItems(latUser, longUser, query,  startIndex);
+  Future<List<AdModel>> searchItems(double latUser, double longUser, String query) async{
+   List<Rental> rentals = await _rentalDataSource.searchItems(latUser, longUser, query);
+   List<Exchange> exchanges = await _exchangeDataSource.searchItems(latUser, longUser, query);
+   List<AdModel> ad=[];
+   ad.addAll(rentals);
+   ad.addAll(exchanges);
+   ad.sort((a, b) {
+     double distanceA = _calculateDistance(
+       latUser,
+       longUser,
+       a.latitude,
+       a.longitude,
+     );
+     double distanceB = _calculateDistance(
+       latUser,
+       longUser,
+       b.latitude,
+       b.longitude,
+     );
+     return distanceA.compareTo(distanceB);
+   });
+   return ad;
   }
 
-  @override
-  Future<List<Exchange>> searchExchangeItems(double latUser, double longUser, String query, int startIndex) {
-    return _exchangeDataSource.searchItems(latUser, longUser, query,  startIndex);
+  double _calculateDistance(double latUser, double longUser, double latRent, double longRent) {
+    const int earthRadiusKm = 6371; // Raggio medio della Terra in chilometri
+    double lat1Rad = radians(latUser);
+    double lat2Rad = radians(latRent);
+    double lon1Rad = radians(longUser);
+    double lon2Rad = radians(longRent);
+    double deltaLat = lat2Rad - lat1Rad;
+    double deltaLon = lon2Rad - lon1Rad;
+
+    double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+        cos(lat1Rad) * cos(lat2Rad) * sin(deltaLon / 2) * sin(deltaLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadiusKm * c;
+  }
+
+  double radians(double degrees) {
+    return degrees * pi / 180;
   }
 }
