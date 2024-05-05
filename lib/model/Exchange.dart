@@ -1,6 +1,8 @@
 
 
-class Exchange {
+import 'AdModel.dart';
+
+class Exchange extends AdModel{
   String _imagePath;
   String _userId;
   String _title;

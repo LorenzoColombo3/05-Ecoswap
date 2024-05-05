@@ -148,6 +148,21 @@ class RentalDataSource extends BaseRentalDataSource {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
+    allRentals.sort((a, b) {
+      double distanceA = _calculateDistance(
+        latUser,
+        longUser,
+        a.lat,
+        a.long,
+      );
+      double distanceB = _calculateDistance(
+        latUser,
+        longUser,
+        b.lat,
+        b.long,
+      );
+      return distanceA.compareTo(distanceB);
+    });
     for (int i=startIndex; i<=startIndex+8 && i < allRentals.length; i++) {
       rental=allRentals[i];
       double distance = _calculateDistance(latUser, longUser, rental.lat, rental.long);

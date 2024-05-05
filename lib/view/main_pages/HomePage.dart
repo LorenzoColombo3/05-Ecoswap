@@ -1,6 +1,7 @@
 import 'package:eco_swap/view/searchPages/Search_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path/path.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/AdViewModel.dart';
@@ -24,14 +25,15 @@ class _HomePageState extends State<HomePage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  late Future<UserModel?> currentUser;
+  late UserModel currentUser;
   int _selectedIndex = 0;
   Color rentalButtonColor = Colors.blue.withOpacity(0.2);
   Color exchangeButtonColor = Colors.transparent;
   bool obscurePassword = true;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final GlobalKey<RentalHomePageState> _rentalHomePageKey = GlobalKey();
+  bool _isLoading = false;
+  List<Rental> _rentals = [];
 
   @override
   void initState() {
@@ -40,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    currentUser = userViewModel.getUser();
+     userViewModel.getUser().then((value) => currentUser=value!);
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);
     });
@@ -49,15 +51,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _scrollListener() {
-    GlobalKey<RentalHomePageState> _rentalHomePageKey = GlobalKey();
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      if (_rentalHomePageKey.currentState?.mounted ?? false) {
-        _rentalHomePageKey.currentState?.loadMoreData(0);
-      } else {
-        print('Lo stato di RentalHomePage non è ancora montato.');
-      }
+        loadMoreData(currentUser);
+    }else {
     }
+  }
+
+  Future<void> loadMoreData(UserModel user) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+
+      adViewModel
+        .getRentalsInRadius(user.latitude,user.longitude, 30, _rentals.length)
+        .then((value) => {
+          setState(() {
+          _rentals.addAll(value);
+          _isLoading = false;
+        })
+    });
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -66,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(const SnackBar(
           content: Text(
               'Location services are disabled. Please enable the services')));
       return false;
@@ -75,13 +89,13 @@ class _HomePageState extends State<HomePage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
             const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(const SnackBar(
           content: Text(
               'Location permissions are permanently denied, we cannot request permissions.')));
       return false;
@@ -189,7 +203,26 @@ class _HomePageState extends State<HomePage> {
                     IndexedStack(
                       index: _selectedIndex,
                       children: <Widget>[
-                        RentalHomePage(currentUser: user),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: _rentals.length + (_isLoading ? 1 : 0),
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 8.0,
+                            crossAxisSpacing: 8.0,
+                            mainAxisExtent: 300,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index < _rentals.length) {
+                              return _buildRentalItem(_rentals[index]);
+                            } else {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                          },
+                        ),
                         ExchangeHomePage(currentUser: user),
                       ],
                     ),
@@ -201,6 +234,73 @@ class _HomePageState extends State<HomePage> {
             }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildRentalItem(Rental rental) {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: FadeInImage(
+              placeholder: AssetImage('assets/image/loading_indicator.gif'),
+              // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
+              height: 200,
+              image: NetworkImage(rental.imageUrl),
+              // URL dell'immagine principale
+              fit: BoxFit.cover, // Adatta l'immagine all'interno del container
+            ),
+          ),
+          Stack(
+            children: [
+              ListTile(
+                title: Text(
+                  rental.title,
+                  overflow: TextOverflow.ellipsis, // Testo non va a capo
+                ),
+                subtitle: Text(
+                  "€${rental.dailyCost}",
+                  overflow: TextOverflow.ellipsis, // Testo non va a capo
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: InkWell(
+                  onTap: () {
+                    // Aggiungere qui la logica per gestire il tap sull'icona del cuore
+                    // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    // Personalizza il padding dell'icona
+                    child: Icon(
+                      Icons.favorite, // Icona del cuore come preferito
+                      color: Colors.grey,
+                      // Colore rosso per indicare che è contrassegnato come preferito
+                      size: 24.0, // Dimensione dell'icona personalizzata
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

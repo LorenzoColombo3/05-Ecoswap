@@ -150,6 +150,21 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     List<Exchange> exchangesInRadius = [];
     List<Exchange> allExchanges = await getAllExchanges();
     Exchange exchange;
+    allExchanges.sort((a, b) {
+      double distanceA = _calculateDistance(
+        latUser,
+        longUser,
+        a.latitude,
+        a.longitude,
+      );
+      double distanceB = _calculateDistance(
+        latUser,
+        longUser,
+        b.latitude,
+        b.longitude,
+      );
+      return distanceA.compareTo(distanceB);
+    });
     for (int i=startIndex; i<startIndex+10 && i < allExchanges.length; i++) {
       exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
@@ -167,21 +182,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     for (int i=startIndex; i<=startIndex+5 && i < exchangesApp.length; i++) {
       exchanges.add(exchangesApp[i]);
     }
-    exchanges.sort((a, b) {
-      double distanceA = _calculateDistance(
-        latUser,
-        longUser,
-        a.latitude,
-        a.longitude,
-      );
-      double distanceB = _calculateDistance(
-        latUser,
-        longUser,
-        b.latitude,
-        b.longitude,
-      );
-      return distanceA.compareTo(distanceB);
-    });
     return exchanges;
   }
 

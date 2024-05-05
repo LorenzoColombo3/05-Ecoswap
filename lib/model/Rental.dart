@@ -1,6 +1,8 @@
 
 
-class Rental {
+import 'AdModel.dart';
+
+class Rental extends AdModel {
   String _imagePath;
   String _userId;
   String _title;
