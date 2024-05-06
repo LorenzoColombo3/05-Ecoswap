@@ -23,6 +23,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final TextEditingController _searchController = TextEditingController();
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
@@ -73,7 +74,7 @@ class _SearchPageState extends State<SearchPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
             child: Text(
               'Delete',
@@ -85,29 +86,44 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
 
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: _buildSearchResults(),
-          ),
-        ],
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _buildSearchResults(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSearchTopBar() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Icon(Icons.search),
-            SizedBox(width: 10),
-            Text(widget.search),
-          ],
+        TextFormField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            hintText: 'Search...',
+            prefixIcon: Icon(Icons.search),
+            border: InputBorder.none,
+          ),
+          onEditingComplete: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchPage(
+                  search: _searchController.text,
+                  currentUser: widget.currentUser,
+                ),
+              ),
+            );
+          },
         ),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Divider(
             color: Colors.black,
             thickness: 1.0,
@@ -116,6 +132,7 @@ class _SearchPageState extends State<SearchPage> {
       ],
     );
   }
+
 
   Widget _buildSearchResults() {
     return ListView.builder(

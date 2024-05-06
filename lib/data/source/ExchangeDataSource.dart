@@ -49,22 +49,24 @@ class ExchangeDataSource extends BaseExchangeDataSource {
      getAllUserExchanges(userId).then((firebaseList) => loadAllExchange(firebaseList));
   }
 
-  Future<List<Exchange>> getAllExchanges() async {
+  @override
+  Future<List<Exchange>> getAllExchanges() async{
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
+      Map<Object?, Object?>? data =snapshot.value as Map<Object?, Object?>?;
       List<Exchange> exchanges = [];
-      var values = snapshot.value; // Rimuovi il cast esplicito per ora
-      if (values != null && values is Map) { // Verifica se i valori sono una mappa
-        values.forEach((key, data) {
-          if (data is Map<String, dynamic>) { // Verifica se i dati sono mappa di stringhe dinamiche
-            Exchange exchange = Exchange.fromMap(data);
-            exchanges.add(exchange);
-          }
+      if (data != null) {
+        data.forEach((key, data) {
+          Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+          Exchange exchange = Exchange.fromMap(data2);
+          exchanges.add(exchange);
         });
+        return exchanges;
+      } else {
+        return [];
       }
-      return exchanges;
     } catch (error) {
-      print('Errore durante il recupero di tutti gli exchange da Firebase: $error');
+      print('Errore durante il recupero di tutti i exchanges da Firebase: $error');
       return [];
     }
   }
@@ -146,6 +148,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex) async {
     List<Exchange> exchangesInRadius = [];
     List<Exchange> allExchanges = await getAllExchanges();
+    print(allExchanges.length);
     Exchange exchange;
     allExchanges.sort((a, b) {
       double distanceA = _calculateDistance(
@@ -165,6 +168,8 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     for (int i=startIndex; i<startIndex+5 && i < allExchanges.length; i++) {
       exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
+      print(radiusKm);
+      print(distance);
       if (distance <= radiusKm) {
         exchangesInRadius.add(exchange);
       }

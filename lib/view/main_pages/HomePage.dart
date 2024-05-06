@@ -63,7 +63,6 @@ class _HomePageState extends State<HomePage> {
         _scrollControllerRental.position.maxScrollExtent) {
       loadMoreRental(currentUser);
       print('rental');
-    } else {
     }
   }
 
@@ -72,7 +71,6 @@ class _HomePageState extends State<HomePage> {
         _scrollControllerExchange.position.maxScrollExtent) {
       loadMoreExchange(currentUser);
       print('exchange');
-    } else {
     }
   }
 
@@ -191,7 +189,8 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  await loadMoreExchange(currentUser);
                   setState(() {
                     _selectedIndex = 1;
                     exchangeButtonColor = Colors.blue.withOpacity(0.2);

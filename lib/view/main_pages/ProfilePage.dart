@@ -51,8 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     userViewModel.getUser().then((user) {
       currentUser = user!;
-      _exchangeFuture = adViewModel.getAllUserExchanges(currentUser.idToken);
-      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
+      _exchangeFuture = adViewModel.getLocalExchange(currentUser.idToken);
+      _rentalsFuture = adViewModel.getLocalRental(currentUser.idToken);
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
@@ -202,8 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   },
                                   title: Text(rental.title),
                                   leading: CircleAvatar(
-                                    backgroundImage: FileImage(
-                                        File(rental.imagePath)),
+                                    backgroundImage: NetworkImage(rental.imageUrl),
                                   ),
                                   subtitle: Text("€" + rental.dailyCost),
                                 );
@@ -241,8 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   },
                                   title: Text(exchange.title),
                                   leading: CircleAvatar(
-                                    backgroundImage: FileImage(
-                                        File(exchange.imagePath)),
+                                    backgroundImage: NetworkImage(exchange.imageUrl),
                                   ),
                                 );
                               },
