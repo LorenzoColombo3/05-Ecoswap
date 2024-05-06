@@ -10,6 +10,8 @@ import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
+import 'ExchangePage.dart';
+import 'RentalPage.dart';
 
 class SearchPage extends StatefulWidget {
   final String search;
@@ -141,142 +143,148 @@ class _SearchPageState extends State<SearchPage> {
       itemBuilder: (context, index) {
         if (index < adList.length) {
           if(adList[index] is Rental)
-             return _buildRentalItem(adList[index] as Rental);
+             return _buildRentalItem(adList[index] as Rental, context);
           else
-            return _buildExchangeItem(adList[index] as Exchange);
+            return _buildExchangeItem(adList[index] as Exchange, context);
         } else {
           return _buildLoader();
         }
       },
     );
   }
-  Widget _buildRentalItem(Rental rental) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(5.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/image/loading_indicator.gif'),
-                  height: 100,
-                  width: 100,
-                  image: NetworkImage(rental.imageUrl),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        rental.title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "€${rental.dailyCost}",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+  Widget _buildRentalItem(Rental rental, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context as BuildContext,
+          MaterialPageRoute(
+            builder: (context) => RentalPage(
+              rental: rental,
+              currentUser: widget.currentUser,
+            ),
+          ),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: FadeInImage(
+                    placeholder: AssetImage('assets/image/loading_indicator.gif'),
+                    height: 100,
+                    width: 100,
+                    image: NetworkImage(rental.imageUrl),
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-              SizedBox(width: 8),
-              InkWell(
-                onTap: () {
-                  // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                  // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          rental.title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "€${rental.dailyCost}",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(width: 8),
+              ],
+            ),
           ),
-        ),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Divider(
-            thickness: 1.0,
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Divider(
+              thickness: 1.0,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
 
 
-  Widget _buildExchangeItem(Exchange exchange) {
-    return
-      Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-          Container(
-          padding: const EdgeInsets.all(5.0),
-          child: Row(
+  Widget _buildExchangeItem(Exchange exchange, BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context as BuildContext,
+          MaterialPageRoute(
+            builder: (context) => ExchangePage(
+              exchange: exchange,
+              currentUser: widget.currentUser,
+            ),
+          ),
+        );
+      },
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/image/loading_indicator.gif'),
-                  height: 100,
-                  width: 100,
-                  image: NetworkImage(exchange.imageUrl),
-                  fit: BoxFit.cover,
+            children: [
+            Container(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: FadeInImage(
+                    placeholder: AssetImage('assets/image/loading_indicator.gif'),
+                    height: 100,
+                    width: 100,
+                    image: NetworkImage(exchange.imageUrl),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        exchange.title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                SizedBox(width: 10),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          exchange.title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 4),
-                    ],
+                        SizedBox(height: 4),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8),
-              InkWell(
-                onTap: () {
-                  // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                  // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-
-                  ),
-                ),
-            ],
+                SizedBox(width: 8),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Divider(
-            color: Colors.black,
-            thickness: 1.0,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Divider(
+              color: Colors.black,
+              thickness: 1.0,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

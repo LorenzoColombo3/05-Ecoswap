@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'dart:io';
@@ -18,6 +20,7 @@ class RentalDataSource extends BaseRentalDataSource {
       final String databasePath = 'rentals';
       String imageUrl = await uploadImage(rental.imagePath);
       rental.imageUrl = imageUrl;
+      rental.position = (await _getAddressFromLatLng(rental.latitude, rental.longitude))!;
       await _databaseReference.child(databasePath).child(rental.idToken).set(rental.toMap());
       onLoadFinished(rental);
       return 'Success';
@@ -111,7 +114,9 @@ class RentalDataSource extends BaseRentalDataSource {
         double long= exchangeData?['long'];
         String idToken = exchangeData?['idToken'];
         String imageUrl = exchangeData?['imageUrl'];
-        rental = Rental(imagePath, userId, title, description, lat, long, dailyCost, maxDaysRent, idToken, imageUrl);
+        String position = exchangeData?['position'];
+        String dateLoad = exchangeData?['dateLoad'];
+        rental = Rental(imagePath, userId, title, description, lat, long, dailyCost, maxDaysRent, idToken, imageUrl, position, dateLoad);
         return rental;
       } else {
         print('No data available.');
@@ -200,6 +205,19 @@ class RentalDataSource extends BaseRentalDataSource {
       });
     }
     return rentals;
+  }
+
+  Future<String?> _getAddressFromLatLng(double latitude, double longitude) async {
+    String? _currentCity;
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      Placemark place = placemarks[0];
+      _currentCity = place.locality;
+      return _currentCity;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
   }
 
 }

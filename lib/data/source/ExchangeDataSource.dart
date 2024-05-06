@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
@@ -19,6 +21,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       final String databasePath = 'exchanges';
       String imageUrl = await uploadImage(exchange.imagePath);
       exchange.imageUrl = imageUrl;
+      exchange.position = (await _getAddressFromLatLng(exchange.latitude, exchange.longitude))!;
       await _databaseReference.child(databasePath).child(exchange.idToken).set(exchange.toMap());
       onLoadFinished(exchange);
       return 'Success';
@@ -111,7 +114,9 @@ class ExchangeDataSource extends BaseExchangeDataSource {
         double longitude = exchangeData?['longitude'];
         String idToken = exchangeData?['idToken'];
         String imageUrl = exchangeData?['imageUrl'];
-        exchange = Exchange(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl);
+        String position = exchangeData?['position'];
+        String dateLoad = exchangeData?['dateLoad'];
+        exchange = Exchange(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl, position, dateLoad);
         return exchange;
       } else {
         print('No data available.');
@@ -206,4 +211,16 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     return rentals;
   }
 
+  Future<String?> _getAddressFromLatLng(double latitude, double longitude) async {
+    String? _currentCity;
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      Placemark place = placemarks[0];
+      _currentCity = place.locality;
+      return _currentCity;
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
 }

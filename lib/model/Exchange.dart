@@ -13,7 +13,9 @@ class Exchange extends AdModel{
       double longitude,
       String idToken,
       String imageUrl,
-      ) : super(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl);
+      String position,
+      String dateLoad
+      ) : super(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl, position, dateLoad);
 
 
 
@@ -28,6 +30,8 @@ class Exchange extends AdModel{
       'longitude': longitude,
       'idToken': idToken,
       'imageUrl': imageUrl,
+      'position' : position,
+      'dateLoad' : dateLoad,
     };
   }
 
@@ -41,6 +45,8 @@ class Exchange extends AdModel{
       map['longitude'],
       map['idToken'],
       map['imageUrl'],
+      map['position'],
+      map['dateLoad'],
     );
   }
 }

@@ -149,7 +149,8 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
                       _descriptionInputController.value.text,
                       _selectedPosition!.latitude,
                       _selectedPosition!.longitude,
-                      Uuid().v4(), "");
+                      Uuid().v4(),
+                      "", "", DateTime.now().toString());
                   adViewModel.loadExchange(exchange).then((message) {
                     if (message!.contains('Success')) {
                       widget.onButtonPressed();

@@ -17,7 +17,9 @@ class Rental extends AdModel {
       this._dailyCost, this._maxDaysRent,
       String idToken,
       String imageUrl,
-      ) : super(imagePath, userId, title, description, lat, long, idToken, imageUrl);
+      String position,
+      String dateLoad,
+      ) : super(imagePath, userId, title, description, lat, long, idToken, imageUrl, position, dateLoad);
 
 
 
@@ -40,6 +42,8 @@ class Rental extends AdModel {
       'maxDaysRent': _maxDaysRent,
       'idToken': idToken,
       'imageUrl' : imageUrl,
+      'position' : position,
+      'dateLoad' : dateLoad,
     };
   }
 
@@ -54,7 +58,9 @@ class Rental extends AdModel {
         map['dailyCost'],
         map['maxDaysRent'],
         map['idToken'],
-         map['imageUrl'],
+        map['imageUrl'],
+        map['position'],
+        map['dateLoad'],
     );
   }
 }

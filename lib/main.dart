@@ -1,7 +1,11 @@
+import 'package:eco_swap/util/ServiceLocator.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
 import 'package:eco_swap/view/welcome/LoginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'data/repository/IUserRepository.dart';
+import 'data/viewmodel/UserViewModel.dart';
+import 'data/viewmodel/UserViewModelFactory.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,12 +21,34 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp>{
+class _MyAppState extends State<MyApp> {
+  late bool _isLoggedIn = false;
+  late IUserRepository userRepository;
+  late UserViewModel userViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    checkCredentials();
+  }
+
+  Future<void> checkCredentials() async {
+    final userViewModel = UserViewModelFactory(ServiceLocator().getUserRepository()).create();
+    final password = await userViewModel.readPassword();
+    final email = await userViewModel.readEmail();
+    if (password != null && email != null) {
+      final message = await userViewModel.login(email: email, password: password);
+      if (message!.contains('Success')) {
+        setState(() {
+          _isLoggedIn = true;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget homePage;
-    homePage = const LoginPage();
-    homePage= MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -38,10 +64,32 @@ class _MyAppState extends State<MyApp>{
           brightness: Brightness.light,
         ),
       ),
-      home: homePage, // Imposta la home page in base allo stato di login
+      home: FutureBuilder(
+        future: checkCredentials(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(
+                //TODO: sostituire con una pagina bianca e il logo dietro
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else {
+            if (_isLoggedIn) {
+              return NavigationPage(logoutCallback: () {
+                userViewModel.deleteCredential();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ));
+              });
+            } else {
+              return const LoginPage();
+            }
+          }
+        },
+      ),
     );
-
-    return homePage;
   }
-}
 
+
+}

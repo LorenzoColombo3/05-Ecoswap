@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage>{
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    userViewModel.readPassword().then((password) {
+    /*userViewModel.readPassword().then((password) {
       userViewModel.readEmail().then((email) {
         if (password != null && email != null) {
           userViewModel.login(email: email, password: password).then((message) {
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage>{
           });
         }
       });
-    });
+    });*/
     super.initState();
   }
 

@@ -7,6 +7,8 @@ abstract class AdModel{
   double _longitude;
   String _idToken;
   String _imageUrl;
+  String _position;
+  String _dateLoad;
 
   AdModel(
       this._imagePath,
@@ -17,6 +19,8 @@ abstract class AdModel{
       this._longitude,
       this._idToken,
       this._imageUrl,
+      this._position,
+      this._dateLoad,
       );
 
   String get imagePath => _imagePath;
@@ -42,6 +46,12 @@ abstract class AdModel{
 
   String get imageUrl => _imageUrl;
   set imageUrl(String value) => _imageUrl = value;
+
+  String get position => _position;
+  set position(String value) => _position = value;
+
+  String get dateLoad => _dateLoad;
+  set dateLoad(String value) => _dateLoad = value;
 
   Map<String, dynamic> toMap();
 
