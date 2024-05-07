@@ -71,7 +71,7 @@ class _RentalPaymentState extends State<RentalPayment> {
                 Text(unitNumber.toString()), // Numero di unità selezionate
                 IconButton(
                   onPressed: () {
-                    if(unitNumber < int.parse(widget.rental.unitNumber))
+                    if(unitNumber < int.parse(widget.rental.unitNumber) - int.parse(widget.rental.unitRented))
                       setState(() {
                         unitNumber++;
                       });
@@ -108,12 +108,6 @@ class _RentalPaymentState extends State<RentalPayment> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-
-                  },
-                  child: Text('Pay with PayPal'),
-                ),
                 ElevatedButton(
                   onPressed: () {
 

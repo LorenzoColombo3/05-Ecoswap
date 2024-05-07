@@ -54,8 +54,11 @@ class AdViewModel{
   }
 
   Future<List<AdModel>> searchItems(double latUser, double longUser, String query) {
-
     return  _adRepository.searchItems(latUser, longUser, query);
+  }
+
+  void updateRentalData(Rental rental){
+    _adRepository.updateRentalData(rental);
   }
 
 }

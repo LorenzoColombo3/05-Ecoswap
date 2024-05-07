@@ -48,18 +48,20 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      theme: ThemeData(
+
+        colorScheme: const ColorScheme.light(
+          primary: Colors.lightGreen, // Colore principale
+          secondary: Colors.lightGreenAccent, // Colore secondario
+          background: Colors.green,
+        ),
+      ),
       darkTheme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.lightBlue,
+          primarySwatch: Colors.green,
+          accentColor: Colors.red,
           brightness: Brightness.dark,
-        ),
-      ),
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.lightBlue,
-          brightness: Brightness.light,
         ),
       ),
       home: FutureBuilder(

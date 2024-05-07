@@ -36,6 +36,9 @@ class _NavigationPageState extends State<NavigationPage> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[

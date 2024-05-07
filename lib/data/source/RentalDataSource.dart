@@ -265,4 +265,20 @@ class RentalDataSource extends BaseRentalDataSource {
       return null;
     }
   }
+
+  @override
+  void updateRentalData(Rental rental){
+    try {
+      Map<String, dynamic> updateData = {
+        'unitNumber': rental.unitNumber,
+        'unitRented': rental.unitRented,
+      };
+      _databaseReference.child('rentals').child(rental.idToken).update(
+          updateData);
+      //TODO testare il funzionamento dell'update locale quando fatta una prenotazione da un altro dispositivo
+      onUpdateFinished(rental);
+    }catch(e){
+      print("errore durante l'update  $e");
+    }
+  }
 }

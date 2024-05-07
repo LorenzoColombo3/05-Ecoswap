@@ -17,7 +17,7 @@ class AdRepository implements IAdRepository{
 
   AdRepository(this._exchangeDataSource, this._rentalDataSource, this._exchangeLocalDataSource, this._rentalLocalDataSource){
     _exchangeDataSource.setCallback(loadLocalExchange, _loadAllExchanges);
-    _rentalDataSource.setCallback(loadLocalRental, _loadAllRentals);
+    _rentalDataSource.setCallback(loadLocalRental, _loadAllRentals, updateLocalRental);
   }
 
   @override
@@ -60,6 +60,10 @@ class AdRepository implements IAdRepository{
 
   void _loadAllRentals(List<Rental> rentals){
     _rentalLocalDataSource.loadAll(rentals);
+  }
+
+  void updateLocalRental(Rental rental){
+    _rentalLocalDataSource.updateLocal(rental);
   }
 
   @override
@@ -133,5 +137,10 @@ class AdRepository implements IAdRepository{
 
   double radians(double degrees) {
     return degrees * pi / 180;
+  }
+
+  @override
+  void updateRentalData(Rental rental) {
+    _rentalDataSource.updateRentalData(rental);
   }
 }
