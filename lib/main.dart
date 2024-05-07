@@ -1,3 +1,4 @@
+import 'package:eco_swap/util/AppTheme.dart';
 import 'package:eco_swap/util/ServiceLocator.dart';
 import 'package:flutter/material.dart';
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
@@ -43,27 +44,12 @@ class _MyAppState extends State<MyApp> {
     }
     return false;
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-
-        colorScheme: const ColorScheme.light(
-          primary: Colors.lightGreen, // Colore principale
-          secondary: Colors.lightGreenAccent, // Colore secondario
-          background: Colors.green,
-        ),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.green,
-          accentColor: Colors.red,
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: AppTheme.lightTheme(),
+      darkTheme: AppTheme.darkTheme(),
       home: FutureBuilder(
         future: checkCredentials(),
         builder: (context, snapshot) {
@@ -76,15 +62,11 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             if (snapshot.data == true) {
-              return NavigationPage(logoutCallback: (){
+              print(Theme.of(context).toString()+"\n padre ");
+              return NavigationPage(logoutCallback: () {
+                userViewModel.deleteCredential();
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) =>
-                      NavigationPage(logoutCallback: () {
-                        userViewModel.deleteCredential();
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ));
-                      }),
+                  builder: (context) => const LoginPage(),
                 ));
               });
             } else {

@@ -33,10 +33,11 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
+      backgroundColor: colorScheme.primary,
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
         currentIndex: _selectedIndex,
@@ -66,4 +67,5 @@ class _NavigationPageState extends State<NavigationPage> {
       ),
     );
   }
+
 }

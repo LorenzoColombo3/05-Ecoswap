@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
   int _selectedIndex = 0;
-  Color rentalButtonColor = Colors.blue.withOpacity(0.2);
+  Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
   late Future<String?> imageUrl;
   late Future<List<Rental>> _rentalsFuture; // Future per recuperare i noleggi
@@ -81,7 +81,9 @@ class _ProfilePageState extends State<ProfilePage> {
           // Verifica se lo snapshot ha completato il caricamento dei dati
           currentUser = snapshot.data!;
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             appBar: AppBar(
+              backgroundColor: Theme.of(context).colorScheme.background,
               automaticallyImplyLeading: false,
               title: Text(''),
               actions:  [
@@ -134,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {
                             setState(() {
                               _selectedIndex = 0;
-                              rentalButtonColor = Colors.blue.withOpacity(0.2);
+                              rentalButtonColor = Theme.of(context).colorScheme.background;
                               exchangeButtonColor = Colors.transparent;
                             });
                           },
@@ -153,8 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {
                             setState(() {
                               _selectedIndex = 1;
-                              exchangeButtonColor =
-                                  Colors.blue.withOpacity(0.2);
+                              exchangeButtonColor = Theme.of(context).colorScheme.background;
                               rentalButtonColor = Colors.transparent;
                             });
                           },

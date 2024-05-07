@@ -14,7 +14,7 @@ class LoadAdPage extends StatefulWidget {
 
 class _LoadAdPageState extends State<LoadAdPage> {
   late int _selectedIndex;
-  Color rentalButtonColor = Colors.blue.withOpacity(0.2);
+  Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
 
   @override
@@ -26,11 +26,16 @@ class _LoadAdPageState extends State<LoadAdPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        automaticallyImplyLeading: false,
+        title: Text(''),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16, 5, 16, 0),
         child: Column(
           children: [
-            SizedBox(height: 30.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -39,7 +44,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
                     onPressed: () {
                       setState(() {
                         _selectedIndex = 0;
-                        rentalButtonColor = Colors.blue.withOpacity(0.2);
+                        rentalButtonColor = Theme.of(context).colorScheme.background;
                         exchangeButtonColor = Colors.transparent;
                       });
                     },
@@ -57,7 +62,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
                     onPressed: () {
                       setState(() {
                         _selectedIndex = 1;
-                        exchangeButtonColor = Colors.blue.withOpacity(0.2);
+                        exchangeButtonColor = Theme.of(context).colorScheme.background;
                         rentalButtonColor = Colors.transparent;
                       });
                     },

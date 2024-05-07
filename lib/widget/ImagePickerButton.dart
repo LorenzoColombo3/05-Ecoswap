@@ -34,7 +34,7 @@ class _ImagePickerButtonState extends State<ImagePickerButton> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
-          color: Colors.white.withOpacity(0.7),
+          color: Theme.of(context).colorScheme.background.withOpacity(0.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black,

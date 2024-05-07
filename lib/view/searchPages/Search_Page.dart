@@ -103,6 +103,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSearchTopBar() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         TextFormField(
