@@ -54,6 +54,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
 
   @override
   Future<List<Exchange>> getAllExchanges() async{
+    //TODO non mostrare gli exchange stessi dello user
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
       Map<Object?, Object?>? data =snapshot.value as Map<Object?, Object?>?;

@@ -22,7 +22,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late bool _isLoggedIn = false;
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
 
@@ -32,18 +31,17 @@ class _MyAppState extends State<MyApp> {
     checkCredentials();
   }
 
-  Future<void> checkCredentials() async {
+  Future<bool> checkCredentials() async {
     final userViewModel = UserViewModelFactory(ServiceLocator().getUserRepository()).create();
     final password = await userViewModel.readPassword();
     final email = await userViewModel.readEmail();
     if (password != null && email != null) {
       final message = await userViewModel.login(email: email, password: password);
       if (message!.contains('Success')) {
-        setState(() {
-          _isLoggedIn = true;
-        });
+        return true;
       }
     }
+    return false;
   }
 
   @override
@@ -68,18 +66,23 @@ class _MyAppState extends State<MyApp> {
         future: checkCredentials(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                 //TODO: sostituire con una pagina bianca e il logo dietro
                 child: CircularProgressIndicator(),
               ),
             );
           } else {
-            if (_isLoggedIn) {
-              return NavigationPage(logoutCallback: () {
-                userViewModel.deleteCredential();
+            if (snapshot.data == true) {
+              return NavigationPage(logoutCallback: (){
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
+                  builder: (context) =>
+                      NavigationPage(logoutCallback: () {
+                        userViewModel.deleteCredential();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ));
+                      }),
                 ));
               });
             } else {

@@ -5,7 +5,8 @@ import 'AdModel.dart';
 class Rental extends AdModel {
   String _dailyCost;
   String _maxDaysRent;
-
+  String _unitNumber;
+  String _unitRented;
 
   Rental(
       String imagePath,
@@ -19,6 +20,8 @@ class Rental extends AdModel {
       String imageUrl,
       String position,
       String dateLoad,
+      this._unitNumber,
+      this._unitRented,
       ) : super(imagePath, userId, title, description, lat, long, idToken, imageUrl, position, dateLoad);
 
 
@@ -28,6 +31,12 @@ class Rental extends AdModel {
 
   String get maxDaysRent => _maxDaysRent;
   set maxDaysRent(String value) => _maxDaysRent = value;
+
+  String get unitNumber => _unitNumber;
+  set unitNumber(String value) => _unitNumber = value;
+
+  String get unitRented => _unitRented;
+  set unitRented(String value) => _unitRented = value;
 
   @override
   Map<String, dynamic> toMap() {
@@ -44,6 +53,8 @@ class Rental extends AdModel {
       'imageUrl' : imageUrl,
       'position' : position,
       'dateLoad' : dateLoad,
+      'unitNumber' : _unitNumber,
+      'unitRented' : _unitRented,
     };
   }
 
@@ -61,6 +72,8 @@ class Rental extends AdModel {
         map['imageUrl'],
         map['position'],
         map['dateLoad'],
+        map['unitNumber'],
+        map['unitRented'],
     );
   }
 }

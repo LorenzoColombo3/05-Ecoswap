@@ -11,7 +11,8 @@ import '../../model/Rental.dart';
 import 'BaseRentalDataSource.dart';
 
 class RentalDataSource extends BaseRentalDataSource {
-  final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+  final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
   int _lastPositionSeach = 0;
 
   @override
@@ -20,8 +21,12 @@ class RentalDataSource extends BaseRentalDataSource {
       final String databasePath = 'rentals';
       String imageUrl = await uploadImage(rental.imagePath);
       rental.imageUrl = imageUrl;
-      rental.position = (await _getAddressFromLatLng(rental.latitude, rental.longitude))!;
-      await _databaseReference.child(databasePath).child(rental.idToken).set(rental.toMap());
+      rental.position =
+          (await _getAddressFromLatLng(rental.latitude, rental.longitude))!;
+      await _databaseReference
+          .child(databasePath)
+          .child(rental.idToken)
+          .set(rental.toMap());
       onLoadFinished(rental);
       return 'Success';
     } catch (error) {
@@ -36,7 +41,8 @@ class RentalDataSource extends BaseRentalDataSource {
       String fileName = basename(imagePath);
       String filePath = 'rental/$fileName';
       await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
-      String downloadURL = await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+      String downloadURL =
+          await FirebaseStorage.instance.ref(filePath).getDownloadURL();
       return downloadURL;
     } catch (e) {
       rethrow;
@@ -45,33 +51,41 @@ class RentalDataSource extends BaseRentalDataSource {
 
   @override
   Future<void> loadFromFirebaseToLocal(String userId) async {
-    getAllUserRentals(userId).then((firebaseList) => loadAllRental(firebaseList));
+    getAllUserRentals(userId)
+        .then((firebaseList) => loadAllRental(firebaseList));
   }
 
   @override
-  Future<List<Rental>> getAllRentals() async{
+  Future<List<Rental>> getAllRentals() async {
+    //TODO non mostrare i rental stessi dello user
     try {
-      DataSnapshot snapshot = await _databaseReference.child('rentals').get();
-      Map<Object?, Object?>? data =snapshot.value as Map<Object?, Object?>?;
+      DataSnapshot snapshot = await _databaseReference
+          .child('rentals')
+          .get();
+      Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
       List<Rental> rentals = [];
       if (data != null) {
         data.forEach((key, data) {
-          Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-          Rental rental = Rental.fromMap(data2);
-          rentals.add(rental);
+          Map<String, dynamic> data2 =
+              Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+          if (data['unitNumber'] != data['unitRented']) {
+            Rental rental = Rental.fromMap(data2);
+            rentals.add(rental);
+          }
         });
         return rentals;
       } else {
         return [];
       }
     } catch (error) {
-      print('Errore durante il recupero di tutti i rentals da Firebase: $error');
+      print(
+          'Errore durante il recupero di tutti i rentals da Firebase: $error');
       return [];
     }
   }
 
   @override
-  Future<List<Rental>> getAllUserRentals(String userId) async{
+  Future<List<Rental>> getAllUserRentals(String userId) async {
     try {
       DataSnapshot snapshot = await _databaseReference
           .child('rentals')
@@ -80,10 +94,11 @@ class RentalDataSource extends BaseRentalDataSource {
           .get();
 
       List<Rental> rentals = [];
-      Map<Object?, Object?>? values =snapshot.value as Map<Object?, Object?>?;
+      Map<Object?, Object?>? values = snapshot.value as Map<Object?, Object?>?;
       if (values != null) {
         values.forEach((key, data) {
-          Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+          Map<String, dynamic> data2 =
+              Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
           Rental rental = Rental.fromMap(data2);
           rentals.add(rental);
         });
@@ -91,19 +106,20 @@ class RentalDataSource extends BaseRentalDataSource {
 
       return rentals;
     } catch (error) {
-      print('Errore durante il recupero di tutti i rental per userId da Firebase: $error');
+      print(
+          'Errore durante il recupero di tutti i rental per userId da Firebase: $error');
       return [];
     }
-
   }
 
   @override
-  Future<Rental?> getRental(String idToken) async{
+  Future<Rental?> getRental(String idToken) async {
     Rental rental;
     try {
       final snapshot = await _databaseReference.child(idToken).get();
       if (snapshot.exists) {
-        Map<String, dynamic>? exchangeData = snapshot.value as Map<String, dynamic>?;
+        Map<String, dynamic>? exchangeData =
+            snapshot.value as Map<String, dynamic>?;
         String imagePath = exchangeData?['imagePath'];
         String userId = exchangeData?['userId'];
         String title = exchangeData?['title'];
@@ -111,12 +127,28 @@ class RentalDataSource extends BaseRentalDataSource {
         String dailyCost = exchangeData?['dailyCost'];
         String maxDaysRent = exchangeData?['maxDaysRent'];
         double lat = exchangeData?['lat'];
-        double long= exchangeData?['long'];
+        double long = exchangeData?['long'];
         String idToken = exchangeData?['idToken'];
         String imageUrl = exchangeData?['imageUrl'];
         String position = exchangeData?['position'];
         String dateLoad = exchangeData?['dateLoad'];
-        rental = Rental(imagePath, userId, title, description, lat, long, dailyCost, maxDaysRent, idToken, imageUrl, position, dateLoad);
+        String unitNumber = exchangeData?['unitNumber'];
+        String unitRented = exchangeData?['unitRented'];
+        rental = Rental(
+            imagePath,
+            userId,
+            title,
+            description,
+            lat,
+            long,
+            dailyCost,
+            maxDaysRent,
+            idToken,
+            imageUrl,
+            position,
+            dateLoad,
+            unitNumber,
+            unitRented);
         return rental;
       } else {
         print('No data available.');
@@ -128,7 +160,8 @@ class RentalDataSource extends BaseRentalDataSource {
     }
   }
 
-  double _calculateDistance(double latUser, double longUser, double latRent, double longRent) {
+  double _calculateDistance(
+      double latUser, double longUser, double latRent, double longRent) {
     const int earthRadiusKm = 6371; // Raggio medio della Terra in chilometri
     double lat1Rad = radians(latUser);
     double lat2Rad = radians(latRent);
@@ -149,7 +182,8 @@ class RentalDataSource extends BaseRentalDataSource {
   }
 
   @override
-  Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex) async {
+  Future<List<Rental>> getRentalsInRadius(
+      double latUser, double longUser, double radiusKm, int startIndex) async {
     List<Rental> rentalsInRadius = [];
     List<Rental> allRentals = await getAllRentals();
     Rental rental;
@@ -168,9 +202,12 @@ class RentalDataSource extends BaseRentalDataSource {
       );
       return distanceA.compareTo(distanceB);
     });
-    for (int i=startIndex; i<=startIndex+8 && i < allRentals.length; i++) {
-      rental=allRentals[i];
-      double distance = _calculateDistance(latUser, longUser, rental.latitude, rental.longitude);
+    for (int i = startIndex;
+        i <= startIndex + 8 && i < allRentals.length;
+        i++) {
+      rental = allRentals[i];
+      double distance = _calculateDistance(
+          latUser, longUser, rental.latitude, rental.longitude);
       if (distance <= radiusKm) {
         rentalsInRadius.add(rental);
       }
@@ -179,38 +216,47 @@ class RentalDataSource extends BaseRentalDataSource {
   }
 
   @override
-  Future<List<Rental>> searchItems(double latUser, double longUser, String query) async {
+  Future<List<Rental>> searchItems(
+      double latUser, double longUser, String query) async {
     List<Rental> rentals = [];
     List<Rental> rentalsApp = await _searchOnKeyword(query);
-    for (int i=_lastPositionSeach; i<=_lastPositionSeach+5 && i < rentalsApp.length; i++) {
+    for (int i = _lastPositionSeach;
+        i <= _lastPositionSeach + 5 && i < rentalsApp.length;
+        i++) {
       rentals.add(rentalsApp[i]);
     }
-    _lastPositionSeach=_lastPositionSeach + rentals.length;
+    _lastPositionSeach = _lastPositionSeach + rentals.length;
     return rentals;
   }
 
   Future<List<Rental>> _searchOnKeyword(String query) async {
     List<Rental> rentals = [];
-    DataSnapshot snapshot = await _databaseReference.child('rentals').get();
+    DataSnapshot snapshot = await _databaseReference
+        .child('rentals')
+        .get();
     Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
     if (data != null) {
       data.forEach((key, data) {
         Map<String, dynamic> dataMap =
-        Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+            Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
         if (dataMap['title'].toString().contains(query) ||
             dataMap['description'].toString().contains(query)) {
-          Rental rental = Rental.fromMap(dataMap);
-          rentals.add(rental);
+          if (data['unitNumber'] != data['unitRented']) {
+            Rental rental = Rental.fromMap(dataMap);
+            rentals.add(rental);
+          }
         }
       });
     }
     return rentals;
   }
 
-  Future<String?> _getAddressFromLatLng(double latitude, double longitude) async {
+  Future<String?> _getAddressFromLatLng(
+      double latitude, double longitude) async {
     String? _currentCity;
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
       Placemark place = placemarks[0];
       _currentCity = place.locality;
       return _currentCity;
@@ -219,7 +265,4 @@ class RentalDataSource extends BaseRentalDataSource {
       return null;
     }
   }
-
 }
-  
-

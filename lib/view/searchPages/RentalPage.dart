@@ -8,6 +8,7 @@ import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
+import 'RentalPayment.dart';
 
 class RentalPage extends StatefulWidget {
   final Rental rental;
@@ -109,6 +110,13 @@ class _RentalPageState extends State<RentalPage> {
             ),
             const SizedBox(height: 8.0),
             Text(
+              'Unit remained: ${widget.rental.unitRented} / ${widget.rental.unitNumber}', // Da sostituire con la vera posizione
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
               'Date: ${widget.rental.dateLoad.substring(0,10)}', // Da sostituire con la vera data
               style: TextStyle(
                 fontSize: 16.0,
@@ -130,7 +138,15 @@ class _RentalPageState extends State<RentalPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Logica per avviare la chat
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RentalPayment(
+                      rental: widget.rental,
+                      currentUser: widget.currentUser,
+                    ),
+                  ),
+                );
               },
               child: const Text('Start Rental'),
             ),

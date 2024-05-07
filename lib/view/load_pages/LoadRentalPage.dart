@@ -33,6 +33,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
   TextEditingController _descriptionInputController = TextEditingController();
   TextEditingController _dailyCostInputController = TextEditingController();
   TextEditingController _maxDaysInputController = TextEditingController();
+  TextEditingController _unitNumberInputController = TextEditingController();
   late UserModel currentUser;
   late String imagePath;
   late IUserRepository userRepository;
@@ -123,6 +124,21 @@ class _LoadRentalState extends State<LoadRentalPage> {
               floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
           ),
+          SizedBox(height: 16.0),
+          TextFormField(
+            controller: _unitNumberInputController,
+            keyboardType: TextInputType.phone,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              filled: false,
+              hintText: 'Unit number',
+              labelText: 'Unit number',
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+            ),
+          ),
           SizedBox(height: 24.0),
           SizedBox(
             height: 300,
@@ -187,7 +203,8 @@ class _LoadRentalState extends State<LoadRentalPage> {
                       _dailyCostInputController.value.text,
                       _maxDaysInputController.value.text,
                       Uuid().v4(),
-                      "","", DateTime.now().toString());
+                      "","", DateTime.now().toString(),
+                      _unitNumberInputController.text, "0");
                   adViewModel.loadRental(rental).then((message) {
                     if (message!.contains('Success')) {
                           widget.onButtonPressed();
