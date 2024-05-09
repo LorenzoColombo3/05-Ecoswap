@@ -9,10 +9,10 @@ class UserModel {
   String _dateField;
   String _phoneNumber;
   String? _imageUrl;
-  List<String> _activeRentalsBuy;
+  /*List<String> _activeRentalsBuy;
   List<String> _finishedRentalsBuy;
   List<String> _activeRentalsSell;
-  List<String> _finishedRentalsSell;
+  List<String> _finishedRentalsSell;*/
 
   // Costruttore della classe
   UserModel({
