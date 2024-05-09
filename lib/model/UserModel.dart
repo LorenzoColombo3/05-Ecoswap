@@ -9,11 +9,11 @@ class UserModel {
   String _dateField;
   String _phoneNumber;
   String? _imageUrl;
-  List<String> _activeRentalsBuy;
-  List<String> _finishedRentalsBuy;
-  List<String> _activeRentalsSell;
-  List<String> _finishedRentalsSell;
-  List<String> _expiredExchange;
+  List<String>? _activeRentalsBuy;
+  List<String>? _finishedRentalsBuy;
+  List<String>? _activeRentalsSell;
+  List<String>? _finishedRentalsSell;
+  List<String>? _expiredExchange;
 
   // Costruttore della classe
   UserModel({
@@ -121,7 +121,7 @@ class UserModel {
 
   String? get imagePath => _imagePath;
   // Getter per _activeRentalsBuy
-  List<String> get activeRentalsBuy => _activeRentalsBuy;
+  List<String> get activeRentalsBuy => _activeRentalsBuy!;
 
   // Setter per _activeRentalsBuy
   set activeRentalsBuy(List<String> value) {
@@ -129,7 +129,7 @@ class UserModel {
   }
 
   // Getter per _finishedRentalsBuy
-  List<String> get finishedRentalsBuy => _finishedRentalsBuy;
+  List<String> get finishedRentalsBuy => _finishedRentalsBuy!;
 
   // Setter per _finishedRentalsBuy
   set finishedRentalsBuy(List<String> value) {
@@ -137,7 +137,7 @@ class UserModel {
   }
 
   // Getter per _activeRentalsSell
-  List<String> get activeRentalsSell => _activeRentalsSell;
+  List<String> get activeRentalsSell => _activeRentalsSell!;
 
   // Setter per _activeRentalsSell
   set activeRentalsSell(List<String> value) {
@@ -145,7 +145,7 @@ class UserModel {
   }
 
   // Getter per _finishedRentalsSell
-  List<String> get finishedRentalsSell => _finishedRentalsSell;
+  List<String> get finishedRentalsSell => _finishedRentalsSell!;
 
   // Setter per _finishedRentalsSell
   set finishedRentalsSell(List<String> value) {
@@ -153,7 +153,7 @@ class UserModel {
   }
 
   // Getter per _expiredExchange
-  List<String> get expiredExchange => _expiredExchange;
+  List<String> get expiredExchange => _expiredExchange!;
 
   // Setter per _expiredExchange
   set expiredExchange(List<String> value) {
@@ -162,52 +162,52 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _activeRentalsBuy
   void addToActiveRentalsBuy(String item) {
-    _activeRentalsBuy.add(item);
+    _activeRentalsBuy?.add(item);
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsBuy
   void removeFromActiveRentalsBuy(String item) {
-    _activeRentalsBuy.remove(item);
+    _activeRentalsBuy?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _finishedRentalsBuy
   void addToFinishedRentalsBuy(String item) {
-    _finishedRentalsBuy.add(item);
+    _finishedRentalsBuy?.add(item);
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsBuy
   void removeFromFinishedRentalsBuy(String item) {
-    _finishedRentalsBuy.remove(item);
+    _finishedRentalsBuy?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _activeRentalsSell
   void addToActiveRentalsSell(String item) {
-    _activeRentalsSell.add(item);
+    _activeRentalsSell?.add(item);
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsSell
   void removeFromActiveRentalsSell(String item) {
-    _activeRentalsSell.remove(item);
+    _activeRentalsSell?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _finishedRentalsSell
   void addToFinishedRentalsSell(String item) {
-    _finishedRentalsSell.add(item);
+    _finishedRentalsSell?.add(item);
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsSell
   void removeFromFinishedRentalsSell(String item) {
-    _finishedRentalsSell.remove(item);
+    _finishedRentalsSell?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _expiredExchange
   void addToExpiredExchange(String item) {
-    _expiredExchange.add(item);
+    _expiredExchange?.add(item);
   }
 
   // Metodo per rimuovere un elemento da _expiredExchange
   void removeFromExpiredExchange(String item) {
-    _expiredExchange.remove(item);
+    _expiredExchange?.remove(item);
   }
 
 

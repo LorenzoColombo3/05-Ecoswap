@@ -330,11 +330,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         double lat = userData?['lat'];
         double long = userData?['long'];
         String phoneNumber = userData?['phoneNumber'];
-        List<String> activeRentalsBuy = userData?['activeRentalsBuy'];
-        List<String> activeRentalsSell = userData?['activeRentalsSell'];
-        List<String> finishedRentalsSell = userData?['finishedRentalsSell'];
-        List<String> finishedRentalsBuy = userData?['finishedRentalsBuy'];
-        List<String> expiredExchange = userData?['expiredExchange'];
+        List<String>? activeRentalsBuy = userData?['activeRentalsBuy'];
+        List<String>? activeRentalsSell = userData?['activeRentalsSell'];
+        List<String>? finishedRentalsSell = userData?['finishedRentalsSell'];
+        List<String>? finishedRentalsBuy = userData?['finishedRentalsBuy'];
+        List<String>? expiredExchange = userData?['expiredExchange'];
         return UserModel(
             idToken: idToken,
             name: name,
