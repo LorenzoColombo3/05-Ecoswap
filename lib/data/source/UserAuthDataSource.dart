@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
@@ -16,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
-
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
@@ -47,24 +45,25 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
         final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+            await googleSignInAccount.authentication;
         final AuthCredential credential = GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
         final UserCredential authResult =
-        await firebaseAuth.signInWithCredential(credential);
+            await firebaseAuth.signInWithCredential(credential);
 
         if (authResult.additionalUserInfo!.isNewUser) {
           return "Nuovo utente creato con successo.";
         } else {
           final User? currentUser = FirebaseAuth.instance.currentUser;
           String idToken = currentUser!.uid;
-          UserModel? user= await getUserDataFirebase(idToken);
+          UserModel? user = await getUserDataFirebase(idToken);
           saveUserLocal(user!);
           return "Accesso con Google effettuato con successo.";
         }
@@ -79,18 +78,23 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  Future<String> setProfileImage(String imagePath) async{
+  Future<String> setProfileImage(String imagePath) async {
     try {
       final User? currentUser = FirebaseAuth.instance.currentUser;
       File imageFile = File(imagePath);
       String fileName = currentUser!.uid;
       String filePath = 'userImage/$fileName';
       await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
-      String downloadURL = await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+      String downloadURL =
+          await FirebaseStorage.instance.ref(filePath).getDownloadURL();
       DatabaseReference databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String idToken = currentUser.uid;
-      databaseReference.child('users').child(idToken).child('imageUrl').set(downloadURL);
+      databaseReference
+          .child('users')
+          .child(idToken)
+          .child('imageUrl')
+          .set(downloadURL);
       return downloadURL;
     } catch (e) {
       print('Errore durante il caricamento dell\'immagine: $e');
@@ -103,7 +107,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     final String idToken = currentUser!.uid;
     DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
     try {
-      DataSnapshot snapshot = await databaseReference.child('users').child(idToken).child('imageUrl').get();
+      DataSnapshot snapshot = await databaseReference
+          .child('users')
+          .child(idToken)
+          .child('imageUrl')
+          .get();
       if (snapshot.value != null) {
         String imageUrl = snapshot.value.toString();
         return imageUrl;
@@ -130,7 +138,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       );
       final User? currentUser = FirebaseAuth.instance.currentUser;
       String idToken = currentUser!.uid;
-      UserModel? user= await getUserDataFirebase(idToken);
+      UserModel? user = await getUserDataFirebase(idToken);
       saveUserLocal(user!);
       return 'Success';
     } on FirebaseAuthException catch (e) {
@@ -155,7 +163,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }) async {
     try {
       final DatabaseReference databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
       UserModel? newUser;
       final String idToken = currentUser!.uid;
@@ -165,24 +173,33 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'birthDate': birthDate,
         'email': currentUser.email,
         'phoneNumber': phoneNumber,
+         'activeRentalsSell' : [],
+        'activeRentalsBuy' : [],
+        'finishedRentalsSell' : [],
+        'finishedRentalsBuy' : [],
+        'expiredExchange' : [],
       };
       final String databasePath = 'users';
       await databaseReference
           .child(databasePath)
           .child(idToken)
           .set(userData)
-          .then((_) =>
-          newUser = UserModel(
-            idToken: idToken,
-            name: name,
-            lastName: lastName,
-            email: currentUser.email,
-            latitude:0,
-            longitude:0,
-            birthDate: birthDate,
-            phoneNumber: phoneNumber,
-            imageUrl: "",
-          ));
+          .then((_) => newUser = UserModel(
+                idToken: idToken,
+                name: name,
+                lastName: lastName,
+                email: currentUser.email,
+                latitude: 0,
+                longitude: 0,
+                birthDate: birthDate,
+                phoneNumber: phoneNumber,
+                imageUrl: "",
+                activeRentalsBuy: [],
+                finishedRentalBuy: [],
+                activeRentalsSell: [],
+                finishedRentalsSell: [],
+                expiredExchange: [],
+              ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
       return result;
@@ -192,9 +209,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-
   @override
-  void deleteUser(){
+  void deleteUser() {
     FirebaseAuth.instance.currentUser?.delete();
   }
 
@@ -208,17 +224,21 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         desiredAccuracy: LocationAccuracy.high,
       );
       final DatabaseReference databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
       final String idToken = currentUser!.uid;
       databasePath = 'users/$idToken/lat';
-      await databaseReference.child(databasePath).set(_currentPosition.latitude);
+      await databaseReference
+          .child(databasePath)
+          .set(_currentPosition.latitude);
       databasePath = 'users/$idToken/long';
-      await databaseReference.child(databasePath).set(_currentPosition.longitude);
+      await databaseReference
+          .child(databasePath)
+          .set(_currentPosition.longitude);
       UserModel? user = await getUser();
       if (user != null) {
-        user.latitude=_currentPosition.latitude;
-        user.longitude=_currentPosition.longitude;
+        user.latitude = _currentPosition.latitude;
+        user.longitude = _currentPosition.longitude;
         await saveUserLocal(user);
       }
     } catch (e) {
@@ -226,12 +246,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-
-
   Future<String?> _getAddressFromLatLng(Position position) async {
     String? _currentCity;
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark place = placemarks[0];
       _currentCity = place.locality;
       return _currentCity;
@@ -240,7 +259,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       return null;
     }
   }
-
 
   @override
   Future<bool> signOutFromGoogle() async {
@@ -252,7 +270,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-  Future<void> saveUserLocal(UserModel user) async{
+  Future<void> saveUserLocal(UserModel user) async {
     SharedPreferences prefs;
     prefs = await SharedPreferences.getInstance();
     final Map<String, dynamic> userMap = user.toMap();
@@ -286,7 +304,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-   Future<UserModel?> getUser() async {
+  Future<UserModel?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? userString = prefs.getString('user');
     if (userString != null) {
@@ -298,12 +316,12 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   Future<UserModel?> getUserDataFirebase(String idToken) async {
-    Result result;
     try {
       final ref = FirebaseDatabase.instance.ref();
       final snapshot = await ref.child('users/$idToken').get();
       if (snapshot.exists) {
-        Map<dynamic, dynamic>? userData = snapshot.value as Map<dynamic, dynamic>?;
+        Map<dynamic, dynamic>? userData =
+            snapshot.value as Map<dynamic, dynamic>?;
         String name = userData?['username'];
         String email = userData?['email'];
         String lastName = userData?['lastname'];
@@ -311,12 +329,31 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         double lat = userData?['lat'];
         double long = userData?['long'];
         String phoneNumber = userData?['phoneNumber'];
-        return UserModel(idToken: idToken, name: name, lastName: lastName, email: email, latitude: lat, longitude: long, birthDate: birthDate, phoneNumber: phoneNumber);
-      }else{
+        List<String> activeRentalsBuy = userData?['activeRentalsBuy'];
+        List<String> activeRentalsSell = userData?['activeRentalsSell'];
+        List<String> finishedRentalsSell = userData?['finishedRentalsSell'];
+        List<String> finishedRentalsBuy = userData?['finishedRentalsBuy'];
+        List<String> expiredExchange = userData?['expiredExchange'];
+        return UserModel(
+            idToken: idToken,
+            name: name,
+            lastName: lastName,
+            email: email,
+            latitude: lat,
+            longitude: long,
+            birthDate: birthDate,
+            phoneNumber: phoneNumber,
+            activeRentalsBuy: activeRentalsBuy,
+            finishedRentalBuy: finishedRentalsBuy,
+            activeRentalsSell: activeRentalsSell,
+            finishedRentalsSell: finishedRentalsSell,
+            expiredExchange: expiredExchange);
+      } else {
         return null;
       }
     } catch (error) {
-      print("Errore durante il recupero dei dati dell'utente con idToken: $idToken, Errore: $error");
+      print(
+          "Errore durante il recupero dei dati dell'utente con idToken: $idToken, Errore: $error");
       return null;
     }
   }
@@ -330,8 +367,4 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       rethrow;
     }
   }
-
-
-
 }
-

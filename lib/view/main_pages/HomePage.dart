@@ -131,7 +131,6 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-    print(Theme.of(context).colorScheme.primary.toString()+"\n figlio ");
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -221,9 +220,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        Container(
-          margin: EdgeInsets.all(10.0),
-          child: Expanded(
+          Expanded(
             child: IndexedStack(
               index: _selectedIndex,
               children: <Widget>[
@@ -272,7 +269,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-        ),
       ],
     );
   }
@@ -293,63 +289,63 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: Container(
-          margin: const EdgeInsets.all(5.0),
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Column(
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: FadeInImage(
-                  placeholder: AssetImage('assets/image/loading_indicator.gif'),
-                  // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
-                  height: 200,
-                  image: NetworkImage(rental.imageUrl),
-                  // URL dell'immagine principale
-                  fit: BoxFit.cover, // Adatta l'immagine all'interno del container
+        margin: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.background,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: FadeInImage(
+                placeholder: AssetImage('assets/image/loading_indicator.gif'),
+                // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
+                height: 200,
+                image: NetworkImage(rental.imageUrl),
+                // URL dell'immagine principale
+                fit: BoxFit.cover, // Adatta l'immagine all'interno del container
 
-                ),
               ),
-              Stack(
-                children: [
-                  ListTile(
+            ),
+            Stack(
+              children: [
+                ListTile(
 
-                    title: Text(
-                      rental.title,
-                      overflow: TextOverflow.ellipsis, // Testo non va a capo
-                    ),
-                    subtitle: Text(
-                      "€${rental.dailyCost}",
-                      overflow: TextOverflow.ellipsis, // Testo non va a capo
-                    ),
+                  title: Text(
+                    rental.title,
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: InkWell(
-                      onTap: () {
-                        // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                        // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        // Personalizza il padding dell'icona
-                        child: Icon(
-                          Icons.favorite, // Icona del cuore come preferito
-                          color: Colors.grey,
-                          // Colore rosso per indicare che è contrassegnato come preferito
-                          size: 24.0, // Dimensione dell'icona personalizzata
-                        ),
+                  subtitle: Text(
+                    "€${rental.dailyCost}",
+                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
+                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      // Personalizza il padding dell'icona
+                      child: Icon(
+                        Icons.favorite, // Icona del cuore come preferito
+                        color: Colors.grey,
+                        // Colore rosso per indicare che è contrassegnato come preferito
+                        size: 24.0, // Dimensione dell'icona personalizzata
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

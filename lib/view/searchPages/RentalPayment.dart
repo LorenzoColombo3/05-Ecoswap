@@ -44,8 +44,11 @@ class _RentalPaymentState extends State<RentalPayment> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.primary,
       appBar: AppBar(
+        backgroundColor: colorScheme.background,
         title: Text('Payment'),
       ),
       body: Padding(
@@ -144,6 +147,10 @@ class _RentalPaymentState extends State<RentalPayment> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<
+                        Color>((states) => colorScheme.background),
+                  ),
                   onPressed: ()  {
                      StripeService.stripePaymentCheckout(
                         widget.rental, unitNumber, daysRent, context, mounted,
@@ -184,7 +191,10 @@ class _RentalPaymentState extends State<RentalPayment> {
                        ));
                     }).then((value) => value.call());
                   },
-                  child: Text('Pay with Stripe'),
+                  child: Text(
+                    'Pay with Stripe',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
                 ),
               ],
             ),

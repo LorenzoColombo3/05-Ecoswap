@@ -29,6 +29,7 @@ class _RentalPageState extends State<RentalPage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
+  late String? imageUrl;
 
   @override
   void initState() {
@@ -37,7 +38,9 @@ class _RentalPageState extends State<RentalPage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
+    userViewModel.getProfileImage().then((value) => imageUrl=value!);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,207 +52,224 @@ class _RentalPageState extends State<RentalPage> {
         backgroundColor: colorScheme.background,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
+        child: FutureBuilder<String?>(
+          future: userViewModel.getProfileImage(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              imageUrl = snapshot.data;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      // Mostra l'immagine a schermo intero
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FullScreenImage(imageUrl: widget.rental.imageUrl),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 400, // Altezza arbitraria per l'immagine
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        image: DecorationImage(
-                          image: NetworkImage(widget.rental.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: const Stack(
-                        children: [
-                          Positioned(
-                            top: 8.0,
-                            right: 8.0,
-                            child: Icon(
-                              Icons.favorite,
-                              color: Colors.grey,
-                              size: 24.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text("Published on: ${widget.rental.dateLoad.substring(0,10)}"),
-                  Divider(
-                    color: colorScheme.onPrimary,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.background,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ListTile(
-                      onTap: () {
-                      // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-                      },
-                      title: Text('UserName'),
-                      subtitle: Text("addStarsRating"),
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage('assets/image/profile.jpg'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Logica per avviare la chat
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<
-                          Color>((states) => colorScheme.background),
-                    ),
-                    child: Text(
-                      'Start a Chat',
-                      style: TextStyle(color: colorScheme.onPrimary),
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Divider(
-                    color: colorScheme.onPrimary,
-                  ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.black, // Colore del testo normale
-                        ),
-                        children: [
-                          const TextSpan(
-                            text: 'Description: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20.0, // Testo in grassetto
-                            ),
-                          ),
-                          TextSpan(
-                              children: [
-                                WidgetSpan(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 15.0),
-                                    child: Text(
-                                      "${widget.rental.description}",
-                                    ),
-                                  ),
-                                ),
-                              ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    color: colorScheme.onPrimary,
-                  ),
-                  const SizedBox(height: 8.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: colorScheme.background,
-                    ),
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            text: "Rental information:\n",
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,// Colore del testo normale
+                        GestureDetector(
+                          onTap: () {
+                            // Mostra l'immagine a schermo intero
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FullScreenImage(imageUrl: imageUrl ?? ''),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 400, // Altezza arbitraria per l'immagine
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              image: DecorationImage(
+                                image: NetworkImage(widget.rental.imageUrl),
+                                fit: BoxFit.cover,
+                              ),
                             ),
+                            child: const Stack(
+                              children: [
+                                Positioned(
+                                  top: 8.0,
+                                  right: 8.0,
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: Colors.grey,
+                                    size: 24.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text("Published on: ${widget.rental.dateLoad.substring(0,10)}"),
+                        Divider(
+                          color: colorScheme.onPrimary,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: colorScheme.background,
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: ListTile(
+                            onTap: () {
+                              // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                            },
+                            title: Text(widget.currentUser.name),
+                            subtitle: Text("addStarsRating"),
+                            leading:
+                            imageUrl != null
+                                ? CircleAvatar(
+                              backgroundImage: NetworkImage(imageUrl!),
+                            )
+                                : CircleAvatar(
+                              child: Icon(Icons.person),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Logica per avviare la chat
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith<
+                                Color>((states) => colorScheme.background),
+                          ),
+                          child: Text(
+                            'Start a Chat',
+                            style: TextStyle(color: colorScheme.onPrimary),
+                          ),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Divider(
+                          color: colorScheme.onPrimary,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.black, // Colore del testo normale
+                              ),
+                              children: [
+                                const TextSpan(
+                                  text: "Description:\n",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0, // Testo in grassetto
+                                  ),
+                                ),
+                                TextSpan(
+                                  children: [
+                                    WidgetSpan(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 15.0),
+                                        child: Text(
+                                          "${widget.rental.description}",
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          color: colorScheme.onPrimary,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: colorScheme.background,
+                          ),
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              WidgetSpan(
-                                child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
-                              ),
-                              const TextSpan(
-                                text: 'Max days of rent: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0, // Testo in grassetto
-                                ),
-                              ),
-                              TextSpan(
-                                text: "${widget.rental.maxDaysRent}\n",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                              WidgetSpan(
-                                child: SizedBox(width: 20),// Spazio vuoto per spostare il testo verso sinistra
-                              ),
-                              const TextSpan(
-                                text: 'Daily cost: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0, // Testo in grassetto
-                                ),
-                              ),
-                              TextSpan(
-                                text: "${widget.rental.dailyCost}\n",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                              WidgetSpan(
-                                child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
-                              ),
-                              const TextSpan(
-                                text: 'Unit remained: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0, // Testo in grassetto
-                                ),
-                              ),
-                              TextSpan(
-                                text: '${widget.rental.unitRented} / ${widget.rental.unitNumber}\n',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                              WidgetSpan(
-                                child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
-                              ),
-                              const TextSpan(
-                                text: 'Location: ',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0, // Testo in grassetto
-                                ),
-                              ),
-                              TextSpan(
-                                text: "${widget.rental.position}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16.0,
+                              RichText(
+                                text: TextSpan(
+                                  text: "Rental information:\n",
+                                  style: const TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,// Colore del testo normale
+                                  ),
+                                  children: [
+                                    WidgetSpan(
+                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                    ),
+                                    const TextSpan(
+                                      text: 'Max days of rent: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0, // Testo in grassetto
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "${widget.rental.maxDaysRent}\n",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: SizedBox(width: 20),// Spazio vuoto per spostare il testo verso sinistra
+                                    ),
+                                    const TextSpan(
+                                      text: 'Daily cost: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0, // Testo in grassetto
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "${widget.rental.dailyCost}\n",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                    ),
+                                    const TextSpan(
+                                      text: 'Unit remained: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0, // Testo in grassetto
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '${widget.rental.unitRented} / ${widget.rental.unitNumber}\n',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                    ),
+                                    const TextSpan(
+                                      text: 'Location: ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0, // Testo in grassetto
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "${widget.rental.position}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -259,9 +279,9 @@ class _RentalPageState extends State<RentalPage> {
                     ),
                   ),
                 ],
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -298,28 +318,3 @@ class _RentalPageState extends State<RentalPage> {
 
 
 }
-
-/*
-
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RentalPayment(
-                                    rental: widget.rental,
-                                    currentUser: widget.currentUser,
-                                  ),
-                                ),
-                              );
-                            },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.resolveWith<
-                                  Color>((states) => colorScheme.background),
-                            ),
-                            child: Text(
-                              'Start rental',
-                              style: TextStyle(color: colorScheme.onPrimary),
-                            ),
-                          ),
- */
