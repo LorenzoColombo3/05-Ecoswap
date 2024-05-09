@@ -162,6 +162,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String phoneNumber,
   }) async {
     try {
+      List<String> listaVuota = [];
       final DatabaseReference databaseReference =
           FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -173,11 +174,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'birthDate': birthDate,
         'email': currentUser.email,
         'phoneNumber': phoneNumber,
-         'activeRentalsSell' : [],
-        'activeRentalsBuy' : [],
-        'finishedRentalsSell' : [],
-        'finishedRentalsBuy' : [],
-        'expiredExchange' : [],
+         'activeRentalsSell' : listaVuota,
+        'activeRentalsBuy' : listaVuota,
+        'finishedRentalsSell' : listaVuota,
+        'finishedRentalsBuy' : listaVuota,
+        'expiredExchange' : listaVuota,
       };
       final String databasePath = 'users';
       await databaseReference
@@ -194,11 +195,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 birthDate: birthDate,
                 phoneNumber: phoneNumber,
                 imageUrl: "",
-                activeRentalsBuy: [],
-                finishedRentalBuy: [],
-                activeRentalsSell: [],
-                finishedRentalsSell: [],
-                expiredExchange: [],
+                activeRentalsBuy: listaVuota,
+                finishedRentalBuy: listaVuota,
+                activeRentalsSell: listaVuota,
+                finishedRentalsSell: listaVuota,
+                expiredExchange: listaVuota,
               ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
