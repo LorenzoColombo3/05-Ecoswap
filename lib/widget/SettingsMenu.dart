@@ -45,11 +45,17 @@ class _SettingsMenuState extends State<SettingsMenu> {
       itemBuilder: (context) => [
         const PopupMenuItem(
           value: 'logout',
-          child: Text('Logout'),
+          child: Text(
+            'Logout',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const PopupMenuItem(
           value: 'settings',
-          child: Text('Settings'),
+          child: Text(
+            'Settings',
+            style: TextStyle(color: Colors.black)
+          ),
         ),
       ],
     );

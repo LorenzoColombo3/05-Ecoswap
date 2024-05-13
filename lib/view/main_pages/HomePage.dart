@@ -132,144 +132,149 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: 50.0),
-        Container(
-          padding: EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0),
-            color: colorScheme.background,
-          ),
-          margin: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _searchController,
-                  style: Theme.of(context).textTheme.headline6,
-                  decoration: const InputDecoration(
-                    hintText: 'Search...',
-                    prefixIcon: Icon(Icons.search),
-                    border: InputBorder.none,
-                  ),
-                  onEditingComplete: () async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SearchPage(
-                          search: _searchController.text,
-                          currentUser: currentUser,
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: 50.0),
+          Container(
+            padding: EdgeInsets.all(4.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.0),
+              color: colorScheme.background,
+            ),
+            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _searchController,
+                    style: TextStyle(color: colorScheme.onPrimary),
+                    decoration: const InputDecoration(
+                      hintText: 'Search...',
+                      prefixIcon: Icon(Icons.search),
+                      border: InputBorder.none,
+                    ),
+                    onEditingComplete: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchPage(
+                            search: _searchController.text,
+                            currentUser: currentUser,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedIndex = 0;
-                      rentalButtonColor = colorScheme.background;
-                      exchangeButtonColor = Colors.transparent;
-                    });
-                  },
-                  child: Text(
-                    'Rental',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>(
-                            (states) => rentalButtonColor),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () async {
-                    await loadMoreExchange(currentUser);
-                    setState(() {
-                      _selectedIndex = 1;
-                      exchangeButtonColor = colorScheme.background;
-                      rentalButtonColor = Colors.transparent;
-                    });
-                  },
-                  child: Text(
-                    'Exchange',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>(
-                            (states) => exchangeButtonColor),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-          Expanded(
-            child: IndexedStack(
-              index: _selectedIndex,
-              children: <Widget>[
-                GridView.builder(
-                  controller: _scrollControllerRental,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: _rentals.length + (_isLoadingRental ? 1 : 0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 2.0,
-                    crossAxisSpacing: 2.0,
-                    mainAxisExtent: 300,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index < _rentals.length) {
-                      return _buildRentalItem(_rentals[index], context);
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
                       );
-                    }
-                  },
-                ),
-                GridView.builder(
-                  controller: _scrollControllerExchange,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: _exchanges.length + (_isLoadingExchange ? 1 : 0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 2.0,
-                    crossAxisSpacing: 2.0,
-                    mainAxisExtent: 300,
+                    },
                   ),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index < _exchanges.length) {
-                      return _buildExchangeItem(_exchanges[index], context);
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
                 ),
               ],
             ),
           ),
-      ],
+          Container(
+            margin: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 0;
+                        rentalButtonColor = colorScheme.background;
+                        exchangeButtonColor = Colors.transparent;
+                      });
+                    },
+                    child: Text(
+                      'Rental',
+                      style: TextStyle(color: colorScheme.onPrimary),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                      MaterialStateProperty.resolveWith<Color>(
+                              (states) => rentalButtonColor),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () async {
+                      await loadMoreExchange(currentUser);
+                      setState(() {
+                        _selectedIndex = 1;
+                        exchangeButtonColor = colorScheme.background;
+                        rentalButtonColor = Colors.transparent;
+                      });
+                    },
+                    child: Text(
+                      'Exchange',
+                      style: TextStyle(color: colorScheme.onPrimary),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor:
+                      MaterialStateProperty.resolveWith<Color>(
+                              (states) => exchangeButtonColor),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+            Expanded(
+              child: IndexedStack(
+                index: _selectedIndex,
+                children: <Widget>[
+                  GridView.builder(
+                    controller: _scrollControllerRental,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: _rentals.length + (_isLoadingRental ? 1 : 0),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 2.0,
+                      crossAxisSpacing: 2.0,
+                      mainAxisExtent: 300,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index < _rentals.length) {
+                        return _buildRentalItem(_rentals[index], context);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                  GridView.builder(
+                    controller: _scrollControllerExchange,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: _exchanges.length + (_isLoadingExchange ? 1 : 0),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 2.0,
+                      crossAxisSpacing: 2.0,
+                      mainAxisExtent: 300,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index < _exchanges.length) {
+                        return _buildExchangeItem(_exchanges[index], context);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 

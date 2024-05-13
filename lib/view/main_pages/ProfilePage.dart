@@ -51,8 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     userViewModel.getUser().then((user) {
       currentUser = user!;
-      _exchangeFuture = adViewModel.getLocalExchange(currentUser.idToken);
-      _rentalsFuture = adViewModel.getLocalRental(currentUser.idToken);
+      _exchangeFuture = adViewModel.getAllUserExchanges(currentUser.idToken);
+      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
@@ -185,9 +185,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
                             return Center(child: Text(
                                 'Error during recoverage of data'));
-                          } else if (snapshot.data!.isEmpty) {
-                            return Center(
-                                child: Text('No rentals available'));
                           } else
                           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                             _rentals = snapshot.data!;
@@ -211,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                           } else {
                             return Center(
-                                child: Text('No rentals available'));
+                                child: Text('No rentals available!!'));
                           }
                         },
                       ),

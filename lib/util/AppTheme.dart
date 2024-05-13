@@ -17,15 +17,14 @@ class AppTheme {
 
   static ThemeData darkTheme() {
     return ThemeData(
-      colorScheme: const ColorScheme.dark(
-        primary: Color(0xFF2E7D32), // Verde Primario
-        secondary: Color(0xFF4CAF50), // Verde Secondario
-        background: Color(0xFF212121), // Colore di sfondo
-        surface: Color(0xFF424242), // Superficie
-        onPrimary: Colors.white, // Testo su primario
-        onSecondary: Colors.white, // Testo su secondario
+      colorScheme:  ColorScheme.dark(
+        primary: Color(0xff303030),
+        secondary: Colors.lightGreen,
+        background: const Color(0xFF7BFF81),
+        surface: Colors.white,
+        onPrimary: Colors.black,
+        onSecondary: Colors.white,
       ),
-      // Altri attributi del tema...
     );
   }
 }

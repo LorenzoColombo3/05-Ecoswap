@@ -78,26 +78,30 @@ class ExchangeDataSource extends BaseExchangeDataSource {
 
   @override
   Future<List<Exchange>> getAllUserExchanges(String userId) async{
-
     try {
-      DataSnapshot snapshot = await _databaseReference.child('exchanges').orderByChild('userId').equalTo(userId).get();
+      DataSnapshot snapshot = await _databaseReference
+          .child('exchanges')
+          .orderByChild('userId')
+          .equalTo(userId)
+          .get();
+
       List<Exchange> exchanges = [];
-      var values = snapshot.value; // Rimuovi il cast esplicito per ora
-      if (values is Map) { // Verifica se i valori sono una mappa
+      Map<Object?, Object?>? values = snapshot.value as Map<Object?, Object?>?;
+      if (values != null) {
         values.forEach((key, data) {
-          if (data is Map<String, dynamic>) { // Verifica se i dati sono mappa di stringhe dinamiche
-            Exchange exchange = Exchange.fromMap(data);
-            exchanges.add(exchange);
-          }
+          Map<String, dynamic> data2 =
+          Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
+          Exchange exchange = Exchange.fromMap(data2);
+          exchanges.add(exchange);
         });
       }
 
       return exchanges;
     } catch (error) {
-      print('Errore durante il recupero di tutti gli exchange per userId da Firebase: $error');
+      print(
+          'Errore durante il recupero di tutti i rental per userId da Firebase: $error');
       return [];
     }
-
   }
 
   @override

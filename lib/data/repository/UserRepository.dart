@@ -85,5 +85,9 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<UserModel?> getUser() {
     return _userAuthDataSource.getUser();
   }
+
+  Future<UserModel?> getUserData(String idToken){
+    return _userAuthDataSource.getUserDataFirebase(idToken);
+  }
   
 }

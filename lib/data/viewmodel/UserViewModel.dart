@@ -65,4 +65,8 @@ class UserViewModel{
   Future<UserModel?> getUser() async{
     return _userRepository.getUser();
   }
+
+  Future<UserModel?> getUserData(String idToken){
+    return _userRepository.getUserData(idToken);
+  }
 }

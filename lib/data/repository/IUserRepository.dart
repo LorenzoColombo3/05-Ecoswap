@@ -18,4 +18,5 @@ abstract class IUserRepository{
   Future<UserModel?> getUser();
   Future<String> setProfileImage(String imageUrl);
   Future<String?> getProfileImage();
+  Future<UserModel?> getUserData(String idToken);
 }

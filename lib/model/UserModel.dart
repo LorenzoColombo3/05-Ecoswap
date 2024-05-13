@@ -253,4 +253,5 @@ class UserModel {
       expiredExchange: map['expiredExchange'],
     );
   }
+
 }

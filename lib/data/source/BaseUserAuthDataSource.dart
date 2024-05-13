@@ -18,4 +18,5 @@ abstract class BaseUserAuthDataSource{
   Future<UserModel?> getUser();
   Future<String> setProfileImage(String imagePath);
   Future<String?> getProfileImage();
+  Future<UserModel?> getUserDataFirebase(String idToken);
 }

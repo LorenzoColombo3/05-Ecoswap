@@ -75,7 +75,7 @@ class _RentalPageState extends State<RentalPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => FullScreenImage(imageUrl: imageUrl ?? ''),
+                                builder: (context) => FullScreenImage(imageUrl: widget.rental.imageUrl ?? ''),
                               ),
                             );
                           },
@@ -113,20 +113,33 @@ class _RentalPageState extends State<RentalPage> {
                             color: colorScheme.background,
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          child: ListTile(
-                            onTap: () {
-                              // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-                            },
-                            title: Text(widget.currentUser.name),
-                            subtitle: Text("addStarsRating"),
-                            leading:
-                            imageUrl != null
-                                ? CircleAvatar(
-                              backgroundImage: NetworkImage(imageUrl!),
-                            )
-                                : CircleAvatar(
-                              child: Icon(Icons.person),
-                            ),
+
+                          child: FutureBuilder<UserModel?>(
+                              future: userViewModel.getUserData(widget.rental.idToken),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Center(child: Text('Error: ${snapshot.error}'));
+                                } else {
+                                  String? img= snapshot.data?.imageUrl;
+                                  return ListTile(
+                                    onTap: () {
+                                      // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                                    },
+                                    title: Text("prova"),
+                                    subtitle: Text("addStarsRating"),
+                                    leading:
+                                    img != null
+                                        ? CircleAvatar(
+                                      backgroundImage: NetworkImage(img),
+                                    )
+                                        : CircleAvatar(
+                                      child: Icon(Icons.person),
+                                    ),
+                                  );
+                                }
+                              }
                           ),
                         ),
                         const SizedBox(height: 8.0),
