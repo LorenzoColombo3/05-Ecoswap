@@ -1,4 +1,5 @@
 import 'package:eco_swap/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -29,7 +30,6 @@ class _RentalPageState extends State<RentalPage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  late String? imageUrl;
 
   @override
   void initState() {
@@ -38,7 +38,6 @@ class _RentalPageState extends State<RentalPage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    userViewModel.getProfileImage().then((value) => imageUrl=value!);
   }
 
 
@@ -52,15 +51,16 @@ class _RentalPageState extends State<RentalPage> {
         backgroundColor: colorScheme.background,
       ),
       body: SingleChildScrollView(
-        child: FutureBuilder<String?>(
-          future: userViewModel.getProfileImage(),
+        child: FutureBuilder<UserModel?>(
+          future: userViewModel.getUserData(widget.rental.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              imageUrl = snapshot.data;
+              int isFavorite = 1;
+              String? img= snapshot.data?.imageUrl;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -127,7 +127,7 @@ class _RentalPageState extends State<RentalPage> {
                                     onTap: () {
                                       // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
                                     },
-                                    title: Text("prova"),
+                                    title: Text(snapshot.data!.name),
                                     subtitle: Text("addStarsRating"),
                                     leading:
                                     img != null
@@ -328,6 +328,5 @@ class _RentalPageState extends State<RentalPage> {
       ),
     );
   }
-
 
 }

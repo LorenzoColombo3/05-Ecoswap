@@ -1,4 +1,5 @@
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
@@ -32,6 +33,7 @@ class _RentalPaymentState extends State<RentalPayment> {
   bool isChecked = false;
   int unitNumber = 1;
   int daysRent=1;
+  late UserModel sellerUser;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _RentalPaymentState extends State<RentalPayment> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
+    userViewModel.getUserData(widget.rental.userId).then((value) => sellerUser=value!);
   }
 
   @override
@@ -160,6 +163,9 @@ class _RentalPaymentState extends State<RentalPayment> {
                           );
                           widget.rental.unitRented = (int.parse(widget.rental.unitRented)+unitNumber).toString();
                           adViewModel.updateRentalData(widget.rental);
+                          widget.currentUser.addToActiveRentalsBuy(widget.rental.idToken);
+                          sellerUser.addToActiveRentalsSell(widget.rental.idToken);
+                          userViewModel.saveUser(widget.currentUser).then((value) =>  userViewModel.saveUser(sellerUser));
                           Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => NavigationPage(logoutCallback: () {
                               Navigator.of(context).pushReplacement(MaterialPageRoute(

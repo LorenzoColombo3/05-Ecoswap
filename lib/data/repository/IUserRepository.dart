@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
@@ -19,4 +21,5 @@ abstract class IUserRepository{
   Future<String> setProfileImage(String imageUrl);
   Future<String?> getProfileImage();
   Future<UserModel?> getUserData(String idToken);
+  Future<void> saveUser(UserModel user);
 }

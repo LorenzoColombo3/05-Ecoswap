@@ -1,5 +1,4 @@
 
-
 import 'AdModel.dart';
 
 class Rental extends AdModel {

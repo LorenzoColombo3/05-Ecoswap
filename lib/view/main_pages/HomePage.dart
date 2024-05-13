@@ -14,8 +14,7 @@ import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
-import '../home_pages/ExchangeHomePage.dart';
-import '../home_pages/RentalHomePage.dart';
+
 import '../searchPages/ExchangePage.dart';
 import '../searchPages/RentalPage.dart';
 

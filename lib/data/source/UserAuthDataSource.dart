@@ -169,11 +169,13 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       UserModel? newUser;
       final String idToken = currentUser!.uid;
       final Map<String, dynamic> userData = {
+        'idToken' : idToken,
         'username': name,
         'lastname': lastName,
         'birthDate': birthDate,
         'email': currentUser.email,
         'phoneNumber': phoneNumber,
+        'imageUrl': "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
          'activeRentalsSell' : listaVuota,
         'activeRentalsBuy' : listaVuota,
         'finishedRentalsSell' : listaVuota,
@@ -205,7 +207,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       saveUserLocal(newUser!);
       return result;
     } catch (error) {
-      Result result = ErrorResult(error.toString());
+      Result result = ErrorResult("errore save user $error.toString()");
       return result;
     }
   }
@@ -244,20 +246,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       }
     } catch (e) {
       debugPrint(e.toString());
-    }
-  }
-
-  Future<String?> _getAddressFromLatLng(Position position) async {
-    String? _currentCity;
-    try {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark place = placemarks[0];
-      _currentCity = place.locality;
-      return _currentCity;
-    } catch (e) {
-      debugPrint(e.toString());
-      return null;
     }
   }
 
@@ -325,16 +313,19 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             snapshot.value as Map<dynamic, dynamic>?;
         String name = userData?['username'];
         String email = userData?['email'];
-        String lastName = userData?['lastname'];
-        String birthDate = userData?['birthDate'];
+        String lastName = userData?['lastName'];
+        String birthDate = userData?['birthdate'];
         double lat = userData?['lat'];
         double long = userData?['long'];
+        String imageUrl = userData?['imageUrl'];
         String phoneNumber = userData?['phoneNumber'];
-        List<String>? activeRentalsBuy = userData?['activeRentalsBuy'];
-        List<String>? activeRentalsSell = userData?['activeRentalsSell'];
-        List<String>? finishedRentalsSell = userData?['finishedRentalsSell'];
-        List<String>? finishedRentalsBuy = userData?['finishedRentalsBuy'];
-        List<String>? expiredExchange = userData?['expiredExchange'];
+        List<dynamic>? activeRentalsBuy = userData?['activeRentalsBuy'];
+        List<dynamic>? activeRentalsSell = userData?['activeRentalsSell'];
+        List<dynamic>? finishedRentalsSell = userData?['finishedRentalsSell'];
+        List<dynamic>? finishedRentalsBuy = userData?['finishedRentalsBuy'];
+        List<dynamic>? expiredExchange = userData?['expiredExchange'];
+        List<dynamic>? favoriteRentals= userData?['favoriteRentals'];
+        List<dynamic>? favoriteExchanges= userData?['favoriteExchanges'];
         return UserModel(
             idToken: idToken,
             name: name,
@@ -344,6 +335,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             longitude: long,
             birthDate: birthDate,
             phoneNumber: phoneNumber,
+            imageUrl: imageUrl,
             activeRentalsBuy: activeRentalsBuy,
             finishedRentalBuy: finishedRentalsBuy,
             activeRentalsSell: activeRentalsSell,
@@ -359,6 +351,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+
   @override
   Future<void> resetPassword(String email) async {
     try {
@@ -366,6 +359,21 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     } catch (e) {
       print(e.toString());
       rethrow;
+    }
+  }
+
+  @override
+  Future<void> saveUser(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users';
+      await _databaseReference
+          .child(databasePath)
+          .child(user.idToken)
+          .set(user.toMap());
+    } catch (error) {
+        print('Errore durante il caricamento del rental: $error');
     }
   }
 }

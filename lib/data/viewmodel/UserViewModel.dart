@@ -69,4 +69,8 @@ class UserViewModel{
   Future<UserModel?> getUserData(String idToken){
     return _userRepository.getUserData(idToken);
   }
+
+  Future<void> saveUser(UserModel user) async {
+    _userRepository.saveUser(user);
+  }
 }

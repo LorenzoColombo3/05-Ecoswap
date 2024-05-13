@@ -37,7 +37,12 @@ class DatabaseManager {
           'dailyCost TEXT, '
           'maxDaysRent TEXT, '
           'idToken TEXT PRIMARY KEY, '
-          'imageUrl TEXT)',
+          'imageUrl TEXT,'
+          'position TEXT,'
+          'dateLoad TEXT,'
+          'unitNumber TEXT,'
+          'unitRented TEXT,'
+          'isFavorite INTEGER)',
     );
     await db.execute(
       'CREATE TABLE exchanges('
@@ -48,7 +53,10 @@ class DatabaseManager {
           'latitude REAL, '
           'longitude REAL, '
           'idToken TEXT PRIMARY KEY, '
-          'imageUrl TEXT)',
+          'imageUrl TEXT,'
+          'position TEXT,'
+          'dateLoad TEXT,'
+          'isFavorite INTEGER)',
     );
   }
 

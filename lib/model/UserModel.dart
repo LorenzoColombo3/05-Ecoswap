@@ -8,12 +8,15 @@ class UserModel {
   double _longitude;
   String _dateField;
   String _phoneNumber;
-  String? _imageUrl;
-  List<String>? _activeRentalsBuy;
-  List<String>? _finishedRentalsBuy;
-  List<String>? _activeRentalsSell;
-  List<String>? _finishedRentalsSell;
-  List<String>? _expiredExchange;
+  String _imageUrl;
+  List<dynamic>? _activeRentalsBuy;
+  List<dynamic>? _finishedRentalsBuy;
+  List<dynamic>? _activeRentalsSell;
+  List<dynamic>? _finishedRentalsSell;
+  List<dynamic>? _expiredExchange;
+  List<dynamic>? _favoriteRentals;
+  List<dynamic>? _favoriteExchanges;
+
 
   // Costruttore della classe
   UserModel({
@@ -25,7 +28,7 @@ class UserModel {
     required double longitude,
     required String birthDate,
     required String phoneNumber,
-    imageUrl,
+    required imageUrl,
     imagePath,
     activeRentalsBuy,
     finishedRentalBuy,
@@ -57,7 +60,7 @@ class UserModel {
   }
 
   // Setter per imageUrl
-  set imageUrl(String? value) {
+  set imageUrl(String value) {
     _imageUrl = value;
   }
 
@@ -117,46 +120,46 @@ class UserModel {
     _phoneNumber = value;
   }
 
-  String? get imageUrl => _imageUrl;
+  String get imageUrl => _imageUrl;
 
   String? get imagePath => _imagePath;
   // Getter per _activeRentalsBuy
-  List<String> get activeRentalsBuy => _activeRentalsBuy!;
+  List<dynamic> get activeRentalsBuy => _activeRentalsBuy!;
 
   // Setter per _activeRentalsBuy
-  set activeRentalsBuy(List<String> value) {
+  set activeRentalsBuy(List<dynamic> value) {
     _activeRentalsBuy = value;
   }
 
   // Getter per _finishedRentalsBuy
-  List<String> get finishedRentalsBuy => _finishedRentalsBuy!;
+  List<dynamic> get finishedRentalsBuy => _finishedRentalsBuy!;
 
   // Setter per _finishedRentalsBuy
-  set finishedRentalsBuy(List<String> value) {
+  set finishedRentalsBuy(List<dynamic> value) {
     _finishedRentalsBuy = value;
   }
 
   // Getter per _activeRentalsSell
-  List<String> get activeRentalsSell => _activeRentalsSell!;
+  List<dynamic> get activeRentalsSell => _activeRentalsSell!;
 
   // Setter per _activeRentalsSell
-  set activeRentalsSell(List<String> value) {
+  set activeRentalsSell(List<dynamic> value) {
     _activeRentalsSell = value;
   }
 
   // Getter per _finishedRentalsSell
-  List<String> get finishedRentalsSell => _finishedRentalsSell!;
+  List<dynamic> get finishedRentalsSell => _finishedRentalsSell!;
 
   // Setter per _finishedRentalsSell
-  set finishedRentalsSell(List<String> value) {
+  set finishedRentalsSell(List<dynamic> value) {
     _finishedRentalsSell = value;
   }
 
   // Getter per _expiredExchange
-  List<String> get expiredExchange => _expiredExchange!;
+  List<dynamic> get expiredExchange => _expiredExchange!;
 
   // Setter per _expiredExchange
-  set expiredExchange(List<String> value) {
+  set expiredExchange(List<dynamic> value) {
     _expiredExchange = value;
   }
 
@@ -214,16 +217,15 @@ class UserModel {
   // Metodo per convertire l'oggetto UserModel in una mappa
   Map<String, dynamic> toMap() {
     return {
-      'idToken': _idToken,
-      'name': _name,
+      'idToken' : idToken,
+      'username': _name,
       'lastName': _lastName,
       'email': _email,
-      'latitude': _latitude,
-      'longitude': _longitude,
+      'lat': _latitude,
+      'long': _longitude,
       'birthdate': _dateField,
       'phoneNumber': _phoneNumber,
       'imageUrl': _imageUrl,
-      'imagePath': _imagePath,
       'activeRentalsSell' : _activeRentalsSell,
       'activeRentalsBuy' : _activeRentalsBuy,
       'finishedRentalsSell' : _finishedRentalsBuy,
@@ -237,14 +239,13 @@ class UserModel {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       idToken: map['idToken'],
-      name: map['name'],
+      name: map['username'],
       lastName: map['lastName'],
       email: map['email'],
-      latitude: map['latitude'],
-      longitude: map['longitude'],
+      latitude: map['lat'],
+      longitude: map['long'],
       birthDate: map['birthdate'],
       phoneNumber: map['phoneNumber'],
-      imagePath: map['imagePath'],
       imageUrl: map['imageUrl'],
       activeRentalsSell: map['activeRentalsSell'],
       activeRentalsBuy: map['activeRentalsBuy'],

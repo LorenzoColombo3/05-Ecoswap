@@ -25,7 +25,7 @@ class StripeService {
     });
     final response = await http.post(url,
         body:
-            'success_url=http://www.checkout.stripe.dev/success&mode=payment$lineItems',
+            'success_url=https://www.checkout.stripe.dev/success&mode=payment$lineItems',
         headers: {
           'Authorization': 'Bearer $secretKey',
           'Content-type': 'application/x-www-form-urlencoded'

@@ -89,5 +89,10 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<UserModel?> getUserData(String idToken){
     return _userAuthDataSource.getUserDataFirebase(idToken);
   }
+
+  @override
+  Future<void> saveUser(UserModel user) async {
+    _userAuthDataSource.saveUser(user);
+  }
   
 }
