@@ -43,6 +43,7 @@ class _RentalPageState extends State<RentalPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.rental.userId);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.primary,

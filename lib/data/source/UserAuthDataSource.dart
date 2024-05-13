@@ -169,7 +169,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       UserModel? newUser;
       final String idToken = currentUser!.uid;
       final Map<String, dynamic> userData = {
-        'idToken' : idToken,
         'username': name,
         'lastname': lastName,
         'birthDate': birthDate,
@@ -320,8 +319,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             snapshot.value as Map<dynamic, dynamic>?;
         String name = userData?['username'];
         String email = userData?['email'];
-        String lastName = userData?['lastName'];
-        String birthDate = userData?['birthdate'];
+        String lastName = userData?['lastname'];
+        String birthDate = userData?['birthDate'];
         double lat = userData?['lat'];
         double long = userData?['long'];
         String imageUrl = userData?['imageUrl'];
