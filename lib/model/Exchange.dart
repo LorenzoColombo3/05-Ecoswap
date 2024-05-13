@@ -14,7 +14,7 @@ class Exchange extends AdModel{
       String idToken,
       String imageUrl,
       String position,
-      String dateLoad
+      String dateLoad,
       ) : super(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl, position, dateLoad);
 
 

@@ -31,7 +31,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     }
   }
 
-
   @override
   Future<String> uploadImage(String imagePath) async {
     try {
@@ -121,6 +120,7 @@ class ExchangeDataSource extends BaseExchangeDataSource {
         String imageUrl = exchangeData?['imageUrl'];
         String position = exchangeData?['position'];
         String dateLoad = exchangeData?['dateLoad'];
+        int isFavorite = exchangeData?['isFavorite'];
         exchange = Exchange(imagePath, userId, title, description, latitude, longitude, idToken, imageUrl, position, dateLoad);
         return exchange;
       } else {

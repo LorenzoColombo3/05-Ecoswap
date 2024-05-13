@@ -20,7 +20,7 @@ abstract class AdModel{
       this._idToken,
       this._imageUrl,
       this._position,
-      this._dateLoad,
+      this._dateLoad
       );
 
   String get imagePath => _imagePath;

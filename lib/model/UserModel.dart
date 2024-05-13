@@ -35,6 +35,8 @@ class UserModel {
     activeRentalsSell,
     finishedRentalsSell,
     expiredExchange,
+    favoriteRentals,
+    favoriteExchanges,
   })  : _idToken = idToken,
         _name = name,
         _lastName = lastName,
@@ -49,7 +51,9 @@ class UserModel {
         _finishedRentalsBuy = finishedRentalBuy,
         _activeRentalsSell = activeRentalsSell,
         _finishedRentalsSell = finishedRentalsSell,
-        _expiredExchange = expiredExchange;
+        _expiredExchange = expiredExchange,
+        _favoriteRentals = favoriteRentals,
+        _favoriteExchanges = favoriteExchanges;
 
   // Getter per idToken
   String get idToken => _idToken;
@@ -158,6 +162,10 @@ class UserModel {
   // Getter per _expiredExchange
   List<dynamic> get expiredExchange => _expiredExchange!;
 
+  List<dynamic> get favoriteExchange => _favoriteExchanges!;
+
+  List<dynamic> get favoriteRentals => _favoriteRentals!;
+
   // Setter per _expiredExchange
   set expiredExchange(List<dynamic> value) {
     _expiredExchange = value;
@@ -213,6 +221,22 @@ class UserModel {
     _expiredExchange?.remove(item);
   }
 
+  void addToFavoriteRentals(String item) {
+    _favoriteRentals?.add(item);
+  }
+
+  void removeFromFavoriteRentals(String item) {
+    _favoriteRentals?.remove(item);
+  }
+
+  void addToFavoriteExchange(String item) {
+    _favoriteExchanges?.add(item);
+  }
+
+  void removeFromFavoriteExchange(String item) {
+    _favoriteExchanges?.remove(item);
+  }
+
 
   // Metodo per convertire l'oggetto UserModel in una mappa
   Map<String, dynamic> toMap() {
@@ -231,7 +255,8 @@ class UserModel {
       'finishedRentalsSell' : _finishedRentalsBuy,
       'finishedRentalsBuy' : _finishedRentalsBuy,
       'expiredExchange' : _expiredExchange,
-
+      'favoriteRentals' : _favoriteRentals,
+      'favoriteExchanges' : _favoriteExchanges,
     };
   }
 
@@ -252,6 +277,8 @@ class UserModel {
       finishedRentalsSell: map['finishedRentalsSell'],
       finishedRentalBuy: map['finishedRentalsBuy'],
       expiredExchange: map['expiredExchange'],
+      favoriteExchanges: map['favoriteExchanges'],
+      favoriteRentals: map['favoriteRentals'],
     );
   }
 

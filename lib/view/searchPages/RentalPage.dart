@@ -88,18 +88,39 @@ class _RentalPageState extends State<RentalPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            child: const Stack(
-                              children: [
-                                Positioned(
-                                  top: 8.0,
-                                  right: 8.0,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.grey,
-                                    size: 24.0,
+                            child:  GestureDetector(
+                              onTap: () {
+                                /*
+                                setState(() {
+                                  if (isFavorite == 1) {
+                                    widget.currentUser.removeFromFavoriteRentals(widget.rental.idToken);
+                                    print('fav No');
+                                    isFavorite=0;
+                                  } else {
+                                    print('fav Sì');
+                                    widget.currentUser.addToFavoriteRentals(widget.rental.idToken);
+                                    isFavorite==1;
+                                  }
+                                  // Cambia il colore dell'icona in base a isFavorite
+                                  isFavorite == 1 ? Colors.red : Colors.grey;
+                                  userViewModel.saveUser(widget.currentUser);
+                                  //adViewModel.loadRental(widget.rental);
+                                });*/
+                              },
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    top: 8.0,
+                                    right: 8.0,
+                                    child:
+                                    Icon(
+                                      Icons.favorite,
+                                      color: isFavorite == 1 ? Colors.red : Colors.grey,
+                                      size: 24.0,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -113,17 +134,7 @@ class _RentalPageState extends State<RentalPage> {
                             color: colorScheme.background,
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-
-                          child: FutureBuilder<UserModel?>(
-                              future: userViewModel.getUserData(widget.rental.idToken),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Center(child: Text('Error: ${snapshot.error}'));
-                                } else {
-                                  String? img= snapshot.data?.imageUrl;
-                                  return ListTile(
+                          child: ListTile(
                                     onTap: () {
                                       // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
                                     },
@@ -137,11 +148,8 @@ class _RentalPageState extends State<RentalPage> {
                                         : CircleAvatar(
                                       child: Icon(Icons.person),
                                     ),
-                                  );
-                                }
-                              }
+                                  ),
                           ),
-                        ),
                         const SizedBox(height: 8.0),
                         ElevatedButton(
                           onPressed: () {

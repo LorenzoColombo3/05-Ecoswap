@@ -48,15 +48,15 @@ class _ExchangePageState extends State<ExchangePage> {
         backgroundColor: colorScheme.background,
       ),
       body: SingleChildScrollView(
-        child: FutureBuilder<String?>(
-          future: userViewModel.getProfileImage(),
+        child: FutureBuilder<UserModel?>(
+            future: userViewModel.getUserData(widget.exchange.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              imageUrl = snapshot.data;
+              String? img= snapshot.data?.imageUrl;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -108,20 +108,11 @@ class _ExchangePageState extends State<ExchangePage> {
                             color: colorScheme.background,
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          child: FutureBuilder<UserModel?>(
-                            future: userViewModel.getUserData(widget.exchange.idToken),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(child: Text('Error: ${snapshot.error}'));
-                              } else {
-                                String? img= snapshot.data?.imageUrl;
-                                return ListTile(
+                          child: ListTile(
                                   onTap: () {
                                   // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
                                   },
-                                  title: Text("prova"),
+                                  title: Text(snapshot.data!.name),
                                   subtitle: Text("addStarsRating"),
                                   leading:
                                   img != null
@@ -131,10 +122,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                   : CircleAvatar(
                                     child: Icon(Icons.person),
                                   ),
-                                );
-                              }
-                            }
-                          ),
+                                ),
                         ),
                         SizedBox(height: 8.0),
                         ElevatedButton(

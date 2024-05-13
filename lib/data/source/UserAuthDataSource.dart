@@ -181,6 +181,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'finishedRentalsSell' : listaVuota,
         'finishedRentalsBuy' : listaVuota,
         'expiredExchange' : listaVuota,
+        'favoriteRentals' : listaVuota,
+        'favoriteExchanges' : listaVuota,
       };
       final String databasePath = 'users';
       await databaseReference
@@ -196,15 +198,18 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 longitude: 0,
                 birthDate: birthDate,
                 phoneNumber: phoneNumber,
-                imageUrl: "",
+                imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
                 activeRentalsBuy: listaVuota,
                 finishedRentalBuy: listaVuota,
                 activeRentalsSell: listaVuota,
                 finishedRentalsSell: listaVuota,
                 expiredExchange: listaVuota,
+                favoriteRentals : listaVuota,
+                favoriteExchanges : listaVuota,
               ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
+
       return result;
     } catch (error) {
       Result result = ErrorResult("errore save user $error.toString()");
@@ -216,6 +221,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   void deleteUser() {
     FirebaseAuth.instance.currentUser?.delete();
   }
+
+
 
   @override
   Future<void> updatePosition(bool hasPermission) async {
@@ -340,7 +347,9 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             finishedRentalBuy: finishedRentalsBuy,
             activeRentalsSell: activeRentalsSell,
             finishedRentalsSell: finishedRentalsSell,
-            expiredExchange: expiredExchange);
+            expiredExchange: expiredExchange,
+            favoriteRentals: favoriteRentals,
+            favoriteExchanges: favoriteExchanges);
       } else {
         return null;
       }
