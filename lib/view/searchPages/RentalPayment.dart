@@ -32,7 +32,7 @@ class _RentalPaymentState extends State<RentalPayment> {
   late AdViewModel adViewModel;
   bool isChecked = false;
   int unitNumber = 1;
-  int daysRent=1;
+  int daysRent = 1;
   late UserModel sellerUser;
 
   @override
@@ -42,7 +42,9 @@ class _RentalPaymentState extends State<RentalPayment> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    userViewModel.getUserData(widget.rental.userId).then((value) => sellerUser=value!);
+    userViewModel
+        .getUserData(widget.rental.userId)
+        .then((value) => sellerUser = value!);
   }
 
   @override
@@ -111,8 +113,7 @@ class _RentalPaymentState extends State<RentalPayment> {
                 Text(daysRent.toString()), // Numero di unità selezionate
                 IconButton(
                   onPressed: () {
-                    if (daysRent <
-                        int.parse(widget.rental.maxDaysRent))
+                    if (daysRent < int.parse(widget.rental.maxDaysRent))
                       setState(() {
                         daysRent++;
                       });
@@ -151,50 +152,61 @@ class _RentalPaymentState extends State<RentalPayment> {
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<
-                        Color>((states) => colorScheme.background),
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (states) => colorScheme.background),
                   ),
-                  onPressed: ()  {
-                     StripeService.stripePaymentCheckout(
+                  onPressed: () {
+                    StripeService.stripePaymentCheckout(
                         widget.rental, unitNumber, daysRent, context, mounted,
                         onSuccess: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("operation successed")),
-                          );
-                          widget.rental.unitRented = (int.parse(widget.rental.unitRented)+unitNumber).toString();
-                          adViewModel.updateRentalData(widget.rental);
-                          widget.currentUser.addToActiveRentalsBuy(widget.rental.idToken);
-                          sellerUser.addToActiveRentalsSell(widget.rental.idToken);
-                          userViewModel.saveUser(widget.currentUser).then((value) =>  userViewModel.saveUser(sellerUser));
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => NavigationPage(logoutCallback: () {
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                builder: (context) =>  HomePage(),
-                              ));
-                            }),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("operation successed")),
+                      );
+                      widget.rental.unitRented =
+                          (int.parse(widget.rental.unitRented) + unitNumber)
+                              .toString();
+                      adViewModel.updateRentalData(widget.rental);
+                      widget.currentUser.addToActiveRentalsBuy(widget.rental.idToken);
+                      sellerUser.addToActiveRentalsSell(widget.rental.idToken);
+                      userViewModel
+                          .saveActiveRentalsBuy(widget.currentUser)
+                          .then((value) =>
+                              userViewModel.saveActiveRentalsSell(sellerUser));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) =>
+                            NavigationPage(logoutCallback: () {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomePage(),
                           ));
+                        }),
+                      ));
                     }, onCancel: () {
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(content: Text("operation cancelled")),
-                       );
-                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                         builder: (context) => NavigationPage(logoutCallback: () {
-                           Navigator.of(context).pushReplacement(MaterialPageRoute(
-                             builder: (context) =>  HomePage(),
-                           ));
-                         }),
-                       ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("operation cancelled")),
+                      );
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) =>
+                            NavigationPage(logoutCallback: () {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ));
+                        }),
+                      ));
                     }, onError: (e) {
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(content: Text(e.toString())),
-                       );
-                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                         builder: (context) => NavigationPage(logoutCallback: () {
-                           Navigator.of(context).pushReplacement(MaterialPageRoute(
-                             builder: (context) =>  HomePage(),
-                           ));
-                         }),
-                       ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) =>
+                            NavigationPage(logoutCallback: () {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ));
+                        }),
+                      ));
                     }).then((value) => value.call());
                   },
                   child: Text(

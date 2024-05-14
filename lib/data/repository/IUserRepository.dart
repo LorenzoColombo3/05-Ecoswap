@@ -21,5 +21,13 @@ abstract class IUserRepository{
   Future<String> setProfileImage(String imageUrl);
   Future<String?> getProfileImage();
   Future<UserModel?> getUserData(String idToken);
-  Future<void> saveUser(UserModel user);
+  void saveFavoriteRentals(List<dynamic> favoriteAds);
+  void saveFavoriteExchanges(List<dynamic> favoriteAds);
+  Future<void> saveActiveRentalsBuy(UserModel user);
+  Future<void> saveActiveRentalsSell(UserModel user);
+  Future<void> saveFinishedRentalsSell(UserModel user);
+  Future<void> saveFinishedRentalsBuy(UserModel user);
+  Future<void> saveExpiredExchange(UserModel user);
+  Future<void> savePublishedRentals(UserModel user);
+  Future<void> savePublishedExchanges(UserModel user);
 }

@@ -43,7 +43,6 @@ class _RentalPageState extends State<RentalPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.rental.userId);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -55,12 +54,13 @@ class _RentalPageState extends State<RentalPage> {
         child: FutureBuilder<UserModel?>(
           future: userViewModel.getUserData(widget.rental.userId),
           builder: (context, snapshot) {
+            bool isFavorite;
+            isFavorite = widget.currentUser.favoriteRentals.contains(widget.rental.idToken);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              int isFavorite = 1;
               String? img= snapshot.data?.imageUrl;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,22 +91,25 @@ class _RentalPageState extends State<RentalPage> {
                             ),
                             child:  GestureDetector(
                               onTap: () {
-                                /*
                                 setState(() {
-                                  if (isFavorite == 1) {
+                                  if (isFavorite) {
                                     widget.currentUser.removeFromFavoriteRentals(widget.rental.idToken);
                                     print('fav No');
-                                    isFavorite=0;
+                                    isFavorite=false;
                                   } else {
                                     print('fav Sì');
                                     widget.currentUser.addToFavoriteRentals(widget.rental.idToken);
-                                    isFavorite==1;
+                                    isFavorite=true;
                                   }
-                                  // Cambia il colore dell'icona in base a isFavorite
-                                  isFavorite == 1 ? Colors.red : Colors.grey;
-                                  userViewModel.saveUser(widget.currentUser);
-                                  //adViewModel.loadRental(widget.rental);
-                                });*/
+                                  if(widget.currentUser.favoriteRentals.contains(" ")) {
+                                    widget.currentUser.removeFromFavoriteRentals(" ");
+                                    userViewModel.saveFavoriteRentals(
+                                        widget.currentUser.favoriteRentals);
+                                  }else{
+                                    userViewModel.saveFavoriteRentals(
+                                        widget.currentUser.favoriteRentals);
+                                  }
+                                });
                               },
                               child: Stack(
                                 children: [
@@ -116,7 +119,7 @@ class _RentalPageState extends State<RentalPage> {
                                     child:
                                     Icon(
                                       Icons.favorite,
-                                      color: isFavorite == 1 ? Colors.red : Colors.grey,
+                                      color: isFavorite ? Colors.red : Colors.grey,
                                       size: 24.0,
                                     ),
                                   ),

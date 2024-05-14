@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eco_swap/model/AdModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -37,10 +38,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
   late Future<String?> imageUrl;
-  late Future<List<Rental>> _rentalsFuture; // Future per recuperare i noleggi
-  List<Rental> _rentals = [];
-  late Future<List<Exchange>> _exchangeFuture; // Future per recuperare i noleggi
-  List<Exchange> _exchange = [];
   @override
   void initState() {
     super.initState();
@@ -51,8 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
     userViewModel.getUser().then((user) {
       currentUser = user!;
-      _exchangeFuture = adViewModel.getAllUserExchanges(currentUser.idToken);
-      _rentalsFuture = adViewModel.getAllUserRentals(currentUser.idToken);
     });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
@@ -128,129 +123,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     currentUser.name, // Sostituisci con il nome utente reale
                     style: const TextStyle(fontSize: 24),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = 0;
-                              rentalButtonColor = Theme.of(context).colorScheme.background;
-                              exchangeButtonColor = Colors.transparent;
-                            });
-                          },
-                          child: Text(
-                            'Rental',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<
-                                Color>((states) => rentalButtonColor),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = 1;
-                              exchangeButtonColor = Theme.of(context).colorScheme.background;
-                              rentalButtonColor = Colors.transparent;
-                            });
-                          },
-                          child: Text(
-                            'Exchange',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<
-                                Color>((states) => exchangeButtonColor),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  IndexedStack(
-                    index: _selectedIndex,
-                    children: <Widget>[
-                      FutureBuilder<List<Rental>>(
-                        future: _rentalsFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState
-                              .waiting) {
-                            // Se la Future è in attesa, mostra l'indicatore di caricamento
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
-                            return Center(child: Text(
-                                'Error during recoverage of data'));
-                          } else
-                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                            _rentals = snapshot.data!;
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: _rentals.length,
-                              itemBuilder: (context, index) {
-                                final rental = _rentals[index];
-                                return ListTile(
-                                  onTap: () {
-                                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-                                  },
-                                  title: Text(rental.title),
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(rental.imageUrl),
-                                  ),
-                                  subtitle: Text("€" + rental.dailyCost),
-                                );
-                              },
-                            );
-                          } else {
-                            return Center(
-                                child: Text('No rentals available!!'));
-                          }
-                        },
-                      ),
-                      FutureBuilder<List<Exchange>>(
-                        future: _exchangeFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState
-                              .waiting) {
-                            // Se la Future è in attesa, mostra l'indicatore di caricamento
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            // Se si verifica un errore durante il recupero dei dati, mostra un messaggio di errore
-                            return Center(child: Text(
-                                'Error during recoverage of data'));
-                          } else
-                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                            _exchange = snapshot.data!;
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: _exchange.length,
-                              itemBuilder: (context, index) {
-                                final exchange = _exchange[index];
-                                return ListTile(
-                                  onTap: () {
-                                    // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
-                                  },
-                                  title: Text(exchange.title),
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(exchange.imageUrl),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            return Center(
-                                child: Text('No exchanges available'));
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  _buildDivider(),
+                  _buildList(context, currentUser.publishedExchange),
+                  _buildDivider(),
+                  /*_buildList(context, currentUser.publishedRentals),
+                  _buildDivider(),
+                  _buildList(context, currentUser.activeRentalsSell),
+                  _buildDivider(),
+                  _buildList(context, currentUser.activeRentalsBuy),
+                  _buildDivider(),
+                  _buildList(context, currentUser.finishedRentalsSell),
+                  _buildDivider(),
+                  _buildList(context, currentUser.finishedRentalsBuy),
+                  _buildDivider(),
+                  _buildList(context, currentUser.expiredExchange),*/
                 ],
               ),
             ),
@@ -262,6 +148,26 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget _buildList(BuildContext context, List<dynamic> listObject) {
+    return ListView.builder(
 
+        scrollDirection: Axis.horizontal,
+        itemCount: listObject.length,
+        itemBuilder: (context, index) {
+          print('Item at index $index: ${listObject[index]}');
+          return  Placeholder();
+        },
 
+    );
   }
+
+
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: Colors.grey,
+    );
+  }
+}
+

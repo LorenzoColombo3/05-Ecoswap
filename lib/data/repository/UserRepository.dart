@@ -92,8 +92,47 @@ Future<Result?> saveData({required String name, required String lastName,
   }
 
   @override
-  Future<void> saveUser(UserModel user) async {
-    _userAuthDataSource.saveUser(user);
+  void saveFavoriteRentals(List<dynamic> favoriteAds) {
+   _userAuthDataSource.saveFavoriteRental(favoriteAds);
   }
-  
+
+  @override
+  void saveFavoriteExchanges(List<dynamic> favoriteAds){
+   _userAuthDataSource.saveFavoriteExchange(favoriteAds);
+  }
+
+  @override
+  Future<void> saveActiveRentalsBuy(UserModel user) async{
+    _userAuthDataSource.saveActiveRentalsBuy(user);
+  }
+
+  @override
+  Future<void> saveActiveRentalsSell(UserModel user) async{
+   _userAuthDataSource.saveActiveRentalsSell(user);
+  }
+
+  @override
+  Future<void> saveFinishedRentalsBuy(UserModel user) async{
+   _userAuthDataSource.saveFinishedRentalsBuy(user);
+  }
+
+  @override
+  Future<void> saveFinishedRentalsSell(UserModel user) async{
+    _userAuthDataSource.saveActiveRentalsSell(user);
+  }
+
+ @override
+ Future<void> saveExpiredExchange(UserModel user) async{
+  _userAuthDataSource.saveExpiredExchange(user);
+ }
+
+  @override
+  Future<void> savePublishedExchanges(UserModel user) async{
+    _userAuthDataSource.savePublishedExchanges(user);
+  }
+
+  @override
+  Future<void> savePublishedRentals(UserModel user) async{
+    _userAuthDataSource.savePublishedRentals(user);
+  }
 }

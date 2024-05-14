@@ -1,8 +1,9 @@
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
-abstract class BaseUserAuthDataSource{
-  Future<String?> registration({required String email, required String password});
+abstract class BaseUserAuthDataSource {
+  Future<String?> registration(
+      {required String email, required String password});
   Future<String?> signInWithGoogle();
   Future<String?> login({required String email, required String password});
   Future<Result?> saveData({required String name, required String lastName,
@@ -19,5 +20,13 @@ abstract class BaseUserAuthDataSource{
   Future<String> setProfileImage(String imagePath);
   Future<String?> getProfileImage();
   Future<UserModel?> getUserDataFirebase(String idToken);
-  Future<void> saveUser(UserModel user);
+  Future<void> saveActiveRentalsBuy(UserModel user);
+  Future<void> saveActiveRentalsSell(UserModel user);
+  Future<void> saveFinishedRentalsSell(UserModel user);
+  Future<void> saveFinishedRentalsBuy(UserModel user);
+  Future<void> saveExpiredExchange(UserModel user);
+  Future<void> savePublishedRentals(UserModel user);
+  Future<void> savePublishedExchanges(UserModel user);
+  void saveFavoriteRental(List<dynamic> favoriteAds);
+  void saveFavoriteExchange(List<dynamic> favoriteAds);
 }

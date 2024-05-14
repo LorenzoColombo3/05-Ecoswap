@@ -280,7 +280,9 @@ class _HomePageState extends State<HomePage> {
 
 
   Widget _buildRentalItem(Rental rental, BuildContext context) {
-    return InkWell(
+    bool isFavorite;
+    isFavorite = currentUser.favoriteRentals.contains(rental.idToken);
+      return InkWell(
       onTap: () {
         Navigator.push(
           context,
@@ -316,7 +318,6 @@ class _HomePageState extends State<HomePage> {
             Stack(
               children: [
                 ListTile(
-
                   title: Text(
                     rental.title,
                     overflow: TextOverflow.ellipsis, // Testo non va a capo
@@ -331,16 +332,31 @@ class _HomePageState extends State<HomePage> {
                   right: 0,
                   child: InkWell(
                     onTap: () {
-                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                      setState(() {
+                        if (isFavorite) {
+                          currentUser.removeFromFavoriteRentals(rental.idToken);
+                          print('fav No');
+                          isFavorite=false;
+                        } else {
+                          print('fav Sì');
+                          currentUser.addToFavoriteRentals(rental.idToken);
+                          isFavorite=true;
+                        }
+                        if(currentUser.favoriteRentals.contains(" ")) {
+                          currentUser.removeFromFavoriteRentals(" ");
+                          userViewModel.saveFavoriteRentals(
+                              currentUser.favoriteRentals);
+                        }else{
+                          userViewModel.saveFavoriteRentals(
+                              currentUser.favoriteRentals);
+                        }
+                      });
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      // Personalizza il padding dell'icona
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
                       child: Icon(
                         Icons.favorite, // Icona del cuore come preferito
-                        color: Colors.grey,
-                        // Colore rosso per indicare che è contrassegnato come preferito
+                        color: isFavorite ? Colors.red : Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
                         size: 24.0, // Dimensione dell'icona personalizzata
                       ),
                     ),
@@ -355,6 +371,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildExchangeItem(Exchange exchange, BuildContext context) {
+    bool isFavorite=true;
+    isFavorite = currentUser.favoriteExchange.contains(exchange.idToken);
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -403,14 +421,35 @@ class _HomePageState extends State<HomePage> {
                   right: 0,
                   child: InkWell(
                     onTap: () {
-                      // Aggiungere qui la logica per gestire il tap sull'icona del cuore
-                      // Ad esempio, potresti aggiornare lo stato per indicare che questo elemento è contrassegnato come preferito
+                        if (isFavorite) {
+                          currentUser.removeFromFavoriteExchange(exchange.idToken);
+                          print('fav No');
+                          setState(() {
+                            isFavorite=false;
+                          });
+                        } else {
+                          print('fav Sì');
+                          currentUser.addToFavoriteExchange(exchange.idToken);
+                          setState(() {
+                            isFavorite=true;
+                          });
+                        }
+                        // Cambia il colore dell'icona in base a isFavorite
+                        isFavorite ? Colors.red : Colors.grey;
+                        if(currentUser.favoriteExchange.contains(" ")) {
+                          currentUser.removeFromFavoriteExchange(" ");
+                          userViewModel.saveFavoriteExcahnges(
+                              currentUser.favoriteExchange);
+                        }else{
+                          userViewModel.saveFavoriteExcahnges(
+                              currentUser.favoriteExchange);
+                        }
                     },
                     child: Padding(
                       padding: EdgeInsets.all(8.0), // Personalizza il padding dell'icona
                       child: Icon(
                         Icons.favorite, // Icona del cuore come preferito
-                        color: Colors.grey, // Colore rosso per indicare che è contrassegnato come preferito
+                        color: isFavorite ? Colors.red : Colors.grey,  // Colore rosso per indicare che è contrassegnato come preferito
                         size: 24.0, // Dimensione dell'icona personalizzata
                       ),
                     ),

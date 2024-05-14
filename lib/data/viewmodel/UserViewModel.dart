@@ -70,7 +70,40 @@ class UserViewModel{
     return _userRepository.getUserData(idToken);
   }
 
-  Future<void> saveUser(UserModel user) async {
-    _userRepository.saveUser(user);
+  Future<void> saveActiveRentalsBuy(UserModel user) async{
+    _userRepository.saveActiveRentalsBuy(user);
   }
+
+  Future<void> saveActiveRentalsSell(UserModel user) async{
+    _userRepository.saveActiveRentalsSell(user);
+  }
+
+  Future<void> saveFinishedRentalsBuy(UserModel user) async{
+    _userRepository.saveFinishedRentalsBuy(user);
+  }
+
+  Future<void> saveFinishedRentalsSell(UserModel user) async{
+    _userRepository.saveActiveRentalsSell(user);
+  }
+
+  Future<void> saveExpiredExchange(UserModel user) async{
+    _userRepository.saveExpiredExchange(user);
+  }
+
+  Future<void> savePublishedExchanges(UserModel user) async{
+    _userRepository.savePublishedExchanges(user);
+  }
+
+  Future<void> savePublishedRentals(UserModel user) async{
+    _userRepository.savePublishedRentals(user);
+  }
+
+  void saveFavoriteRentals(List<dynamic> favoriteAds) {
+    _userRepository.saveFavoriteRentals(favoriteAds);
+  }
+
+  void saveFavoriteExcahnges(List<dynamic> favoriteAds){
+    _userRepository.saveFavoriteExchanges(favoriteAds);
+  }
+
 }

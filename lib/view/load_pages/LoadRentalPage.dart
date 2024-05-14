@@ -193,6 +193,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
                 );
               } else {
                 try {
+                  String idToken = Uuid().v4();
                   Rental rental = Rental(
                       imagePath,
                       currentUser.idToken,
@@ -202,9 +203,11 @@ class _LoadRentalState extends State<LoadRentalPage> {
                       _selectedPosition!.longitude,
                       _dailyCostInputController.value.text,
                       _maxDaysInputController.value.text,
-                      Uuid().v4(),
+                      idToken,
                       "","", DateTime.now().toString(),
                       _unitNumberInputController.text, "0");
+                  currentUser.addToActivePublishedRentals(idToken);
+                  userViewModel.savePublishedRentals(currentUser);
                   adViewModel.loadRental(rental).then((message) {
                     if (message!.contains('Success')) {
                           widget.onButtonPressed();

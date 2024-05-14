@@ -9,6 +9,8 @@ class UserModel {
   String _dateField;
   String _phoneNumber;
   String _imageUrl;
+  List<dynamic>? _publishedRentals;
+  List<dynamic>? _publishedExchange;
   List<dynamic>? _activeRentalsBuy;
   List<dynamic>? _finishedRentalsBuy;
   List<dynamic>? _activeRentalsSell;
@@ -30,6 +32,8 @@ class UserModel {
     required String phoneNumber,
     required imageUrl,
     imagePath,
+    publishedRentals,
+    publishedExchange,
     activeRentalsBuy,
     finishedRentalBuy,
     activeRentalsSell,
@@ -47,6 +51,8 @@ class UserModel {
         _phoneNumber = phoneNumber,
         _imageUrl = imageUrl,
         _imagePath = imagePath,
+        _publishedRentals = publishedRentals,
+        _publishedExchange = publishedExchange,
         _activeRentalsBuy = activeRentalsBuy,
         _finishedRentalsBuy = finishedRentalBuy,
         _activeRentalsSell = activeRentalsSell,
@@ -128,7 +134,14 @@ class UserModel {
 
   String? get imagePath => _imagePath;
   // Getter per _activeRentalsBuy
-  List<dynamic> get activeRentalsBuy => _activeRentalsBuy!;
+  List<dynamic> get activeRentalsBuy{
+    if(_activeRentalsBuy==null) {
+      _activeRentalsBuy = [" "];
+      return _activeRentalsBuy!;
+    }else{
+      return _activeRentalsBuy!;
+    }
+  }
 
   // Setter per _activeRentalsBuy
   set activeRentalsBuy(List<dynamic> value) {
@@ -136,7 +149,14 @@ class UserModel {
   }
 
   // Getter per _finishedRentalsBuy
-  List<dynamic> get finishedRentalsBuy => _finishedRentalsBuy!;
+  List<dynamic> get finishedRentalsBuy{
+    if(_finishedRentalsBuy==null) {
+      _finishedRentalsBuy = [" "];
+      return _finishedRentalsBuy!;
+    }else{
+      return _finishedRentalsBuy!;
+    }
+  }
 
   // Setter per _finishedRentalsBuy
   set finishedRentalsBuy(List<dynamic> value) {
@@ -144,7 +164,14 @@ class UserModel {
   }
 
   // Getter per _activeRentalsSell
-  List<dynamic> get activeRentalsSell => _activeRentalsSell!;
+  List<dynamic> get activeRentalsSell {
+    if(_activeRentalsSell==null) {
+      _activeRentalsSell = [" "];
+      return _activeRentalsSell!;
+    }else{
+      return _activeRentalsSell!;
+    }
+  }
 
   // Setter per _activeRentalsSell
   set activeRentalsSell(List<dynamic> value) {
@@ -152,19 +179,73 @@ class UserModel {
   }
 
   // Getter per _finishedRentalsSell
-  List<dynamic> get finishedRentalsSell => _finishedRentalsSell!;
-
+  List<dynamic> get finishedRentalsSell{
+    if(_finishedRentalsSell==null) {
+      _finishedRentalsSell = [" "];
+      return _finishedRentalsSell!;
+    }else{
+      return _finishedRentalsSell!;
+    }
+  }
   // Setter per _finishedRentalsSell
   set finishedRentalsSell(List<dynamic> value) {
     _finishedRentalsSell = value;
   }
 
+  List<dynamic> get publishedRentals {
+    if(_publishedRentals==null) {
+      _publishedRentals = [" "];
+      return _publishedRentals!;
+    }else{
+      return _publishedRentals!;
+    }
+  }
+
+  // Setter per _activeRentalsSell
+  set publishedRentals(List<dynamic> value) {
+    _publishedRentals = value;
+  }
+
+  List<dynamic> get publishedExchange {
+    if(_publishedExchange==null) {
+      _publishedExchange = [" "];
+      return _publishedExchange!;
+    }else{
+      return _publishedExchange!;
+    }
+  }
+  // Setter per _activeRentalsSell
+  set publishedExchange(List<dynamic> value) {
+    _publishedExchange = value;
+  }
+
   // Getter per _expiredExchange
-  List<dynamic> get expiredExchange => _expiredExchange!;
+  List<dynamic> get expiredExchange {
+    if(_expiredExchange==null) {
+      _expiredExchange = [" "];
+      return _expiredExchange!;
+    }else{
+      return _expiredExchange!;
+    }
+  }
 
-  List<dynamic> get favoriteExchange => _favoriteExchanges!;
+  List<dynamic> get favoriteExchange{
+    if(_favoriteExchanges==null) {
+      _favoriteExchanges = [" "];
+      return _favoriteExchanges!;
+    }else{
+      return _favoriteExchanges!;
+    }
+  }
 
-  List<dynamic> get favoriteRentals => _favoriteRentals!;
+  List<dynamic> get favoriteRentals{
+    if(_favoriteRentals==null) {
+      _favoriteRentals = [" "];
+      return _favoriteRentals!;
+    }else{
+      return _favoriteRentals!;
+    }
+  }
 
   // Setter per _expiredExchange
   set expiredExchange(List<dynamic> value) {
@@ -173,7 +254,10 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _activeRentalsBuy
   void addToActiveRentalsBuy(String item) {
-    _activeRentalsBuy?.add(item);
+    if(_activeRentalsBuy != null)
+       _activeRentalsBuy?.add(item);
+    else
+      _activeRentalsBuy= [item];
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsBuy
@@ -183,7 +267,11 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _finishedRentalsBuy
   void addToFinishedRentalsBuy(String item) {
-    _finishedRentalsBuy?.add(item);
+    if(_finishedRentalsBuy != null)
+      _finishedRentalsBuy?.add(item);
+    else
+      _finishedRentalsBuy= [item];
+
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsBuy
@@ -193,7 +281,10 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _activeRentalsSell
   void addToActiveRentalsSell(String item) {
-    _activeRentalsSell?.add(item);
+    if(_activeRentalsSell != null)
+      _activeRentalsSell?.add(item);
+    else
+      _activeRentalsSell= [item];
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsSell
@@ -203,7 +294,10 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _finishedRentalsSell
   void addToFinishedRentalsSell(String item) {
-    _finishedRentalsSell?.add(item);
+    if(_finishedRentalsSell != null)
+      _finishedRentalsSell?.add(item);
+    else
+      _finishedRentalsSell= [item];
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsSell
@@ -213,7 +307,10 @@ class UserModel {
 
   // Metodo per aggiungere un elemento a _expiredExchange
   void addToExpiredExchange(String item) {
-    _expiredExchange?.add(item);
+    if(_expiredExchange != null)
+      _expiredExchange?.add(item);
+    else
+      _expiredExchange= [item];
   }
 
   // Metodo per rimuovere un elemento da _expiredExchange
@@ -222,7 +319,10 @@ class UserModel {
   }
 
   void addToFavoriteRentals(String item) {
-    _favoriteRentals?.add(item);
+    if(_favoriteRentals != null)
+      _favoriteRentals?.add(item);
+    else
+      _favoriteRentals= [item];
   }
 
   void removeFromFavoriteRentals(String item) {
@@ -230,13 +330,39 @@ class UserModel {
   }
 
   void addToFavoriteExchange(String item) {
-    _favoriteExchanges?.add(item);
+    if(_favoriteExchanges != null)
+      _favoriteExchanges?.add(item);
+    else
+      _favoriteExchanges= [item];
   }
 
   void removeFromFavoriteExchange(String item) {
     _favoriteExchanges?.remove(item);
   }
 
+  void addToActivePublishedRentals(String item) {
+    if(_publishedRentals != null)
+      _publishedRentals?.add(item);
+    else
+      _publishedRentals= [item];
+  }
+
+  // Metodo per rimuovere un elemento da _activeRentalsBuy
+  void removeFromActivePublishedRentals(String item) {
+    _publishedRentals?.remove(item);
+  }
+
+  void addToActivePublishedExchanges(String item) {
+    if(_publishedExchange != null)
+      _publishedExchange?.add(item);
+    else
+      _publishedExchange= [item];
+  }
+
+  // Metodo per rimuovere un elemento da _activeRentalsBuy
+  void removeFromActivePublishedExchanges(String item) {
+    _publishedExchange?.remove(item);
+  }
 
   // Metodo per convertire l'oggetto UserModel in una mappa
   Map<String, dynamic> toMap() {
@@ -250,6 +376,8 @@ class UserModel {
       'birthdate': _dateField,
       'phoneNumber': _phoneNumber,
       'imageUrl': _imageUrl,
+      'publishedRentals' : _publishedRentals,
+      'publishedExchanges' : _publishedExchange,
       'activeRentalsSell' : _activeRentalsSell,
       'activeRentalsBuy' : _activeRentalsBuy,
       'finishedRentalsSell' : _finishedRentalsBuy,
@@ -272,6 +400,8 @@ class UserModel {
       birthDate: map['birthdate'],
       phoneNumber: map['phoneNumber'],
       imageUrl: map['imageUrl'],
+      publishedRentals: map['publishedRentals'],
+      publishedExchange: map['publishedExchanges'],
       activeRentalsSell: map['activeRentalsSell'],
       activeRentalsBuy: map['activeRentalsBuy'],
       finishedRentalsSell: map['finishedRentalsSell'],

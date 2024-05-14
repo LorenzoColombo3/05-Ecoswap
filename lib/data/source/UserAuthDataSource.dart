@@ -198,6 +198,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 birthDate: birthDate,
                 phoneNumber: phoneNumber,
                 imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
+                publishedRentals: listaVuota,
+                publishedExchange: listaVuota,
                 activeRentalsBuy: listaVuota,
                 finishedRentalBuy: listaVuota,
                 activeRentalsSell: listaVuota,
@@ -325,6 +327,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         double long = userData?['long'];
         String imageUrl = userData?['imageUrl'];
         String phoneNumber = userData?['phoneNumber'];
+        List<dynamic>? publishedExchanges = userData?['publishedExchanges'];
+        List<dynamic>? publishedRentals = userData?['publishedRentals'];
         List<dynamic>? activeRentalsBuy = userData?['activeRentalsBuy'];
         List<dynamic>? activeRentalsSell = userData?['activeRentalsSell'];
         List<dynamic>? finishedRentalsSell = userData?['finishedRentalsSell'];
@@ -342,6 +346,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             birthDate: birthDate,
             phoneNumber: phoneNumber,
             imageUrl: imageUrl,
+            publishedExchange: publishedExchanges,
+            publishedRentals: publishedRentals,
             activeRentalsBuy: activeRentalsBuy,
             finishedRentalBuy: finishedRentalsBuy,
             activeRentalsSell: activeRentalsSell,
@@ -371,17 +377,128 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  Future<void> saveUser(UserModel user) async{
+  Future<void> saveActiveRentalsBuy(UserModel user) async{
     try {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
-      final String databasePath = 'users';
+      final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
       await _databaseReference
           .child(databasePath)
-          .child(user.idToken)
-          .set(user.toMap());
+          .set(user.activeRentalsBuy);
     } catch (error) {
-        print('Errore durante il caricamento del rental: $error');
+        print('Errore durante il caricamento del rental attivo comprato: $error');
     }
   }
+
+  @override
+  Future<void> saveActiveRentalsSell(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/activeRentalsSell';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.activeRentalsSell);
+    } catch (error) {
+      print('Errore durante il caricamento del rental attivo vendita: $error');
+    }
+  }
+
+  @override
+  Future<void> saveFinishedRentalsSell(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.finishedRentalsBuy);
+    } catch (error) {
+      print('Errore durante il caricamento del rental finito comprato: $error');
+    }
+  }
+
+  @override
+  Future<void> saveFinishedRentalsBuy(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.finishedRentalsSell);
+    } catch (error) {
+      print('Errore durante il caricamento del rental finito vendita: $error');
+    }
+  }
+
+
+  @override
+  Future<void> saveExpiredExchange(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/expiredExchangel';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.expiredExchange);
+    } catch (error) {
+      print('Errore durante il caricamento del exchange finito: $error');
+    }
+  }
+
+  @override
+  Future<void> savePublishedRentals(UserModel user) async{
+    try {
+      print("salvataggio");
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/publishedRentals';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.publishedRentals);
+    } catch (error) {
+      print('Errore durante il caricamento del rental finito vendita: $error');
+    }
+  }
+
+
+  @override
+  Future<void> savePublishedExchanges(UserModel user) async{
+    try {
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/publishedExchanges';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.publishedExchange);
+    } catch (error) {
+      print('Errore durante il caricamento del exchange finito: $error');
+    }
+  }
+
+
+
+  void saveFavoriteRental(List<dynamic>favoriteAds){
+    try{
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final String idToken = currentUser!.uid;
+      DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+      databaseReference.child('users').child(idToken).child('favoriteRentals').set(favoriteAds);
+    } catch (error) {
+      print('Errore durante il salvataggio del rental preferito: $error');
+    }
+  }
+
+  void saveFavoriteExchange(List<dynamic>favoriteAds){
+    try{
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final String idToken = currentUser!.uid;
+      DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+      databaseReference.child('users').child(idToken).child('favoriteExchanges').set(favoriteAds);
+    } catch (error) {
+      print('Errore durante il salvataggio del exchange preferito: $error');
+    }
+  }
+
 }

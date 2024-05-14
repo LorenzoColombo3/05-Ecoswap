@@ -142,6 +142,7 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
                 );
               } else {
                 try {
+                  String idToken = Uuid().v4();
                   Exchange exchange = Exchange(
                       imagePath,
                       currentUser.idToken,
@@ -149,8 +150,10 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
                       _descriptionInputController.value.text,
                       _selectedPosition!.latitude,
                       _selectedPosition!.longitude,
-                      Uuid().v4(),
+                      idToken,
                       "", "", DateTime.now().toString());
+                  currentUser.addToActivePublishedExchanges(idToken);
+                  userViewModel.savePublishedExchanges(currentUser);
                   adViewModel.loadExchange(exchange).then((message) {
                     if (message!.contains('Success')) {
                       widget.onButtonPressed();
