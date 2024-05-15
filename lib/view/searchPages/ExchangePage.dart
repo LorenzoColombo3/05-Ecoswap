@@ -49,8 +49,10 @@ class _ExchangePageState extends State<ExchangePage> {
       ),
       body: SingleChildScrollView(
         child: FutureBuilder<UserModel?>(
-            future: userViewModel.getUserData(widget.exchange.userId),
+          future: userViewModel.getUserData(widget.exchange.userId),
           builder: (context, snapshot) {
+            bool isFavorite;
+            isFavorite = widget.currentUser.favoriteExchange.contains(widget.exchange.idToken);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
@@ -83,18 +85,38 @@ class _ExchangePageState extends State<ExchangePage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            child: const Stack(
-                              children: [
-                                Positioned(
-                                  top: 8.0,
-                                  right: 8.0,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.grey,
-                                    size: 24.0,
+                            child:  GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isFavorite) {
+                                    widget.currentUser.removeFromFavoriteExchange(widget.exchange.idToken);
+                                    isFavorite=false;
+                                  } else {
+                                    widget.currentUser.addToFavoriteExchange(widget.exchange.idToken);
+                                    isFavorite=true;
+                                  }
+                                  if(widget.currentUser.favoriteExchange.contains(" ")) {
+                                    widget.currentUser.removeFromFavoriteExchange(" ");
+                                    userViewModel.saveFavoriteExchange(widget.currentUser);
+                                  }else{
+                                    userViewModel.saveFavoriteExchange(widget.currentUser);
+                                  }
+                                });
+                              },
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    top: 8.0,
+                                    right: 8.0,
+                                    child:
+                                    Icon(
+                                      Icons.favorite,
+                                      color: isFavorite ? Colors.red : Colors.grey,
+                                      size: 24.0,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

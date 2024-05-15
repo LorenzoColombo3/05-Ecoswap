@@ -42,14 +42,19 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
     adViewModel = AdViewModelFactory(adRepository).create();
     userViewModel.getUser().then((value) {
       currentUser = value!;
+      _exchangesId = currentUser.favoriteExchange;
+      _rentalsId = currentUser.favoriteRentals;
+      print("eee${_exchangesId}");
+      print("rrr${_rentalsId}");
       setState(() {
-        _exchangesId = currentUser.favoriteExchange;
-        _rentalsId = currentUser.favoriteRentals;
       });
-      print("eee${_exchangesId.toString()}");
-      print("rrr${_rentalsId.toString()}");
     });
     _selectedIndex = 0;
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
   }
 
   @override
@@ -159,7 +164,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
                           currentUser: currentUser,
                         ),
                       ),
-                    );
+                    ).then((value) => setState(() {}));
                   },
                   title: Text(rental.title),
                   leading: ClipRRect(
@@ -204,7 +209,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
                         currentUser: currentUser,
                       ),
                     ),
-                  );
+                  ).then((value) => setState(() {}));
                 },
                 title: Text(exchange.title),
                 leading: ClipRRect(

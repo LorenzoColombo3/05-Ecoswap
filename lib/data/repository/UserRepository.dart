@@ -91,14 +91,15 @@ Future<Result?> saveData({required String name, required String lastName,
     return _userAuthDataSource.getUserDataFirebase(idToken);
   }
 
+
   @override
-  void saveFavoriteRentals(List<dynamic> favoriteAds) {
-   _userAuthDataSource.saveFavoriteRental(favoriteAds);
+  Future<void> saveFavoriteExchange(UserModel user) async{
+   _userAuthDataSource.saveFavoriteExchange(user);
   }
 
   @override
-  void saveFavoriteExchanges(List<dynamic> favoriteAds){
-   _userAuthDataSource.saveFavoriteExchange(favoriteAds);
+  Future<void> saveFavoriteRentals(UserModel user) async{
+   _userAuthDataSource.saveFavoriteRentals(user);
   }
 
   @override

@@ -312,6 +312,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+  @override
   Future<UserModel?> getUserDataFirebase(String idToken) async {
     try {
       final ref = FirebaseDatabase.instance.ref();
@@ -382,6 +383,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.activeRentalsBuy);
@@ -396,6 +398,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.activeRentalsSell);
@@ -410,6 +413,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.finishedRentalsBuy);
@@ -424,6 +428,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.finishedRentalsSell);
@@ -439,6 +444,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/expiredExchangel';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.expiredExchange);
@@ -454,6 +460,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/publishedRentals';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.publishedRentals);
@@ -469,6 +476,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/publishedExchanges';
+      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.publishedExchange);
@@ -478,24 +486,31 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
 
-
-  void saveFavoriteRental(List<dynamic>favoriteAds){
+  @override
+  Future<void> saveFavoriteRentals(UserModel user) async{
     try{
-      final User? currentUser = FirebaseAuth.instance.currentUser;
-      final String idToken = currentUser!.uid;
-      DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
-      databaseReference.child('users').child(idToken).child('favoriteRentals').set(favoriteAds);
+      saveUserLocal(user);
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/favoriteRentals';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.favoriteRentals);
     } catch (error) {
       print('Errore durante il salvataggio del rental preferito: $error');
     }
   }
 
-  void saveFavoriteExchange(List<dynamic>favoriteAds){
+  @override
+  Future<void> saveFavoriteExchange(UserModel user) async{
     try{
-      final User? currentUser = FirebaseAuth.instance.currentUser;
-      final String idToken = currentUser!.uid;
-      DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
-      databaseReference.child('users').child(idToken).child('favoriteExchanges').set(favoriteAds);
+      saveUserLocal(user);
+      final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.reference();
+      final String databasePath = 'users/${user.idToken}/favoriteExchanges';
+      await _databaseReference
+          .child(databasePath)
+          .set(user.favoriteExchange);
     } catch (error) {
       print('Errore durante il salvataggio del exchange preferito: $error');
     }

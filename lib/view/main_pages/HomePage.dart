@@ -293,7 +293,7 @@ class _HomePageState extends State<HomePage> {
               currentUser: currentUser,
             ),
           ),
-        );
+        ).then((value) => setState(() {}));
       },
       child: Container(
         margin: const EdgeInsets.all(5.0),
@@ -345,11 +345,9 @@ class _HomePageState extends State<HomePage> {
                         }
                         if(currentUser.favoriteRentals.contains(" ")) {
                           currentUser.removeFromFavoriteRentals(" ");
-                          userViewModel.saveFavoriteRentals(
-                              currentUser.favoriteRentals);
+                          userViewModel.saveFavoriteRentals(currentUser);
                         }else{
-                          userViewModel.saveFavoriteRentals(
-                              currentUser.favoriteRentals);
+                          userViewModel.saveFavoriteRentals(currentUser);
                         }
                       });
                     },
@@ -384,7 +382,7 @@ class _HomePageState extends State<HomePage> {
               currentUser: currentUser,
             ),
           ),
-        );
+        ).then((value) => setState(() {}));
       },
       child: Container(
         margin: const EdgeInsets.all(5.0),
@@ -439,11 +437,9 @@ class _HomePageState extends State<HomePage> {
                         isFavorite ? Colors.red : Colors.grey;
                         if(currentUser.favoriteExchange.contains(" ")) {
                           currentUser.removeFromFavoriteExchange(" ");
-                          userViewModel.saveFavoriteExcahnges(
-                              currentUser.favoriteExchange);
+                          userViewModel.saveFavoriteExchange(currentUser);
                         }else{
-                          userViewModel.saveFavoriteExcahnges(
-                              currentUser.favoriteExchange);
+                          userViewModel.saveFavoriteExchange(currentUser);
                         }
                     },
                     child: Padding(

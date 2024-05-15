@@ -27,6 +27,6 @@ abstract class BaseUserAuthDataSource {
   Future<void> saveExpiredExchange(UserModel user);
   Future<void> savePublishedRentals(UserModel user);
   Future<void> savePublishedExchanges(UserModel user);
-  void saveFavoriteRental(List<dynamic> favoriteAds);
-  void saveFavoriteExchange(List<dynamic> favoriteAds);
+  Future<void> saveFavoriteExchange(UserModel user);
+  Future<void> saveFavoriteRentals(UserModel user);
 }

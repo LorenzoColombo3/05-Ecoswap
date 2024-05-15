@@ -94,20 +94,16 @@ class _RentalPageState extends State<RentalPage> {
                                 setState(() {
                                   if (isFavorite) {
                                     widget.currentUser.removeFromFavoriteRentals(widget.rental.idToken);
-                                    print('fav No');
                                     isFavorite=false;
                                   } else {
-                                    print('fav Sì');
                                     widget.currentUser.addToFavoriteRentals(widget.rental.idToken);
                                     isFavorite=true;
                                   }
                                   if(widget.currentUser.favoriteRentals.contains(" ")) {
                                     widget.currentUser.removeFromFavoriteRentals(" ");
-                                    userViewModel.saveFavoriteRentals(
-                                        widget.currentUser.favoriteRentals);
+                                     userViewModel.saveFavoriteRentals(widget.currentUser);
                                   }else{
-                                    userViewModel.saveFavoriteRentals(
-                                        widget.currentUser.favoriteRentals);
+                                     userViewModel.saveFavoriteRentals(widget.currentUser);
                                   }
                                 });
                               },

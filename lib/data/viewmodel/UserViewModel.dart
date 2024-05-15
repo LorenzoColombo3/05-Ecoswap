@@ -98,12 +98,12 @@ class UserViewModel{
     _userRepository.savePublishedRentals(user);
   }
 
-  void saveFavoriteRentals(List<dynamic> favoriteAds) {
-    _userRepository.saveFavoriteRentals(favoriteAds);
+  Future<void> saveFavoriteExchange(UserModel user) async{
+    _userRepository.saveFavoriteExchange(user);
   }
 
-  void saveFavoriteExcahnges(List<dynamic> favoriteAds){
-    _userRepository.saveFavoriteExchanges(favoriteAds);
+  Future<void> saveFavoriteRentals(UserModel user) async{
+    _userRepository.saveFavoriteRentals(user);
   }
 
 }
