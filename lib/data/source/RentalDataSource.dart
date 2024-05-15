@@ -281,4 +281,27 @@ class RentalDataSource extends BaseRentalDataSource {
       print("errore durante l'update  $e");
     }
   }
+
+  Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens) async {
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+    try {
+      List<Rental> rentals = [];
+      for (var idToken in idTokens) {
+        DataSnapshot snapshot = await databaseReference.child('rentals').child(idToken).get();
+        Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?; // Cast in Map<dynamic, dynamic>?
+        if (data != null) {
+          // Converti il Map<dynamic, dynamic> in Map<String, dynamic>
+          Map<String, dynamic> rentalData = data.cast<String, dynamic>();
+          Rental rental = Rental.fromMap(rentalData);
+          rentals.add(rental);
+        }
+      }
+      return rentals;
+    } catch (error) {
+      print('Errore durante il recupero dei noleggi dal database Firebase: $error');
+      return [];
+    }
+  }
+
+
 }

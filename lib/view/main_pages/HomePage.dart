@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
       currentUser = value!;
       loadMoreRental(currentUser);
       loadMoreExchange(currentUser);
+      print(currentUser.favoriteRentals.toString());
     });
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);

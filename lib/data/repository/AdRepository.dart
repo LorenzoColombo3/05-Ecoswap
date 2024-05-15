@@ -143,4 +143,12 @@ class AdRepository implements IAdRepository{
   void updateRentalData(Rental rental) {
     _rentalDataSource.updateRentalData(rental);
   }
+  @override
+  Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens){
+    return _rentalDataSource.getRentalsByIdTokens(idTokens);
+  }
+  @override
+  Future<List<Exchange>> getExchangesByIdTokens(List<dynamic> idTokens){
+    return _exchangeDataSource.getExchangesByIdTokens(idTokens);
+  }
 }

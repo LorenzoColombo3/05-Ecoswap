@@ -20,5 +20,6 @@ abstract class BaseRentalDataSource{
   Future<List<Rental>> getRentalsInRadius(double latUser, double longUser, double radiusKm, int startIndex);
   Future<List<Rental>> searchItems(double latUser, double longUser, String query);
   void updateRentalData(Rental rental);
+  Future<List<Rental>> getRentalsByIdTokens(List idTokens);
 
 }

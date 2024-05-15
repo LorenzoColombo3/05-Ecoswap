@@ -228,4 +228,24 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       return null;
     }
   }
+
+  Future<List<Exchange>> getExchangesByIdTokens(List idTokens) async {
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+    try {
+      List<Exchange> exchanges = [];
+      for (var idToken in idTokens) {
+        DataSnapshot snapshot = await databaseReference.child('exchanges').child(idToken).get();
+        Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?; // Cast in Map<dynamic, dynamic>?
+        if (data != null) {
+          Map<String, dynamic> exchangeData = data.cast<String, dynamic>();
+          Exchange exchange = Exchange.fromMap(exchangeData);
+          exchanges.add(exchange);
+        }
+      }
+      return exchanges;
+    } catch (error) {
+      print('Errore durante il recupero dei noleggi dal database Firebase: $error');
+      return [];
+    }
+  }
 }

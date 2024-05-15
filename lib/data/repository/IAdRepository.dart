@@ -16,5 +16,7 @@ abstract class IAdRepository{
   Future<List<Exchange>> getAllUserExchanges(String userId);
   Future<List<AdModel>> searchItems(double latUser, double longUser, String query);
   void updateRentalData(Rental rental);
+  Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens);
+  Future<List<Exchange>> getExchangesByIdTokens(List<dynamic> idTokens);
 
 }

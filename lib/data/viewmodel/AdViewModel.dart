@@ -61,4 +61,12 @@ class AdViewModel{
     _adRepository.updateRentalData(rental);
   }
 
+  Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens){
+    return _adRepository.getRentalsByIdTokens(idTokens);
+  }
+
+  Future<List<Exchange>> getExchangesByIdTokens(List<dynamic> idTokens){
+    return _adRepository.getExchangesByIdTokens(idTokens);
+  }
+
 }
