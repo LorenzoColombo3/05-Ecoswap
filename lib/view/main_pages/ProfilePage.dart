@@ -34,7 +34,6 @@ class _ProfilePageState extends State<ProfilePage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  int _selectedIndex = 0;
   Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
   late Future<String?> imageUrl;
@@ -45,30 +44,13 @@ class _ProfilePageState extends State<ProfilePage> {
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-
-    userViewModel.getUser().then((user) {
-      currentUser = user!;
-    });
     imagePath = "";
     imageUrl = userViewModel.getProfileImage();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UserModel?>(
-      future: userViewModel.getUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          currentUser = snapshot.data!;
-          return buildContent();
-        } else {
-          return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
-        }
-      },
-    );
-  }
-
-  Widget buildContent() {
     return FutureBuilder<UserModel?>(
       future: userViewModel.getUser(), // Ottieni l'utente
       builder: (context, snapshot) {
@@ -150,7 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildList(BuildContext context, List<dynamic> listObject) {
     return ListView.builder(
-
         scrollDirection: Axis.horizontal,
         itemCount: listObject.length,
         itemBuilder: (context, index) {
