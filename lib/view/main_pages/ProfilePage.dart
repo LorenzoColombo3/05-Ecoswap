@@ -19,6 +19,8 @@ import '../../widget/SettingsMenu.dart';
 import '../load_pages/LoadExchangePage.dart';
 import '../load_pages/LoadRentalPage.dart';
 import '../profile_pages/SettingsPage.dart';
+import '../searchPages/ExchangePage.dart';
+import '../searchPages/RentalPage.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -29,14 +31,11 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late UserModel currentUser;
-  late String imagePath;
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  Color rentalButtonColor = Color(0xFF7BFF81);
-  Color exchangeButtonColor = Colors.transparent;
-  late Future<String?> imageUrl;
+
   @override
   void initState() {
     super.initState();
@@ -44,10 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    imagePath = "";
-    imageUrl = userViewModel.getProfileImage();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
       future: userViewModel.getUser(), // Ottieni l'utente
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          // Verifica se lo snapshot ha completato il caricamento dei dati
           currentUser = snapshot.data!;
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -63,42 +58,24 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: Theme.of(context).colorScheme.background,
               automaticallyImplyLeading: false,
               title: Text(''),
-              actions:  [
-                SettingsMenu(callback: (){setState(() {
-
-                });}),
+              actions: [
+                SettingsMenu(callback: () {
+                  setState(() {});
+                }),
               ],
             ),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                mainAxisSize:MainAxisSize.min,
                 children: [
-                  FutureBuilder<String?>(
-                    future: imageUrl,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
-                      } else if (snapshot.hasData && snapshot.data != "") {
-                        return ClipOval(
-                          child: Image.network(
-                            snapshot.data!,
-                            width: 150, // Imposta la larghezza dell'immagine
-                            height: 150, // Imposta l'altezza dell'immagine
-                            fit: BoxFit
-                                .cover, // Scala l'immagine per adattarla al widget Image
-                          ),
-                        );
-                      } else {
-                        return ClipOval(
-                          child: Image.asset(
-                            'assets/image/profile.jpg',
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.cover,
-                          ),
-                        ); // Gestisci il caso in cui non ci sia alcun URL immagine
-                      }
-                    },
+                  ClipOval(
+                    child: Image.network(
+                      currentUser.imageUrl,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -106,19 +83,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: const TextStyle(fontSize: 24),
                   ),
                   _buildDivider(),
-                  _buildList(context, currentUser.publishedExchange),
+                  _buildExchangeList(context, currentUser.publishedExchange),
                   _buildDivider(),
-                  /*_buildList(context, currentUser.publishedRentals),
+                  /*_buildRentalList(context, currentUser.publishedRentals),
                   _buildDivider(),
-                  _buildList(context, currentUser.activeRentalsSell),
+                  _buildExchangeList(context, currentUser.activeRentalsSell),
                   _buildDivider(),
-                  _buildList(context, currentUser.activeRentalsBuy),
-                  _buildDivider(),
-                  _buildList(context, currentUser.finishedRentalsSell),
+                  _buildRentalList(context, currentUser.activeRentalsBuy),
+                  _buildDivider(),*/
+                 /* _buildList(context, currentUser.finishedRentalsSell),
                   _buildDivider(),
                   _buildList(context, currentUser.finishedRentalsBuy),
                   _buildDivider(),
                   _buildList(context, currentUser.expiredExchange),*/
+                  //controllare se necessario creare liste per ordini conclusi
                 ],
               ),
             ),
@@ -130,25 +108,115 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildList(BuildContext context, List<dynamic> listObject) {
-    return ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: listObject.length,
-        itemBuilder: (context, index) {
-          print('Item at index $index: ${listObject[index]}');
-          return  Placeholder();
-        },
+  Widget _buildExchangeList(BuildContext context, List<dynamic> listObject) {
+    return FutureBuilder<List<Exchange>>(
+      future: adViewModel.getExchangesByIdTokens(listObject),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Errore durante il recupero dei exchange: ${snapshot.error}'));
+        } else {
+          List<Exchange> exchanges = snapshot.data ?? [];
+          return Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints( maxHeight: 150),
+              child: ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap:true,
+                scrollDirection: Axis.horizontal,
+                itemCount: exchanges.length,
+                itemBuilder: (context, index) {
+                  final exchange = exchanges[index];
+                  //la listview funziona, il problema sta negli oggetti stampati, vuota andrebbe
+                  return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExchangePage(
+                            exchange: exchange,
+                            currentUser: currentUser,
+                          ),
+                        ),
+                      ).then((value) => setState(() {}));
+                    },
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: FadeInImage(
+                        placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder
+                        image: NetworkImage(exchange.imageUrl), // Immagine effettiva
+                        fit: BoxFit.fill, // Modalità di adattamento dell'immagine
+                      ),
+                    ),
+                    title: Text(exchange.title),
+                  );
+                },
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
 
+  Widget _buildRentalList(BuildContext context, List<dynamic> listObject) {
+    return FutureBuilder<List<Rental>>(
+      future: adViewModel.getRentalsByIdTokens(listObject),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Errore durante il recupero dei rentals: ${snapshot.error}'));
+        } else {
+          List<Rental> rentals = snapshot.data ?? [];
+          return Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints( maxHeight: 150),
+              child: ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap:true,
+                scrollDirection: Axis.horizontal,
+                itemCount: rentals.length,
+                itemBuilder: (context, index) {
+                  final rental = rentals[index];
+                  return ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RentalPage(
+                            rental: rental,
+                            currentUser: currentUser,
+                          ),
+                        ),
+                      ).then((value) => setState(() {}));
+                    },
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: FadeInImage(
+                        placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder
+                        image: NetworkImage(rental.imageUrl), // Immagine effettiva
+                        fit: BoxFit.fill, // Modalità di adattamento dell'immagine
+                      ),
+                    ),
+                    title: Text(rental.title),
+                  );
+                },
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 
 
   Widget _buildDivider() {
-    return Divider(
+    return const Divider(
       height: 1,
       thickness: 1,
       color: Colors.grey,
     );
   }
 }
-
