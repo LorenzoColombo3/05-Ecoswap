@@ -1,3 +1,4 @@
+import 'RentalOrder.dart';
 import 'ReviewModel.dart';
 
 class UserModel {
@@ -14,10 +15,10 @@ class UserModel {
   Map<dynamic,dynamic>? _reviews;
   List<dynamic>? _publishedRentals;
   List<dynamic>? _publishedExchange;
-  List<dynamic>? _activeRentalsBuy;
-  List<dynamic>? _finishedRentalsBuy;
-  List<dynamic>? _activeRentalsSell;
-  List<dynamic>? _finishedRentalsSell;
+  List<RentalOrder>? _activeRentalsBuy;
+  List<RentalOrder>? _finishedRentalsBuy;
+  List<RentalOrder>? _activeRentalsSell;
+  List<RentalOrder>? _finishedRentalsSell;
   List<dynamic>? _favoriteRentals;
   List<dynamic>? _favoriteExchanges;
 
@@ -136,9 +137,9 @@ class UserModel {
 
   String? get imagePath => _imagePath;
   // Getter per _activeRentalsBuy
-  List<dynamic> get activeRentalsBuy{
+  List<RentalOrder> get activeRentalsBuy{
     if(_activeRentalsBuy==null) {
-      _activeRentalsBuy = [" "];
+      _activeRentalsBuy = [];
       return _activeRentalsBuy!;
     }else{
       return _activeRentalsBuy!;
@@ -146,14 +147,14 @@ class UserModel {
   }
 
   // Setter per _activeRentalsBuy
-  set activeRentalsBuy(List<dynamic> value) {
+  set activeRentalsBuy(List<RentalOrder> value) {
     _activeRentalsBuy = value;
   }
 
   // Getter per _finishedRentalsBuy
-  List<dynamic> get finishedRentalsBuy{
+  List<RentalOrder> get finishedRentalsBuy{
     if(_finishedRentalsBuy==null) {
-      _finishedRentalsBuy = [" "];
+      _finishedRentalsBuy = [];
       return _finishedRentalsBuy!;
     }else{
       return _finishedRentalsBuy!;
@@ -161,14 +162,14 @@ class UserModel {
   }
 
   // Setter per _finishedRentalsBuy
-  set finishedRentalsBuy(List<dynamic> value) {
+  set finishedRentalsBuy(List<RentalOrder> value) {
     _finishedRentalsBuy = value;
   }
 
   // Getter per _activeRentalsSell
-  List<dynamic> get activeRentalsSell {
+  List<RentalOrder> get activeRentalsSell {
     if(_activeRentalsSell==null) {
-      _activeRentalsSell = [" "];
+      _activeRentalsSell = [];
       return _activeRentalsSell!;
     }else{
       return _activeRentalsSell!;
@@ -176,21 +177,21 @@ class UserModel {
   }
 
   // Setter per _activeRentalsSell
-  set activeRentalsSell(List<dynamic> value) {
+  set activeRentalsSell(List<RentalOrder> value) {
     _activeRentalsSell = value;
   }
 
   // Getter per _finishedRentalsSell
-  List<dynamic> get finishedRentalsSell{
+  List<RentalOrder> get finishedRentalsSell{
     if(_finishedRentalsSell==null) {
-      _finishedRentalsSell = [" "];
+      _finishedRentalsSell = [];
       return _finishedRentalsSell!;
     }else{
       return _finishedRentalsSell!;
     }
   }
   // Setter per _finishedRentalsSell
-  set finishedRentalsSell(List<dynamic> value) {
+  set finishedRentalsSell(List<RentalOrder> value) {
     _finishedRentalsSell = value;
   }
 
@@ -248,7 +249,7 @@ class UserModel {
   }
 
   // Metodo per aggiungere un elemento a _activeRentalsBuy
-  void addToActiveRentalsBuy(String item) {
+  void addToActiveRentalsBuy(RentalOrder item) {
     if(_activeRentalsBuy != null)
        _activeRentalsBuy?.add(item);
     else
@@ -256,12 +257,12 @@ class UserModel {
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsBuy
-  void removeFromActiveRentalsBuy(String item) {
+  void removeFromActiveRentalsBuy(RentalOrder item) {
     _activeRentalsBuy?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _finishedRentalsBuy
-  void addToFinishedRentalsBuy(String item) {
+  void addToFinishedRentalsBuy(RentalOrder item) {
     if(_finishedRentalsBuy != null)
       _finishedRentalsBuy?.add(item);
     else
@@ -270,12 +271,12 @@ class UserModel {
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsBuy
-  void removeFromFinishedRentalsBuy(String item) {
+  void removeFromFinishedRentalsBuy(RentalOrder item) {
     _finishedRentalsBuy?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _activeRentalsSell
-  void addToActiveRentalsSell(String item) {
+  void addToActiveRentalsSell(RentalOrder item) {
     if(_activeRentalsSell != null)
       _activeRentalsSell?.add(item);
     else
@@ -283,12 +284,12 @@ class UserModel {
   }
 
   // Metodo per rimuovere un elemento da _activeRentalsSell
-  void removeFromActiveRentalsSell(String item) {
+  void removeFromActiveRentalsSell(RentalOrder item) {
     _activeRentalsSell?.remove(item);
   }
 
   // Metodo per aggiungere un elemento a _finishedRentalsSell
-  void addToFinishedRentalsSell(String item) {
+  void addToFinishedRentalsSell(RentalOrder item) {
     if(_finishedRentalsSell != null)
       _finishedRentalsSell?.add(item);
     else
@@ -296,7 +297,7 @@ class UserModel {
   }
 
   // Metodo per rimuovere un elemento da _finishedRentalsSell
-  void removeFromFinishedRentalsSell(String item) {
+  void removeFromFinishedRentalsSell(RentalOrder item) {
     _finishedRentalsSell?.remove(item);
   }
 

@@ -1,5 +1,6 @@
+import 'package:eco_swap/model/RentalOrder.dart';
 import 'package:eco_swap/view/main_pages/NavigationPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
@@ -49,7 +50,9 @@ class _RentalPaymentState extends State<RentalPayment> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme
+        .of(context)
+        .colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
@@ -126,7 +129,8 @@ class _RentalPaymentState extends State<RentalPayment> {
 
             // Descrizione e prezzo
             Text(
-              'Description: ${widget.rental.description}\nPrice: ${(unitNumber * int.parse(widget.rental.dailyCost)) * daysRent}',
+              'Description: ${widget.rental.description}\nPrice: ${(unitNumber *
+                  int.parse(widget.rental.dailyCost)) * daysRent}',
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 16.0),
@@ -153,46 +157,55 @@ class _RentalPaymentState extends State<RentalPayment> {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (states) => colorScheme.background),
+                            (states) => colorScheme.background),
                   ),
                   onPressed: () {
                     StripeService.stripePaymentCheckout(
                         widget.rental, unitNumber, daysRent, context, mounted,
                         onSuccess: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("operation successed")),
-                      );
-                      widget.rental.unitRented =
-                          (int.parse(widget.rental.unitRented) + unitNumber)
-                              .toString();
-                      adViewModel.updateRentalData(widget.rental);
-                      widget.currentUser.addToActiveRentalsBuy(widget.rental.idToken);
-                      sellerUser.addToActiveRentalsSell(widget.rental.idToken);
-                      userViewModel
-                          .saveActiveRentalsBuy(widget.currentUser)
-                          .then((value) =>
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("operation successed")),
+                          );
+                          widget.rental.unitRented =
+                              (int.parse(widget.rental.unitRented) + unitNumber)
+                                  .toString();
+                          adViewModel.updateRentalData(widget.rental);
+                          RentalOrder order = RentalOrder(idToken: Uuid().v4(),
+                              sellerId: sellerUser.idToken,
+                              buyerId: widget.currentUser.idToken,
+                              rentalId:widget.rental.idToken,
+                              dateTime: DateTime.now().toString().substring(0,10),
+                              unitRented: unitNumber,
+                              price: (unitNumber * int.parse(widget.rental.dailyCost)) * daysRent,
+                              days: daysRent);
+                          widget.currentUser.addToActiveRentalsBuy(order);
+                          sellerUser.addToActiveRentalsSell(order);
+                          userViewModel
+                              .saveActiveRentalsBuy(widget.currentUser)
+                              .then((value) =>
                               userViewModel.saveActiveRentalsSell(sellerUser));
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) =>
-                            NavigationPage(logoutCallback: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ));
-                        }),
-                      ));
-                    }, onCancel: () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NavigationPage(logoutCallback: () {
+                                      Navigator.of(context)
+                                          .pushReplacement(MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ));
+                                    }),
+                              ));
+                        }, onCancel: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("operation cancelled")),
                       );
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) =>
                             NavigationPage(logoutCallback: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ));
-                        }),
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => HomePage(),
+                              ));
+                            }),
                       ));
                     }, onError: (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -201,11 +214,11 @@ class _RentalPaymentState extends State<RentalPayment> {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) =>
                             NavigationPage(logoutCallback: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => HomePage(),
-                          ));
-                        }),
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => HomePage(),
+                              ));
+                            }),
                       ));
                     }).then((value) => value.call());
                   },

@@ -385,9 +385,13 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
       saveUserLocal(user);
+      List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsBuy
+          .map((rentalOrder) => rentalOrder.toMap())
+          .toList();
+      print(rentalsSellMapList);
       await _databaseReference
           .child(databasePath)
-          .set(user.activeRentalsBuy);
+          .set(rentalsSellMapList);
     } catch (error) {
         print('Errore durante il caricamento del rental attivo comprato: $error');
     }
@@ -399,10 +403,13 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
-      saveUserLocal(user);
+      List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsSell
+          .map((rentalOrder) => rentalOrder.toMap())
+          .toList();
+      print(rentalsSellMapList);
       await _databaseReference
           .child(databasePath)
-          .set(user.activeRentalsSell);
+          .set(rentalsSellMapList);
     } catch (error) {
       print('Errore durante il caricamento del rental attivo vendita: $error');
     }
@@ -414,7 +421,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
-      saveUserLocal(user);
       await _databaseReference
           .child(databasePath)
           .set(user.finishedRentalsBuy);

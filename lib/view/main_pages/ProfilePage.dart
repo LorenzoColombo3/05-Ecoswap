@@ -13,6 +13,7 @@ import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
+import '../../model/RentalOrder.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 import '../../util/ServiceLocator.dart';
@@ -221,8 +222,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   Widget _buildRentalList(BuildContext context, List<dynamic> listObject) {
+    List<String>? listApp = [];
+    if (listObject is List<RentalOrder>) {
+      for (RentalOrder order in listObject) {
+        listApp.add(order.idToken);
+      }
+    }else{
+      listApp = listObject.cast<String>();
+    }
     return FutureBuilder<List<Rental>>(
-      future: adViewModel.getRentalsByIdTokens(listObject),
+      future: adViewModel.getRentalsByIdTokens(listApp),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
