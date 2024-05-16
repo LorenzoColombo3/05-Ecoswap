@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/AdViewModel.dart';
@@ -13,6 +14,7 @@ import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
+import '../../widget/modalBottomSheet.dart';
 import 'RentalPayment.dart';
 
 class RentalPage extends StatefulWidget {
@@ -61,6 +63,7 @@ class _RentalPageState extends State<RentalPage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
+              print("Recensioni${snapshot.data!.reviews}");
               String? img= snapshot.data?.imageUrl;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,7 +139,7 @@ class _RentalPageState extends State<RentalPage> {
                           ),
                           child: ListTile(
                                     onTap: () {
-                                      // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                                      userViewModel.saveReview(widget.rental.userId, "PorcoDDIo",3);
                                     },
                                     title: Text(snapshot.data!.name),
                                     subtitle: Text("addStarsRating"),

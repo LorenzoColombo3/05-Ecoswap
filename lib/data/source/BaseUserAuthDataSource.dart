@@ -28,4 +28,5 @@ abstract class BaseUserAuthDataSource {
   Future<void> savePublishedExchanges(UserModel user);
   Future<void> saveFavoriteExchange(UserModel user);
   Future<void> saveFavoriteRentals(UserModel user);
+  Future<void> saveReview(String userId, String reviewContent, int stars);
 }

@@ -102,4 +102,9 @@ class UserViewModel{
     _userRepository.saveFavoriteRentals(user);
   }
 
+
+  Future<void> saveReview(String userId, String reviewContent, int stars){
+    return _userRepository.saveReview(userId, reviewContent, stars);
+  }
+
 }

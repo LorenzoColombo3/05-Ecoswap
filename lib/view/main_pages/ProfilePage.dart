@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:eco_swap/model/AdModel.dart';
+import 'package:eco_swap/view/profile_pages/ReviewsPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -81,6 +82,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text(
                     currentUser.name, // Sostituisci con il nome utente reale
                     style: const TextStyle(fontSize: 24),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReviewsPage(
+                            currentUser: currentUser,
+                          ),
+                        ),
+                      ).then((value) => setState(() {}));
+                    },
+                    child: Text("My reviews")
                   ),
                   Text("Published exchanges"),
                   _buildDivider(),

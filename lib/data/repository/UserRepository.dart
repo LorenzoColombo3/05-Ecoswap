@@ -132,4 +132,9 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<void> savePublishedRentals(UserModel user) async{
     _userAuthDataSource.savePublishedRentals(user);
   }
+
+  @override
+  Future<void> saveReview(String userId, String reviewContent, int stars){
+   return _userAuthDataSource.saveReview(userId, reviewContent, stars);
+  }
 }

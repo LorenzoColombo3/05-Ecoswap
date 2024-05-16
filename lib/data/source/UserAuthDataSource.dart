@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
+import 'package:eco_swap/model/ReviewModel.dart';
 import 'package:eco_swap/model/UserModel.dart';
 import 'package:eco_swap/util/Result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -175,7 +176,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'email': currentUser.email,
         'phoneNumber': phoneNumber,
         'imageUrl': "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
-         'activeRentalsSell' : listaVuota,
+        'reviews' : listaVuota,
+        'activeRentalsSell' : listaVuota,
         'activeRentalsBuy' : listaVuota,
         'finishedRentalsSell' : listaVuota,
         'finishedRentalsBuy' : listaVuota,
@@ -197,6 +199,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 birthDate: birthDate,
                 phoneNumber: phoneNumber,
                 imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
+                reviews: listaVuota,
                 publishedRentals: listaVuota,
                 publishedExchange: listaVuota,
                 activeRentalsBuy: listaVuota,
@@ -326,6 +329,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         double long = userData?['long'];
         String imageUrl = userData?['imageUrl'];
         String phoneNumber = userData?['phoneNumber'];
+        Map<dynamic, dynamic>? reviews = userData?['reviews'];
         List<dynamic>? publishedExchanges = userData?['publishedExchanges'];
         List<dynamic>? publishedRentals = userData?['publishedRentals'];
         List<dynamic>? activeRentalsBuy = userData?['activeRentalsBuy'];
@@ -344,6 +348,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             birthDate: birthDate,
             phoneNumber: phoneNumber,
             imageUrl: imageUrl,
+            reviews: reviews,
             publishedExchange: publishedExchanges,
             publishedRentals: publishedRentals,
             activeRentalsBuy: activeRentalsBuy,
@@ -495,6 +500,24 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
           .set(user.favoriteExchange);
     } catch (error) {
       print('Errore durante il salvataggio del exchange preferito: $error');
+    }
+  }
+
+  @override
+  Future<void> saveReview(String userId/*id user che riceve la recensione*/, String reviewContent, int stars) async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+    String idToken = currentUser!.uid;
+    final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+    final String databasePath = 'users/$userId/reviews';
+    try {
+      await _databaseReference.child(databasePath).push().set({
+        'userIdToken': idToken,//id user che ha fatto la recensione
+        'text': reviewContent,
+        'stars': stars,
+      });
+      print('Recensione salvata con successo.');
+    } catch (error) {
+      print('Errore durante il salvataggio della recensione: $error');
     }
   }
 

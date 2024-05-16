@@ -29,4 +29,5 @@ abstract class IUserRepository{
   Future<void> saveFinishedRentalsBuy(UserModel user);
   Future<void> savePublishedRentals(UserModel user);
   Future<void> savePublishedExchanges(UserModel user);
+  Future<void> saveReview(String userId, String reviewContent, int stars);
 }

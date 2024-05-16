@@ -1,3 +1,5 @@
+import 'ReviewModel.dart';
+
 class UserModel {
   String? _imagePath;
   String _idToken;
@@ -9,6 +11,7 @@ class UserModel {
   String _dateField;
   String _phoneNumber;
   String _imageUrl;
+  Map<dynamic,dynamic>? _reviews;
   List<dynamic>? _publishedRentals;
   List<dynamic>? _publishedExchange;
   List<dynamic>? _activeRentalsBuy;
@@ -31,6 +34,7 @@ class UserModel {
     required String phoneNumber,
     required imageUrl,
     imagePath,
+    reviews,
     publishedRentals,
     publishedExchange,
     activeRentalsBuy,
@@ -49,6 +53,7 @@ class UserModel {
         _phoneNumber = phoneNumber,
         _imageUrl = imageUrl,
         _imagePath = imagePath,
+        _reviews = reviews,
         _publishedRentals = publishedRentals,
         _publishedExchange = publishedExchange,
         _activeRentalsBuy = activeRentalsBuy,
@@ -234,6 +239,14 @@ class UserModel {
     }
   }
 
+  Map<dynamic,dynamic> get reviews{
+    if(_reviews==null) {
+      return _reviews!;
+    }else{
+      return _reviews!;
+    }
+  }
+
   // Metodo per aggiungere un elemento a _activeRentalsBuy
   void addToActiveRentalsBuy(String item) {
     if(_activeRentalsBuy != null)
@@ -346,6 +359,7 @@ class UserModel {
       'birthdate': _dateField,
       'phoneNumber': _phoneNumber,
       'imageUrl': _imageUrl,
+      'reviews': _reviews,
       'publishedRentals' : _publishedRentals,
       'publishedExchanges' : _publishedExchange,
       'activeRentalsSell' : _activeRentalsSell,
@@ -369,6 +383,7 @@ class UserModel {
       birthDate: map['birthdate'],
       phoneNumber: map['phoneNumber'],
       imageUrl: map['imageUrl'],
+      reviews: map['reviews'],
       publishedRentals: map['publishedRentals'],
       publishedExchange: map['publishedExchanges'],
       activeRentalsSell: map['activeRentalsSell'],
