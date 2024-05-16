@@ -179,7 +179,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'activeRentalsBuy' : listaVuota,
         'finishedRentalsSell' : listaVuota,
         'finishedRentalsBuy' : listaVuota,
-        'expiredExchange' : listaVuota,
         'favoriteRentals' : listaVuota,
         'favoriteExchanges' : listaVuota,
       };
@@ -204,7 +203,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 finishedRentalBuy: listaVuota,
                 activeRentalsSell: listaVuota,
                 finishedRentalsSell: listaVuota,
-                expiredExchange: listaVuota,
                 favoriteRentals : listaVuota,
                 favoriteExchanges : listaVuota,
               ));
@@ -334,7 +332,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         List<dynamic>? activeRentalsSell = userData?['activeRentalsSell'];
         List<dynamic>? finishedRentalsSell = userData?['finishedRentalsSell'];
         List<dynamic>? finishedRentalsBuy = userData?['finishedRentalsBuy'];
-        List<dynamic>? expiredExchange = userData?['expiredExchange'];
         List<dynamic>? favoriteRentals= userData?['favoriteRentals'];
         List<dynamic>? favoriteExchanges= userData?['favoriteExchanges'];
         return UserModel(
@@ -353,7 +350,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             finishedRentalBuy: finishedRentalsBuy,
             activeRentalsSell: activeRentalsSell,
             finishedRentalsSell: finishedRentalsSell,
-            expiredExchange: expiredExchange,
             favoriteRentals: favoriteRentals,
             favoriteExchanges: favoriteExchanges);
       } else {
@@ -438,20 +434,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
 
-  @override
-  Future<void> saveExpiredExchange(UserModel user) async{
-    try {
-      final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
-      final String databasePath = 'users/${user.idToken}/expiredExchangel';
-      saveUserLocal(user);
-      await _databaseReference
-          .child(databasePath)
-          .set(user.expiredExchange);
-    } catch (error) {
-      print('Errore durante il caricamento del exchange finito: $error');
-    }
-  }
 
   @override
   Future<void> savePublishedRentals(UserModel user) async{

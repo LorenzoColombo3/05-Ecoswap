@@ -66,6 +66,9 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
           ),
           SizedBox(height: 16.0),
           TextFormField(
+            minLines: 1,
+            maxLines: null,
+            maxLength: 15,
             controller: _titleInputController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),

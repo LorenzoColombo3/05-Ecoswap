@@ -86,10 +86,6 @@ class UserViewModel{
     _userRepository.saveActiveRentalsSell(user);
   }
 
-  Future<void> saveExpiredExchange(UserModel user) async{
-    _userRepository.saveExpiredExchange(user);
-  }
-
   Future<void> savePublishedExchanges(UserModel user) async{
     _userRepository.savePublishedExchanges(user);
   }

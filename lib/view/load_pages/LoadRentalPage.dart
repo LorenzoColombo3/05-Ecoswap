@@ -70,6 +70,9 @@ class _LoadRentalState extends State<LoadRentalPage> {
           ),
           SizedBox(height: 16.0),
           TextFormField(
+            minLines: 1,
+            maxLines: null,
+            maxLength: 15,
             controller: _titleInputController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),

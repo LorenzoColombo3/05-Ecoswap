@@ -15,7 +15,6 @@ class UserModel {
   List<dynamic>? _finishedRentalsBuy;
   List<dynamic>? _activeRentalsSell;
   List<dynamic>? _finishedRentalsSell;
-  List<dynamic>? _expiredExchange;
   List<dynamic>? _favoriteRentals;
   List<dynamic>? _favoriteExchanges;
 
@@ -38,7 +37,6 @@ class UserModel {
     finishedRentalBuy,
     activeRentalsSell,
     finishedRentalsSell,
-    expiredExchange,
     favoriteRentals,
     favoriteExchanges,
   })  : _idToken = idToken,
@@ -57,7 +55,6 @@ class UserModel {
         _finishedRentalsBuy = finishedRentalBuy,
         _activeRentalsSell = activeRentalsSell,
         _finishedRentalsSell = finishedRentalsSell,
-        _expiredExchange = expiredExchange,
         _favoriteRentals = favoriteRentals,
         _favoriteExchanges = favoriteExchanges;
 
@@ -219,16 +216,6 @@ class UserModel {
     _publishedExchange = value;
   }
 
-  // Getter per _expiredExchange
-  List<dynamic> get expiredExchange {
-    if(_expiredExchange==null) {
-      _expiredExchange = [" "];
-      return _expiredExchange!;
-    }else{
-      return _expiredExchange!;
-    }
-  }
-
   List<dynamic> get favoriteExchange{
     if(_favoriteExchanges==null) {
       _favoriteExchanges = [" "];
@@ -245,11 +232,6 @@ class UserModel {
     }else{
       return _favoriteRentals!;
     }
-  }
-
-  // Setter per _expiredExchange
-  set expiredExchange(List<dynamic> value) {
-    _expiredExchange = value;
   }
 
   // Metodo per aggiungere un elemento a _activeRentalsBuy
@@ -305,18 +287,6 @@ class UserModel {
     _finishedRentalsSell?.remove(item);
   }
 
-  // Metodo per aggiungere un elemento a _expiredExchange
-  void addToExpiredExchange(String item) {
-    if(_expiredExchange != null)
-      _expiredExchange?.add(item);
-    else
-      _expiredExchange= [item];
-  }
-
-  // Metodo per rimuovere un elemento da _expiredExchange
-  void removeFromExpiredExchange(String item) {
-    _expiredExchange?.remove(item);
-  }
 
   void addToFavoriteRentals(String item) {
     if(_favoriteRentals != null)
@@ -382,7 +352,6 @@ class UserModel {
       'activeRentalsBuy' : _activeRentalsBuy,
       'finishedRentalsSell' : _finishedRentalsBuy,
       'finishedRentalsBuy' : _finishedRentalsBuy,
-      'expiredExchange' : _expiredExchange,
       'favoriteRentals' : _favoriteRentals,
       'favoriteExchanges' : _favoriteExchanges,
     };
@@ -406,7 +375,6 @@ class UserModel {
       activeRentalsBuy: map['activeRentalsBuy'],
       finishedRentalsSell: map['finishedRentalsSell'],
       finishedRentalBuy: map['finishedRentalsBuy'],
-      expiredExchange: map['expiredExchange'],
       favoriteExchanges: map['favoriteExchanges'],
       favoriteRentals: map['favoriteRentals'],
     );

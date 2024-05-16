@@ -27,7 +27,6 @@ abstract class IUserRepository{
   Future<void> saveActiveRentalsSell(UserModel user);
   Future<void> saveFinishedRentalsSell(UserModel user);
   Future<void> saveFinishedRentalsBuy(UserModel user);
-  Future<void> saveExpiredExchange(UserModel user);
   Future<void> savePublishedRentals(UserModel user);
   Future<void> savePublishedExchanges(UserModel user);
 }

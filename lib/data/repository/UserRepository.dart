@@ -122,10 +122,6 @@ Future<Result?> saveData({required String name, required String lastName,
     _userAuthDataSource.saveActiveRentalsSell(user);
   }
 
- @override
- Future<void> saveExpiredExchange(UserModel user) async{
-  _userAuthDataSource.saveExpiredExchange(user);
- }
 
   @override
   Future<void> savePublishedExchanges(UserModel user) async{
