@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
+import 'package:eco_swap/model/RentalOrder.dart';
 import 'package:eco_swap/model/ReviewModel.dart';
 import 'package:eco_swap/model/UserModel.dart';
 import 'package:eco_swap/util/Result.dart';
@@ -332,10 +333,11 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         Map<dynamic, dynamic>? reviews = userData?['reviews'];
         List<dynamic>? publishedExchanges = userData?['publishedExchanges'];
         List<dynamic>? publishedRentals = userData?['publishedRentals'];
-        List<dynamic>? activeRentalsBuy = userData?['activeRentalsBuy'];
-        List<dynamic>? activeRentalsSell = userData?['activeRentalsSell'];
-        List<dynamic>? finishedRentalsSell = userData?['finishedRentalsSell'];
-        List<dynamic>? finishedRentalsBuy = userData?['finishedRentalsBuy'];
+        List<RentalOrder>? activeRentalsBuy = _convertToRentalOrderList(userData?['activeRentalsBuy']);
+        List<RentalOrder>? activeRentalsSell = _convertToRentalOrderList(userData?['activeRentalsSell']);
+        List<RentalOrder>? finishedRentalsSell = _convertToRentalOrderList(userData?['finishedRentalsSell']);
+        List<RentalOrder>? finishedRentalsBuy = _convertToRentalOrderList(userData?['finishedRentalsBuy']);
+
         List<dynamic>? favoriteRentals= userData?['favoriteRentals'];
         List<dynamic>? favoriteExchanges= userData?['favoriteExchanges'];
         return UserModel(
@@ -368,6 +370,26 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
 
+  List<RentalOrder>? _convertToRentalOrderList(List<dynamic>? list) {
+    if (list == null) return null;
+    try {
+      return list.map((item) {
+       //errore item null
+        if (item is Map<String, dynamic>) {
+          return RentalOrder.fromMap(item);
+        } else if (item is Map) {
+          return RentalOrder.fromMap(Map<String, dynamic>.from(item));
+        } else {
+          throw Exception('Elemento della lista non convertibile in Map<String, dynamic>: $item');
+        }
+      }).toList();
+    } catch (e) {
+      print('Errore durante la conversione della lista: $e');
+      return null;
+    }
+  }
+
+
   @override
   Future<void> resetPassword(String email) async {
     try {
@@ -388,7 +410,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsBuy
           .map((rentalOrder) => rentalOrder.toMap())
           .toList();
-      print(rentalsSellMapList);
       await _databaseReference
           .child(databasePath)
           .set(rentalsSellMapList);
@@ -406,7 +427,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsSell
           .map((rentalOrder) => rentalOrder.toMap())
           .toList();
-      print(rentalsSellMapList);
       await _databaseReference
           .child(databasePath)
           .set(rentalsSellMapList);

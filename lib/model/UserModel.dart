@@ -351,49 +351,56 @@ class UserModel {
   // Metodo per convertire l'oggetto UserModel in una mappa
   Map<String, dynamic> toMap() {
     return {
-      'idToken' : idToken,
-      'username': _name,
-      'lastName': _lastName,
-      'email': _email,
-      'lat': _latitude,
-      'long': _longitude,
-      'birthdate': _dateField,
-      'phoneNumber': _phoneNumber,
-      'imageUrl': _imageUrl,
-      'reviews': _reviews,
-      'publishedRentals' : _publishedRentals,
-      'publishedExchanges' : _publishedExchange,
-      'activeRentalsSell' : _activeRentalsSell,
-      'activeRentalsBuy' : _activeRentalsBuy,
-      'finishedRentalsSell' : _finishedRentalsBuy,
-      'finishedRentalsBuy' : _finishedRentalsBuy,
-      'favoriteRentals' : _favoriteRentals,
-      'favoriteExchanges' : _favoriteExchanges,
+      'idToken': idToken,
+      'username': name,
+      'lastname': lastName,
+      'email': email,
+      'lat': latitude,
+      'long': longitude,
+      'birthDate': _dateField,
+      'phoneNumber': phoneNumber,
+      'imageUrl': imageUrl,
+      'reviews': reviews,
+      'publishedExchanges': publishedExchange,
+      'publishedRentals': publishedRentals,
+      'activeRentalsBuy': activeRentalsBuy?.map((e) => e.toMap()).toList(),
+      'finishedRentalsBuy': finishedRentalsBuy?.map((e) => e.toMap()).toList(),
+      'activeRentalsSell': activeRentalsSell?.map((e) => e.toMap()).toList(),
+      'finishedRentalsSell': finishedRentalsSell?.map((e) => e.toMap()).toList(),
+      'favoriteRentals': favoriteRentals,
+      'favoriteExchanges': favoriteExchange,
     };
   }
 
-  // Metodo factory per creare un oggetto UserModel da una mappa
+  // Metodo fromMap
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       idToken: map['idToken'],
       name: map['username'],
-      lastName: map['lastName'],
+      lastName: map['lastname'],
       email: map['email'],
       latitude: map['lat'],
       longitude: map['long'],
-      birthDate: map['birthdate'],
+      birthDate: map['birthDate'],
       phoneNumber: map['phoneNumber'],
       imageUrl: map['imageUrl'],
       reviews: map['reviews'],
-      publishedRentals: map['publishedRentals'],
       publishedExchange: map['publishedExchanges'],
-      activeRentalsSell: map['activeRentalsSell'],
-      activeRentalsBuy: map['activeRentalsBuy'],
-      finishedRentalsSell: map['finishedRentalsSell'],
-      finishedRentalBuy: map['finishedRentalsBuy'],
-      favoriteExchanges: map['favoriteExchanges'],
+      publishedRentals: map['publishedRentals'],
+      activeRentalsBuy: (map['activeRentalsBuy'] as List<dynamic>?)
+          ?.map((e) => RentalOrder.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      finishedRentalBuy: (map['finishedRentalsBuy'] as List<dynamic>?)
+          ?.map((e) => RentalOrder.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      activeRentalsSell: (map['activeRentalsSell'] as List<dynamic>?)
+          ?.map((e) => RentalOrder.fromMap(e as Map<String, dynamic>))
+          .toList(),
+      finishedRentalsSell: (map['finishedRentalsSell'] as List<dynamic>?)
+          ?.map((e) => RentalOrder.fromMap(e as Map<String, dynamic>))
+          .toList(),
       favoriteRentals: map['favoriteRentals'],
+      favoriteExchanges: map['favoriteExchanges'],
     );
   }
-
 }
