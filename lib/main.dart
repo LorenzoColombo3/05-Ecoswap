@@ -62,7 +62,6 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             if (snapshot.data == true) {
-              print(Theme.of(context).toString()+"\n padre ");
               return NavigationPage(logoutCallback: () {
                 userViewModel.deleteCredential();
                 Navigator.of(context).pushReplacement(MaterialPageRoute(

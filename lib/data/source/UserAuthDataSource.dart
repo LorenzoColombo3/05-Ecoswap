@@ -280,14 +280,14 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> saveCredential(String email, String password) async {
     await _storage.write(key: 'password', value: password);
     await _storage.write(key: 'email', value: email);
-    print('credential saved!');
+
   }
 
   @override
   Future<void> deleteCredential() async {
     await _storage.delete(key: 'password');
     await _storage.delete(key: 'email');
-    print('credential deleted!');
+
   }
 
   @override
@@ -374,7 +374,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     if (list == null) return null;
     try {
       return list.map((item) {
-       //errore item null
         if (item is Map<String, dynamic>) {
           return RentalOrder.fromMap(item);
         } else if (item is Map) {
@@ -469,7 +468,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> savePublishedRentals(UserModel user) async{
     try {
-      print("salvataggio");
       final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/publishedRentals';

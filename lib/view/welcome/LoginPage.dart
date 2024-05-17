@@ -34,24 +34,6 @@ class _LoginPageState extends State<LoginPage>{
     userViewModel = UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    /*userViewModel.readPassword().then((password) {
-      userViewModel.readEmail().then((email) {
-        if (password != null && email != null) {
-          userViewModel.login(email: email, password: password).then((message) {
-            if (message!.contains('Success')) {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => NavigationPage(logoutCallback: () {
-                  userViewModel.deleteCredential();
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ));
-                }),
-              ));
-            }
-          });
-        }
-      });
-    });*/
     super.initState();
   }
 

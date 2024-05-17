@@ -15,7 +15,8 @@ import '../../widget/DateField.dart';
 import '../main_pages/ProfilePage.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final UserModel currentUser;
+  const SettingsPage({super.key, required this.currentUser});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -39,9 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = UserViewModelFactory(userRepository).create();
-    userViewModel.getUser().then((user){
-      currentUser = user!;
-    });
+    currentUser = widget.currentUser;
     imageUrl = userViewModel.getProfileImage();
     imagePath = "";
   }
@@ -56,18 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UserModel?>(
-      future: userViewModel.getUser(), // Ottieni l'utente
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // Verifica se lo snapshot ha completato il caricamento dei dati
-          currentUser = snapshot.data!;
-          return buildContent(); // Costruisci il widget principale
-        } else {
-          return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
-        }
-      },
-    );
+    return buildContent(); // Costruisci il widget principale
   }
 
   Future<void> _getImage() async {

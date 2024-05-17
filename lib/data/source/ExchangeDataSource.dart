@@ -158,7 +158,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
   Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex) async {
     List<Exchange> exchangesInRadius = [];
     List<Exchange> allExchanges = await getAllExchanges();
-    print(allExchanges.length);
     Exchange exchange;
     allExchanges.sort((a, b) {
       double distanceA = _calculateDistance(
@@ -178,8 +177,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
     for (int i=startIndex; i<startIndex+5 && i < allExchanges.length; i++) {
       exchange = allExchanges[i];
       double distance = _calculateDistance(latUser, longUser, exchange.latitude, exchange.longitude);
-      print(radiusKm);
-      print(distance);
       if (distance <= radiusKm) {
         exchangesInRadius.add(exchange);
       }

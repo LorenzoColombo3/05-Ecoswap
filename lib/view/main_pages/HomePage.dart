@@ -52,7 +52,6 @@ class _HomePageState extends State<HomePage> {
       currentUser = value!;
       loadMoreRental(currentUser);
       loadMoreExchange(currentUser);
-      print(currentUser.favoriteRentals.toString());
     });
     _handleLocationPermission().then((bool hasPermission) {
       userViewModel.updatePosition(hasPermission);
@@ -66,7 +65,6 @@ class _HomePageState extends State<HomePage> {
     if (_scrollControllerRental.position.pixels ==
         _scrollControllerRental.position.maxScrollExtent) {
       loadMoreRental(currentUser);
-      print('rental');
     }
   }
 
@@ -74,7 +72,6 @@ class _HomePageState extends State<HomePage> {
     if (_scrollControllerExchange.position.pixels ==
         _scrollControllerExchange.position.maxScrollExtent) {
       loadMoreExchange(currentUser);
-      print('exchange');
     }
   }
 
@@ -336,10 +333,8 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         if (isFavorite) {
                           currentUser.removeFromFavoriteRentals(rental.idToken);
-                          print('fav No');
                           isFavorite=false;
                         } else {
-                          print('fav Sì');
                           currentUser.addToFavoriteRentals(rental.idToken);
                           isFavorite=true;
                         }
@@ -422,12 +417,10 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                         if (isFavorite) {
                           currentUser.removeFromFavoriteExchange(exchange.idToken);
-                          print('fav No');
                           setState(() {
                             isFavorite=false;
                           });
                         } else {
-                          print('fav Sì');
                           currentUser.addToFavoriteExchange(exchange.idToken);
                           setState(() {
                             isFavorite=true;

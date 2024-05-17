@@ -1,27 +1,25 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-
+import 'package:flutter/widgets.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
 import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
-import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
-import '../searchPages/ExchangePage.dart';
-import '../searchPages/RentalPage.dart';
 
-class SavedAdsPage extends StatefulWidget {
+class FinishedRentals extends StatefulWidget {
+  final UserModel currentUser;
+
+  const FinishedRentals({super.key, required this.currentUser});
+
   @override
-  _SavedAdsPageState createState() => _SavedAdsPageState();
+  State<FinishedRentals> createState() => _FinishedRentalsState();
 }
 
-class _SavedAdsPageState extends State<SavedAdsPage> {
+class _FinishedRentalsState extends State<FinishedRentals> {
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
@@ -30,8 +28,8 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
   int _selectedIndex = 1;
   Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
-  List<dynamic> _rentalsId = [];
-  List<dynamic> _exchangesId = [];
+  List<dynamic> _rentalsSoldId = [];
+  List<dynamic> _rentalsBoughtId = [];
 
   @override
   void initState() {
@@ -40,22 +38,12 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    userViewModel.getUser().then((value) {
-      currentUser = value!;
-      _exchangesId = currentUser.favoriteExchange;
-      _rentalsId = currentUser.favoriteRentals;
-      setState(() {
-      });
-    });
+    _rentalsSoldId = currentUser.finishedRentalsSell;
+    _rentalsBoughtId = currentUser.finishedRentalsBuy;
     _selectedIndex = 0;
   }
 
-  @override
-  void dispose(){
-    super.dispose();
-  }
-
-  @override
+  /*@override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return
@@ -134,7 +122,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
             ),
           ],
         ),
-    );
+      );
   }
 
   FutureBuilder _buildRentalsList() {
@@ -184,7 +172,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
       );
   }
   FutureBuilder _buildExchangesList() {
-    return FutureBuilder<List<Exchange>>(
+    return FutureBuilder<List<Rental>>(
       future: adViewModel.getExchangesByIdTokens(_exchangesId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -192,23 +180,12 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Errore durante il recupero dei exchange: ${snapshot.error}'));
         } else {
-          List<Exchange> exchanges = snapshot.data ?? [];
+          List<Rental> exchanges = snapshot.data ?? [];
           return ListView.builder(
             itemCount: exchanges.length,
             itemBuilder: (context, index) {
               final exchange = exchanges[index];
               return ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExchangePage(
-                        exchange: exchange,
-                        currentUser: currentUser,
-                      ),
-                    ),
-                  ).then((value) => setState(() {}));
-                },
                 title: Text(exchange.title),
                 leading: ClipRRect(
                   borderRadius: BorderRadius.circular(25.0),
@@ -226,6 +203,5 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
         }
       },
     );
-  }
-
+  }*/
 }

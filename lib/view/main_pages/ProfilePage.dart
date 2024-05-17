@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:eco_swap/model/AdModel.dart';
+import 'package:eco_swap/view/profile_pages/BoughtRentalProfile.dart';
 import 'package:eco_swap/view/profile_pages/ReviewsPage.dart';
+import 'package:eco_swap/view/profile_pages/SoldRentalProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,14 +17,10 @@ import '../../model/Exchange.dart';
 import '../../model/Rental.dart';
 import '../../model/RentalOrder.dart';
 import '../../model/UserModel.dart';
-import '../../util/Result.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/SettingsMenu.dart';
-import '../load_pages/LoadExchangePage.dart';
-import '../load_pages/LoadRentalPage.dart';
-import '../profile_pages/SettingsPage.dart';
-import '../searchPages/ExchangePage.dart';
-import '../searchPages/RentalPage.dart';
+import '../profile_pages/ExchangeProfile.dart';
+import '../profile_pages/RentalProfile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -63,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
               actions: [
                 SettingsMenu(callback: () {
                   setState(() {});
-                }),
+                }, currentUser: currentUser,),
               ],
             ),
             body: SingleChildScrollView(
@@ -107,19 +105,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildDivider(),
                   SizedBox(
                     height: 152,
-                    child:  _buildRentalList(context, currentUser.publishedRentals),
+                    child:  _buildRentalList(context, currentUser.publishedRentals, 0),
                   ),
                   Text("Items Sold (To Be Returned)"),
                   _buildDivider(),
                   SizedBox(
                     height: 152,
-                    child: _buildRentalList(context, currentUser.activeRentalsSell),
+                    child: _buildRentalList(context, currentUser.activeRentalsSell, 1),
                   ),
                   Text("Items Purchased (To Return)"),
                   _buildDivider(),
                   SizedBox(
                     height: 152,
-                    child:  _buildRentalList(context, currentUser.activeRentalsBuy),
+                    child:  _buildRentalList(context, currentUser.activeRentalsBuy, 2),
                   ),
                 ],
               ),
@@ -128,40 +126,6 @@ class _ProfilePageState extends State<ProfilePage> {
         } else {
           return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
         }
-      },
-    );
-  }
-
-  Widget _buildHorizontalListView() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children:[
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              width: 150,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 120, // Larghezza dell'immagine
-                    height: 120, // Altezza dell'immagine
-                    color: Colors.grey[300], // Colore di sfondo temporaneo
-                    child: Icon(Icons.image), // Immagine temporanea
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Item $index',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
       },
     );
   }
@@ -182,72 +146,19 @@ class _ProfilePageState extends State<ProfilePage> {
               itemCount: exchanges.length,
               itemBuilder: (context, index) {
                 final exchange = exchanges[index];
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                width: 150,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 120, // Larghezza dell'immagine
-                      height: 120, // Altezza dell'immagine
-                      color: Colors.grey[300], // Colore di sfondo temporaneo
-                      child:ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: FadeInImage(
-                          placeholder: AssetImage('assets/image/loading_indicator.gif'),
-                          // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
-                          height: 200,
-                          image: NetworkImage(exchange.imageUrl),
-                          // URL dell'immagine principale
-                          fit: BoxFit.cover, // Adatta l'immagine all'interno del container
-
-                        ),
-                      ),// Immagine temporanea
+              return InkWell(
+                onTap: (){
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ExchangeProfile(
+                      exchange: exchange,
+                      currentUser: currentUser,
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                     exchange.title,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        }
-      },
-    );
-  }
-
-
-  Widget _buildRentalList(BuildContext context, List<dynamic> listObject) {
-    List<String>? listApp = [];
-    if (listObject is List<RentalOrder>) {
-      print("true");
-      for (RentalOrder order in listObject) {
-        listApp.add(order.idToken);
-      }
-    }else{
-      listApp = listObject.cast<String>();
-    }
-    print(listApp);
-    return FutureBuilder<List<Rental>>(
-      future: adViewModel.getRentalsByIdTokens(listApp),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Errore durante il recupero dei exchange: ${snapshot.error}'));
-        } else {
-          List<Rental> rentals = snapshot.data ?? [];
-          return
-            ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: rentals.length,
-              itemBuilder: (context, index) {
-                final rental = rentals[index];
-                return Container(
+                  ),
+                ).then((value) => setState(() {}));
+                  },
+                child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 8),
                   width: 150,
                   child: Column(
@@ -263,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             placeholder: AssetImage('assets/image/loading_indicator.gif'),
                             // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
                             height: 200,
-                            image: NetworkImage(rental.imageUrl),
+                            image: NetworkImage(exchange.imageUrl),
                             // URL dell'immagine principale
                             fit: BoxFit.cover, // Adatta l'immagine all'interno del container
 
@@ -272,10 +183,109 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        rental.title,
+                       exchange.title,
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+
+  Widget _buildRentalList(BuildContext context, List<dynamic> listObject, int type) {
+    List<String>? listApp = [];
+    if (listObject is List<RentalOrder>) {
+     
+      for (RentalOrder order in listObject) {
+        listApp.add(order.rentalId);
+      }
+    }else{
+      listApp = listObject.cast<String>();
+    }
+    return FutureBuilder<List<Rental>>(
+      future: adViewModel.getRentalsByIdTokens(listApp),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Errore durante il recupero dei exchange: ${snapshot.error}'));
+        } else {
+          List<Rental> rentals = snapshot.data ?? [];
+          return
+            ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: rentals.length,
+              itemBuilder: (context, index) {
+                final rental = rentals[index];
+                return InkWell(
+                  onTap: (){
+                      if(type == 0){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RentalProfile(
+                              rental: rental,
+                              currentUser: currentUser,
+                            ),
+                          ),
+                        ).then((value) => setState(() {}));
+                      }
+                      if(type ==1){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SoldRentalProfile(
+                              order:  listObject[index],
+                              currentUser: currentUser,
+                            ),
+                          ),
+                        ).then((value) => setState(() {}));
+                      }
+                      if(type ==2){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BoughtRentalProfile(
+                              order: listObject[index],
+                              currentUser: currentUser,
+                            ),
+                          ),
+                        ).then((value) => setState(() {}));
+                      }
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    width: 150,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          color: Colors.grey[300],
+                          child:ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: FadeInImage(
+                              placeholder: AssetImage('assets/image/loading_indicator.gif'),
+                              height: 200,
+                              image: NetworkImage(rental.imageUrl),
+                              fit: BoxFit.cover,
+                            ),
+                          ),// Immagine temporanea
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          rental.title,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -275,13 +275,13 @@ class RentalDataSource extends BaseRentalDataSource {
       };
       _databaseReference.child('rentals').child(rental.idToken).update(
           updateData);
-      //TODO testare il funzionamento dell'update locale quando fatta una prenotazione da un altro dispositivo
       onUpdateFinished(rental);
     }catch(e){
       print("errore durante l'update  $e");
     }
   }
 
+  @override
   Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens) async {
     DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
     try {
