@@ -22,7 +22,7 @@ class AppTheme {
         secondary: Colors.lightGreen,
         background: const Color(0xFF7BFF81),
         surface: Colors.white,
-        onPrimary: Colors.black,
+        onPrimary: Colors.white,
         onSecondary: Colors.white,
       ),
     );

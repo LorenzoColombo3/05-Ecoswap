@@ -9,6 +9,7 @@ import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
+import '../main_pages/LeaveReviewPage.dart';
 
 
 class ExchangePage extends StatefulWidget {
@@ -132,7 +133,15 @@ class _ExchangePageState extends State<ExchangePage> {
                           ),
                           child: ListTile(
                                   onTap: () {
-                                  // Aggiungere qui la logica da eseguire quando viene toccato il ListTile
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Leavereviewpage(
+                                          currentUser: widget.currentUser,
+                                          sellerUser: snapshot.data!,
+                                        ),
+                                      ),
+                                    ).then((value) => setState(() {}));
                                   },
                                   title: Text(snapshot.data!.name),
                                   subtitle: Text("addStarsRating"),

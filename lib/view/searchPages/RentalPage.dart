@@ -1,4 +1,5 @@
 import 'package:eco_swap/main.dart';
+import 'package:eco_swap/view/main_pages/LeaveReviewPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +140,15 @@ class _RentalPageState extends State<RentalPage> {
                           ),
                           child: ListTile(
                                     onTap: () {
-                                      userViewModel.saveReview(widget.rental.userId, "PorcoDDIo",3);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Leavereviewpage(
+                                            currentUser: widget.currentUser,
+                                            sellerUser: snapshot.data!,
+                                          ),
+                                        ),
+                                      ).then((value) => setState(() {}));
                                     },
                                     title: Text(snapshot.data!.name),
                                     subtitle: Text("addStarsRating"),

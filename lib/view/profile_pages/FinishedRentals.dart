@@ -43,9 +43,10 @@ class _FinishedRentalsState extends State<FinishedRentals> {
     _selectedIndex = 0;
   }
 
-  /*@override
+  @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    return Placeholder();
+    /*final colorScheme = Theme.of(context).colorScheme;
     return
       Container(
         decoration: BoxDecoration(
@@ -202,6 +203,6 @@ class _FinishedRentalsState extends State<FinishedRentals> {
           );
         }
       },
-    );
-  }*/
+    );*/
+  }
 }
