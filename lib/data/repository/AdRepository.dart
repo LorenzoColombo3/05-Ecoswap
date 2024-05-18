@@ -151,4 +151,15 @@ class AdRepository implements IAdRepository{
   Future<List<Exchange>> getExchangesByIdTokens(List<dynamic> idTokens){
     return _exchangeDataSource.getExchangesByIdTokens(idTokens);
   }
+
+  @override
+  Future<void> removeExchange(String idToken) async{
+    _exchangeDataSource.removeExchange(idToken);
+  }
+
+  @override
+  Future<void> removeRental(String idToken) async{
+    _rentalDataSource.removeRental(idToken);
+  }
+
 }

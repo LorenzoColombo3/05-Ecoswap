@@ -69,4 +69,13 @@ class AdViewModel{
     return _adRepository.getExchangesByIdTokens(idTokens);
   }
 
+  Future<void> removeExchange(String idToken) async{
+    _adRepository.removeExchange(idToken);
+  }
+
+  Future<void> removeRental(String idToken) async{
+    _adRepository.removeRental(idToken);
+  }
+
+
 }

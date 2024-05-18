@@ -7,6 +7,7 @@ import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/Rental.dart';
+import '../../model/RentalOrder.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 
@@ -24,12 +25,11 @@ class _FinishedRentalsState extends State<FinishedRentals> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
-  late UserModel currentUser;
   int _selectedIndex = 1;
   Color rentalButtonColor = Color(0xFF7BFF81);
   Color exchangeButtonColor = Colors.transparent;
-  List<dynamic> _rentalsSoldId = [];
-  List<dynamic> _rentalsBoughtId = [];
+  List<RentalOrder> _rentalsSoldId = [];
+  List<RentalOrder> _rentalsBoughtId = [];
 
   @override
   void initState() {
@@ -38,26 +38,27 @@ class _FinishedRentalsState extends State<FinishedRentals> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    _rentalsSoldId = currentUser.finishedRentalsSell;
-    _rentalsBoughtId = currentUser.finishedRentalsBuy;
+    _rentalsSoldId = widget.currentUser.finishedRentalsSell;
+    _rentalsBoughtId = widget.currentUser.finishedRentalsBuy;
     _selectedIndex = 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
-    /*final colorScheme = Theme.of(context).colorScheme;
-    return
-      Container(
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Past Orders'),
+      ),
+      body: Container(
         decoration: BoxDecoration(
           color: colorScheme.primary,
         ),
-
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 5.0),
             Container(
               padding: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
@@ -65,7 +66,6 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                 color: colorScheme.primary,
               ),
               margin: const EdgeInsets.symmetric(horizontal: 16.0),
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -79,12 +79,12 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.resolveWith<Color>(
-                                (states) => rentalButtonColor),
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (states) => rentalButtonColor,
+                        ),
                       ),
                       child: Text(
-                        'Rental',
+                        'Items sold',
                         style: TextStyle(color: colorScheme.onPrimary),
                       ),
                     ),
@@ -99,12 +99,12 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.resolveWith<Color>(
-                                (states) => exchangeButtonColor),
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (states) => exchangeButtonColor,
+                        ),
                       ),
                       child: Text(
-                        'Exchange',
+                        'Items bought',
                         style: TextStyle(color: colorScheme.onPrimary),
                       ),
                     ),
@@ -116,20 +116,24 @@ class _FinishedRentalsState extends State<FinishedRentals> {
               child: IndexedStack(
                 index: _selectedIndex,
                 children: <Widget>[
-                  _buildRentalsList(),
-                  _buildExchangesList(),
+                  _buildRentalsList(_rentalsSoldId),
+                  _buildRentalsList(_rentalsBoughtId),
                 ],
               ),
             ),
           ],
         ),
-      );
+      ),
+    );
   }
 
-  FutureBuilder _buildRentalsList() {
-    return
-      FutureBuilder<List<Rental>>(
-        future: adViewModel.getRentalsByIdTokens(_rentalsId),
+  FutureBuilder _buildRentalsList(List<RentalOrder> itemsList) {
+    List<String> listApp = [];
+    for (RentalOrder order in itemsList) {
+      listApp.add(order.rentalId);
+    }
+    return FutureBuilder<List<Rental>>(
+        future: adViewModel.getRentalsByIdTokens(listApp),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -141,18 +145,8 @@ class _FinishedRentalsState extends State<FinishedRentals> {
               itemCount: rentals.length,
               itemBuilder: (context, index) {
                 final rental = rentals[index];
+                final order = itemsList[index];
                 return ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RentalPage(
-                          rental: rental,
-                          currentUser: currentUser,
-                        ),
-                      ),
-                    ).then((value) => setState(() {}));
-                  },
                   title: Text(rental.title),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(25.0),
@@ -164,7 +158,8 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                       height: 50.0,
                     ),
                   ),
-                  subtitle: Text("€" + rental.dailyCost),
+                  subtitle: Text("€" + order.price.toString() + "\n"
+                                 "Date:" +order.dateTime),
                 );
               },
             );
@@ -172,37 +167,6 @@ class _FinishedRentalsState extends State<FinishedRentals> {
         },
       );
   }
-  FutureBuilder _buildExchangesList() {
-    return FutureBuilder<List<Rental>>(
-      future: adViewModel.getExchangesByIdTokens(_exchangesId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Errore durante il recupero dei exchange: ${snapshot.error}'));
-        } else {
-          List<Rental> exchanges = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: exchanges.length,
-            itemBuilder: (context, index) {
-              final exchange = exchanges[index];
-              return ListTile(
-                title: Text(exchange.title),
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(25.0),
-                  child: FadeInImage(
-                    placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder
-                    image: NetworkImage(exchange.imageUrl), // Immagine effettiva
-                    fit: BoxFit.cover, // Modalità di adattamento dell'immagine
-                    width: 50.0,
-                    height: 50.0,
-                  ),
-                ),
-              );
-            },
-          );
-        }
-      },
-    );*/
-  }
+
+
 }

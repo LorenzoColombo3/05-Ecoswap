@@ -5,9 +5,6 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/model/Exchange.dart';
 
@@ -30,6 +27,8 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       return 'Errore durante il caricamento dell\'exchange: $error';
     }
   }
+
+
 
   @override
   Future<String> uploadImage(String imagePath) async {
@@ -244,5 +243,11 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       print('Errore durante il recupero dei noleggi dal database Firebase: $error');
       return [];
     }
+  }
+
+  @override
+  Future<void> removeExchange(String idToken) async{
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+    databaseReference.child("exchanges").child(idToken).remove();
   }
 }

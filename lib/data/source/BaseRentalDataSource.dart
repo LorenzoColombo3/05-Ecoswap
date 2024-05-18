@@ -21,5 +21,5 @@ abstract class BaseRentalDataSource{
   Future<List<Rental>> searchItems(double latUser, double longUser, String query);
   void updateRentalData(Rental rental);
   Future<List<Rental>> getRentalsByIdTokens(List idTokens);
-
+  Future<void> removeRental(String idToken);
 }

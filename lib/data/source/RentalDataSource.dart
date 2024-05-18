@@ -303,5 +303,10 @@ class RentalDataSource extends BaseRentalDataSource {
     }
   }
 
+  @override
+  Future<void> removeRental(String idToken) async{
+    _databaseReference.child("rentals").child(idToken).remove();
+  }
+
 
 }

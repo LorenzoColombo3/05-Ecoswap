@@ -18,5 +18,7 @@ abstract class IAdRepository{
   void updateRentalData(Rental rental);
   Future<List<Rental>> getRentalsByIdTokens(List<dynamic> idTokens);
   Future<List<Exchange>> getExchangesByIdTokens(List<dynamic> idTokens);
+  Future<void> removeExchange(String idToken);
+  Future<void> removeRental(String idToken);
 
 }

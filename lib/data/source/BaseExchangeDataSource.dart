@@ -16,6 +16,7 @@ abstract class BaseExchangeDataSource{
   Future<List<Exchange>> getExchangesInRadius(double latUser, double longUser, double radiusKm, int startIndex);
   Future<List<Exchange>> searchItems(double latUser, double longUser, String query);
   Future<List<Exchange>> getExchangesByIdTokens(List idTokens);
+  Future<void> removeExchange(String idToken);
 
   void setCallback(Function (Exchange exchange) onLoadFinished, Function (List<Exchange> exchanges) loadAllExchange){
     this.loadAllExchange=loadAllExchange;
