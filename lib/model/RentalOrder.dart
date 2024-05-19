@@ -62,7 +62,7 @@ class RentalOrder {
   }
 
   // Metodo fromMap
-  factory RentalOrder.fromMap(Map<String, dynamic> map) {
+  factory RentalOrder.fromMap(Map<dynamic, dynamic> map) {
     return RentalOrder(
       idToken: map['idToken'],
       sellerId: map['sellerId'],

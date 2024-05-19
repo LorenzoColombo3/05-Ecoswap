@@ -166,8 +166,7 @@ class _ExchangeProfileState extends State<ExchangeProfile> {
                             children: [
                               WidgetSpan(
                                 child: SizedBox(
-                                    width:
-                                        20), // Spazio vuoto per spostare il testo verso sinistra
+                                    width: 20),
                               ),
                               const TextSpan(
                                 text: 'Location: ',

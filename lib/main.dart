@@ -1,3 +1,4 @@
+import 'package:eco_swap/data/source/UserAuthDataSource.dart';
 import 'package:eco_swap/util/AppTheme.dart';
 import 'package:eco_swap/util/ServiceLocator.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +24,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
-
+   UserAuthDataSource aa = UserAuthDataSource();
   @override
   void initState() {
     super.initState();
     checkCredentials();
+    WidgetsFlutterBinding.ensureInitialized();
+    aa.setupFirebaseListener();
   }
 
   Future<bool> checkCredentials() async {

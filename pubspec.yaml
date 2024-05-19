@@ -54,6 +54,8 @@ dependencies:
   stripe_checkout: ^1.0.2
   flutter_secure_storage: ^8.0.0
   webview_flutter: ^3.0.4
+  flutter_local_notifications: ^11.0.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

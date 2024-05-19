@@ -9,15 +9,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
 class UserAuthDataSource extends BaseUserAuthDataSource {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  bool isFirstLoad = true;
 
   @override
   Future<String?> registration(
@@ -176,14 +179,15 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'birthDate': birthDate,
         'email': currentUser.email,
         'phoneNumber': phoneNumber,
-        'imageUrl': "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
-        'reviews' : listaVuota,
-        'activeRentalsSell' : listaVuota,
-        'activeRentalsBuy' : listaVuota,
-        'finishedRentalsSell' : listaVuota,
-        'finishedRentalsBuy' : listaVuota,
-        'favoriteRentals' : listaVuota,
-        'favoriteExchanges' : listaVuota,
+        'imageUrl':
+            "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
+        'reviews': listaVuota,
+        'activeRentalsSell': listaVuota,
+        'activeRentalsBuy': listaVuota,
+        'finishedRentalsSell': listaVuota,
+        'finishedRentalsBuy': listaVuota,
+        'favoriteRentals': listaVuota,
+        'favoriteExchanges': listaVuota,
       };
       final String databasePath = 'users';
       await databaseReference
@@ -199,7 +203,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 longitude: 0,
                 birthDate: birthDate,
                 phoneNumber: phoneNumber,
-                imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
+                imageUrl:
+                    "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
                 reviews: listaVuota,
                 publishedRentals: listaVuota,
                 publishedExchange: listaVuota,
@@ -207,8 +212,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 finishedRentalBuy: listaVuota,
                 activeRentalsSell: listaVuota,
                 finishedRentalsSell: listaVuota,
-                favoriteRentals : listaVuota,
-                favoriteExchanges : listaVuota,
+                favoriteRentals: listaVuota,
+                favoriteExchanges: listaVuota,
               ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
@@ -224,8 +229,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   void deleteUser() {
     FirebaseAuth.instance.currentUser?.delete();
   }
-
-
 
   @override
   Future<void> updatePosition(bool hasPermission) async {
@@ -280,14 +283,12 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> saveCredential(String email, String password) async {
     await _storage.write(key: 'password', value: password);
     await _storage.write(key: 'email', value: email);
-
   }
 
   @override
   Future<void> deleteCredential() async {
     await _storage.delete(key: 'password');
     await _storage.delete(key: 'email');
-
   }
 
   @override
@@ -333,13 +334,17 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         Map<dynamic, dynamic>? reviews = userData?['reviews'];
         List<dynamic>? publishedExchanges = userData?['publishedExchanges'];
         List<dynamic>? publishedRentals = userData?['publishedRentals'];
-        List<RentalOrder>? activeRentalsBuy = _convertToRentalOrderList(userData?['activeRentalsBuy']);
-        List<RentalOrder>? activeRentalsSell = _convertToRentalOrderList(userData?['activeRentalsSell']);
-        List<RentalOrder>? finishedRentalsSell = _convertToRentalOrderList(userData?['finishedRentalsSell']);
-        List<RentalOrder>? finishedRentalsBuy = _convertToRentalOrderList(userData?['finishedRentalsBuy']);
+        List<RentalOrder>? activeRentalsBuy =
+            _convertToRentalOrderList(userData?['activeRentalsBuy']);
+        List<RentalOrder>? activeRentalsSell =
+            _convertToRentalOrderList(userData?['activeRentalsSell']);
+        List<RentalOrder>? finishedRentalsSell =
+            _convertToRentalOrderList(userData?['finishedRentalsSell']);
+        List<RentalOrder>? finishedRentalsBuy =
+            _convertToRentalOrderList(userData?['finishedRentalsBuy']);
 
-        List<dynamic>? favoriteRentals= userData?['favoriteRentals'];
-        List<dynamic>? favoriteExchanges= userData?['favoriteExchanges'];
+        List<dynamic>? favoriteRentals = userData?['favoriteRentals'];
+        List<dynamic>? favoriteExchanges = userData?['favoriteExchanges'];
         return UserModel(
             idToken: idToken,
             name: name,
@@ -369,7 +374,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-
   List<RentalOrder>? _convertToRentalOrderList(List<dynamic>? list) {
     if (list == null) return null;
     try {
@@ -379,7 +383,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         } else if (item is Map) {
           return RentalOrder.fromMap(Map<String, dynamic>.from(item));
         } else {
-          throw Exception('Elemento della lista non convertibile in Map<String, dynamic>: $item');
+          throw Exception(
+              'Elemento della lista non convertibile in Map<String, dynamic>: $item');
         }
       }).toList();
     } catch (e) {
@@ -387,7 +392,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       return null;
     }
   }
-
 
   @override
   Future<void> resetPassword(String email) async {
@@ -400,59 +404,53 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   @override
-  Future<void> saveActiveRentalsBuy(UserModel user) async{
+  Future<void> saveActiveRentalsBuy(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
       saveUserLocal(user);
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsBuy
           .map((rentalOrder) => rentalOrder.toMap())
           .toList();
-      await _databaseReference
-          .child(databasePath)
-          .set(rentalsSellMapList);
+      await _databaseReference.child(databasePath).set(rentalsSellMapList);
     } catch (error) {
-        print('Errore durante il caricamento del rental attivo comprato: $error');
+      print('Errore durante il caricamento del rental attivo comprato: $error');
     }
   }
 
   @override
-  Future<void> saveActiveRentalsSell(UserModel user) async{
+  Future<void> saveActiveRentalsSell(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsSell
           .map((rentalOrder) => rentalOrder.toMap())
           .toList();
-      await _databaseReference
-          .child(databasePath)
-          .set(rentalsSellMapList);
+      await _databaseReference.child(databasePath).set(rentalsSellMapList);
     } catch (error) {
       print('Errore durante il caricamento del rental attivo vendita: $error');
     }
   }
 
   @override
-  Future<void> saveFinishedRentalsSell(UserModel user) async{
+  Future<void> saveFinishedRentalsSell(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
-      await _databaseReference
-          .child(databasePath)
-          .set(user.finishedRentalsBuy);
+      await _databaseReference.child(databasePath).set(user.finishedRentalsBuy);
     } catch (error) {
       print('Errore durante il caricamento del rental finito comprato: $error');
     }
   }
 
   @override
-  Future<void> saveFinishedRentalsBuy(UserModel user) async{
+  Future<void> saveFinishedRentalsBuy(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
       saveUserLocal(user);
       await _databaseReference
@@ -463,79 +461,69 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-
-
   @override
-  Future<void> savePublishedRentals(UserModel user) async{
+  Future<void> savePublishedRentals(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/publishedRentals';
       saveUserLocal(user);
-      await _databaseReference
-          .child(databasePath)
-          .set(user.publishedRentals);
+      await _databaseReference.child(databasePath).set(user.publishedRentals);
     } catch (error) {
       print('Errore durante il caricamento del rental finito vendita: $error');
     }
   }
 
-
   @override
-  Future<void> savePublishedExchanges(UserModel user) async{
+  Future<void> savePublishedExchanges(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/publishedExchanges';
       saveUserLocal(user);
-      await _databaseReference
-          .child(databasePath)
-          .set(user.publishedExchange);
+      await _databaseReference.child(databasePath).set(user.publishedExchange);
     } catch (error) {
       print('Errore durante il caricamento del exchange finito: $error');
     }
   }
 
-
   @override
-  Future<void> saveFavoriteRentals(UserModel user) async{
-    try{
+  Future<void> saveFavoriteRentals(UserModel user) async {
+    try {
       saveUserLocal(user);
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/favoriteRentals';
-      await _databaseReference
-          .child(databasePath)
-          .set(user.favoriteRentals);
+      await _databaseReference.child(databasePath).set(user.favoriteRentals);
     } catch (error) {
       print('Errore durante il salvataggio del rental preferito: $error');
     }
   }
 
   @override
-  Future<void> saveFavoriteExchange(UserModel user) async{
-    try{
+  Future<void> saveFavoriteExchange(UserModel user) async {
+    try {
       saveUserLocal(user);
       final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
+          FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/favoriteExchanges';
-      await _databaseReference
-          .child(databasePath)
-          .set(user.favoriteExchange);
+      await _databaseReference.child(databasePath).set(user.favoriteExchange);
     } catch (error) {
       print('Errore durante il salvataggio del exchange preferito: $error');
     }
   }
 
   @override
-  Future<void> saveReview(String userId/*id user che riceve la recensione*/, String reviewContent, int stars) async {
+  Future<void> saveReview(String userId /*id user che riceve la recensione*/,
+      String reviewContent, int stars) async {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     String idToken = currentUser!.uid;
-    final DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+    final DatabaseReference _databaseReference =
+        FirebaseDatabase.instance.reference();
     final String databasePath = 'users/$userId/reviews';
     try {
       await _databaseReference.child(databasePath).push().set({
-        'userIdToken': idToken,//id user che ha fatto la recensione
+        'userIdToken': idToken, //id user che ha fatto la recensione
         'text': reviewContent,
         'stars': stars,
       });
@@ -545,4 +533,96 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+
+  void setupFirebaseListener() async {
+
+    UserModel? currentUser = await getUser();
+    final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final initializationSettingsIOS = DarwinInitializationSettings(
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        // Handle your logic for local notification on iOS
+      },
+    );
+
+    final initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Richiedi permessi solo una volta
+    await _requestPermissionsOnce(_flutterLocalNotificationsPlugin);
+
+    var userRef = FirebaseDatabase.instance.ref().child('users').child(currentUser!.idToken).child("activeRentalsSell");
+    userRef.onChildAdded.listen((event) async {
+      bool controllo=false;
+        final RentalOrder order = RentalOrder.fromMap(event.snapshot.value as Map<dynamic, dynamic>);
+        currentUser.activeRentalsSell.forEach((element) async {
+          print(element.idToken);
+        });
+        print("ordine   "+order.idToken);
+        currentUser.activeRentalsSell.forEach((element) {
+          if(element.idToken==order.idToken){
+            controllo=true;
+          }
+        });
+        if(!controllo){
+            //contains non funzionante
+            currentUser.addToActiveRentalsSell(order);
+            await saveUserLocal(currentUser);
+            _showNotification(order, _flutterLocalNotificationsPlugin);
+          }
+    });
+  }
+
+  Future<void> _requestPermissionsOnce(FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isPermissionRequested = prefs.getBool('isPermissionRequested');
+
+    if (isPermissionRequested == null || !isPermissionRequested) {
+      // Richiedi permessi su iOS
+      await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      // Richiedi permessi su Android (necessario solo se usi Android 13 o superiore)
+      if (Platform.isAndroid) {
+        await _requestAndroidPermissions();
+      }
+
+      // Imposta il flag per indicare che i permessi sono stati richiesti
+      await prefs.setBool('isPermissionRequested', true);
+    }
+  }
+
+  Future<void> _requestAndroidPermissions() async {
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+  }
+
+  Future<void> _showNotification(RentalOrder order, FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin) async {
+    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'new_order_channel', 'New Order Notifications',
+        importance: Importance.max, priority: Priority.high, showWhen: false, );
+    const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
+    const platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      'New Order from: ${order.buyerId}',
+      'You have a new order: ${order.idToken}',
+      platformChannelSpecifics,
+      payload: 'item x',
+    );
+  }
 }
