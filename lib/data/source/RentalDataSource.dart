@@ -116,10 +116,10 @@ class RentalDataSource extends BaseRentalDataSource {
   Future<Rental?> getRental(String idToken) async {
     Rental rental;
     try {
-      final snapshot = await _databaseReference.child(idToken).get();
+      final snapshot = await _databaseReference.child("rentals").child(idToken).get();
       if (snapshot.exists) {
-        Map<String, dynamic>? exchangeData =
-            snapshot.value as Map<String, dynamic>?;
+        Map<dynamic, dynamic>? exchangeData =
+            snapshot.value as Map<dynamic, dynamic>?;
         String imagePath = exchangeData?['imagePath'];
         String userId = exchangeData?['userId'];
         String title = exchangeData?['title'];

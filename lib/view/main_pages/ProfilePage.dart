@@ -47,6 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return FutureBuilder<UserModel?>(
       future: userViewModel.getUser(), // Ottieni l'utente
       builder: (context, snapshot) {
@@ -93,7 +94,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ).then((value) => setState(() {}));
                     },
-                    child: Text("My reviews")
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                    ),
+                    child: const Text("My reviews"),
                   ),
                   Text("Published exchanges"),
                   _buildDivider(),
@@ -201,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildRentalList(BuildContext context, List<dynamic> listObject, int type) {
     List<String>? listApp = [];
     if (listObject is List<RentalOrder>) {
-     
+
       for (RentalOrder order in listObject) {
         listApp.add(order.rentalId);
       }

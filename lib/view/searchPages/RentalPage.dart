@@ -16,6 +16,7 @@ import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
 import '../../widget/modalBottomSheet.dart';
+import '../profile_pages/SellerProfilePage.dart';
 import 'RentalPayment.dart';
 
 class RentalPage extends StatefulWidget {
@@ -143,9 +144,9 @@ class _RentalPageState extends State<RentalPage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Leavereviewpage(
+                                          builder: (context) => SellerProfilePage(
                                             currentUser: widget.currentUser,
-                                            sellerUser: snapshot.data!,
+                                            sellerId: snapshot.data!.idToken,
                                           ),
                                         ),
                                       ).then((value) => setState(() {}));

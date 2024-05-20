@@ -10,6 +10,7 @@ import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
 import '../main_pages/LeaveReviewPage.dart';
+import '../profile_pages/SellerProfilePage.dart';
 
 
 class ExchangePage extends StatefulWidget {
@@ -136,9 +137,9 @@ class _ExchangePageState extends State<ExchangePage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Leavereviewpage(
+                                        builder: (context) => SellerProfilePage(
                                           currentUser: widget.currentUser,
-                                          sellerUser: snapshot.data!,
+                                          sellerId: snapshot.data!.idToken,
                                         ),
                                       ),
                                     ).then((value) => setState(() {}));

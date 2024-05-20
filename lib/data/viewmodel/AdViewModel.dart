@@ -77,5 +77,8 @@ class AdViewModel{
     _adRepository.removeRental(idToken);
   }
 
+  Future<Rental?> getRental(String idToken) async{
+    return _adRepository.getRental(idToken);
+  }
 
 }

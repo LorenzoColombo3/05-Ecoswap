@@ -25,7 +25,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
     List<Review> reviews = [];
 
     reviewsMap.forEach((key, value) {
-      Review review = Review.fromMap(value as Map<String, dynamic>);
+      Review review = Review.fromMap(value as Map<dynamic, dynamic>);
       reviews.add(review);
     });
 

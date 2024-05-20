@@ -422,8 +422,9 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> saveActiveRentalsSell(UserModel user) async {
     try {
+      saveUserLocal(user);
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+            FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsSell
           .map((rentalOrder) => rentalOrder.toMap())
@@ -437,6 +438,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> saveFinishedRentalsSell(UserModel user) async {
     try {
+      saveUserLocal(user);
       final DatabaseReference _databaseReference =
           FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
@@ -535,7 +537,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
 
   @override
   void setupFirebaseListener() async {
-
     UserModel? currentUser = await getUser();
     final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     final initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -612,7 +613,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );
-    await _flutterLocalNotificationsPlugin.show(
+     _flutterLocalNotificationsPlugin.show(
       0,
       'New Order from: ${order.nameBuyer}',
       'You have a new order: ${order.nameRental}',

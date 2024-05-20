@@ -24,12 +24,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
+
   @override
   void initState() {
     super.initState();
+    userRepository = ServiceLocator().getUserRepository();
+    userViewModel = UserViewModelFactory(userRepository).create();
     checkCredentials();
     WidgetsFlutterBinding.ensureInitialized();
     userViewModel.setupFirebaseListener();

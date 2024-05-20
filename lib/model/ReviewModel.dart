@@ -6,7 +6,7 @@ class Review {
   Review(this.userIdToken, this.text, this.stars);
 
   // Metodo factory per creare un'istanza di Review da una mappa
-  factory Review.fromMap(Map<String, dynamic> map) {
+  factory Review.fromMap(Map<dynamic, dynamic> map) {
     return Review(
       map['userIdToken'],
       map['text'],
@@ -15,7 +15,7 @@ class Review {
   }
 
   // Metodo per convertire la Review in una mappa
-  Map<String, dynamic> toMap() {
+  Map<dynamic, dynamic> toMap() {
     return {
       'userIdToken': userIdToken,
       'text': text,

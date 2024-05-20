@@ -162,4 +162,9 @@ class AdRepository implements IAdRepository{
     _rentalDataSource.removeRental(idToken);
   }
 
+  @override
+  Future<Rental?> getRental(String idToken) async{
+    return _rentalDataSource.getRental(idToken);
+  }
+
 }

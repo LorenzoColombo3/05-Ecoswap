@@ -7,15 +7,15 @@ import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 
-class Leavereviewpage extends StatefulWidget {
+class LeaveReviewPage extends StatefulWidget {
   UserModel currentUser,sellerUser;
-  Leavereviewpage({super.key,required this.currentUser, required this.sellerUser});
+  LeaveReviewPage({super.key,required this.currentUser, required this.sellerUser});
 
   @override
-  State<Leavereviewpage> createState() => _LeavereviewpageState();
+  State<LeaveReviewPage> createState() => _LeaveReviewPageState();
 }
 
-class _LeavereviewpageState extends State<Leavereviewpage> {
+class _LeaveReviewPageState extends State<LeaveReviewPage> {
   TextEditingController _reviewController = TextEditingController();
   int _rating = 0;
 
