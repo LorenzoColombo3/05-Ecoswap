@@ -30,4 +30,5 @@ abstract class IUserRepository{
   Future<void> savePublishedRentals(UserModel user);
   Future<void> savePublishedExchanges(UserModel user);
   Future<void> saveReview(String userId, String reviewContent, int stars);
+  void setupFirebaseListener();
 }

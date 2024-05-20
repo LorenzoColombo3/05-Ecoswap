@@ -533,7 +533,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-
+  @override
   void setupFirebaseListener() async {
 
     UserModel? currentUser = await getUser();
@@ -559,10 +559,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     userRef.onChildAdded.listen((event) async {
       bool controllo=false;
         final RentalOrder order = RentalOrder.fromMap(event.snapshot.value as Map<dynamic, dynamic>);
-        currentUser.activeRentalsSell.forEach((element) async {
-          print(element.idToken);
-        });
-        print("ordine   "+order.idToken);
         currentUser.activeRentalsSell.forEach((element) {
           if(element.idToken==order.idToken){
             controllo=true;
@@ -616,11 +612,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );
-
     await _flutterLocalNotificationsPlugin.show(
       0,
-      'New Order from: ${order.buyerId}',
-      'You have a new order: ${order.idToken}',
+      'New Order from: ${order.nameBuyer}',
+      'You have a new order: ${order.nameRental}',
       platformChannelSpecifics,
       payload: 'item x',
     );

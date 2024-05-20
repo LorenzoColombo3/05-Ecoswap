@@ -2,6 +2,9 @@ class RentalOrder {
   String _idToken;
   String _sellerId;
   String _buyerId;
+  String _nameSeller;
+  String _nameBuyer;
+  String _nameRental;
   String _rentalId;
   String _dateTime;
   int _unitRented;
@@ -18,6 +21,9 @@ class RentalOrder {
     required int unitRented,
     required int price,
     required int days,
+    required nameSeller,
+    required nameBuyer,
+    required nameRental
   })  : _idToken = idToken,
         _sellerId = sellerId,
         _buyerId = buyerId,
@@ -25,7 +31,10 @@ class RentalOrder {
         _dateTime = dateTime,
         _unitRented = unitRented,
         _price = price,
-        _days = days;
+        _days = days,
+        _nameSeller=nameSeller,
+        _nameBuyer=nameBuyer,
+        _nameRental=nameRental;
 
   // Getter
   String get idToken => _idToken;
@@ -36,6 +45,9 @@ class RentalOrder {
   int get unitRented => _unitRented;
   int get price => _price;
   int get days => _days;
+  String get nameRental => _nameRental;
+  String get nameSeller => _nameSeller;
+  String get nameBuyer => _nameBuyer;
 
   // Setter
   set idToken(String value) => _idToken = value;
@@ -46,6 +58,9 @@ class RentalOrder {
   set unitRented(int value) => _unitRented = value;
   set price(int value) => _price = value;
   set days(int value) => _days = value;
+  set nameSeller(String value) => _nameSeller = value;
+  set nameBuyer(String value) => _nameBuyer = value;
+  set nameRental(String value) => _nameRental = value;
 
   // Metodo toMap
   Map<String, dynamic> toMap() {
@@ -58,6 +73,9 @@ class RentalOrder {
       'unitRented': _unitRented,
       'price': _price,
       'days': _days,
+      'nameSeller': _nameSeller,
+      'nameBuyer': _nameBuyer,
+      'nameRental': _nameRental,
     };
   }
 
@@ -72,6 +90,9 @@ class RentalOrder {
       unitRented: map['unitRented'],
       price: map['price'],
       days: map['days'],
+      nameSeller: map['nameSeller'],
+      nameBuyer: map['nameBuyer'],
+      nameRental: map['nameRental'],
     );
   }
 }

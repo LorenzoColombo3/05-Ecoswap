@@ -27,13 +27,12 @@ class _MyAppState extends State<MyApp> {
 
   late IUserRepository userRepository;
   late UserViewModel userViewModel;
-   UserAuthDataSource aa = UserAuthDataSource();
   @override
   void initState() {
     super.initState();
     checkCredentials();
     WidgetsFlutterBinding.ensureInitialized();
-    aa.setupFirebaseListener();
+    userViewModel.setupFirebaseListener();
   }
 
   Future<bool> checkCredentials() async {

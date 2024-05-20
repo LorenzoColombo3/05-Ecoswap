@@ -137,4 +137,9 @@ Future<Result?> saveData({required String name, required String lastName,
   Future<void> saveReview(String userId, String reviewContent, int stars){
    return _userAuthDataSource.saveReview(userId, reviewContent, stars);
   }
+
+  @override
+  void setupFirebaseListener(){
+   _userAuthDataSource.setupFirebaseListener();
+  }
 }

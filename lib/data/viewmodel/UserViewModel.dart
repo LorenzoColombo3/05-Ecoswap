@@ -107,4 +107,7 @@ class UserViewModel{
     return _userRepository.saveReview(userId, reviewContent, stars);
   }
 
+  void setupFirebaseListener(){
+    _userRepository.setupFirebaseListener();
+  }
 }
