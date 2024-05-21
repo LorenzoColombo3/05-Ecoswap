@@ -157,7 +157,35 @@ class _RentalPaymentState extends State<RentalPayment> {
                         (states) => colorScheme.background),
                   ),
                   onPressed: () {
-                    StripeService.stripePaymentCheckout(
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("operation successed")),
+                    );
+                    widget.rental.unitRented =
+                        (int.parse(widget.rental.unitRented) + unitNumber)
+                            .toString();
+                    adViewModel.updateRentalData(widget.rental);
+                    RentalOrder order = RentalOrder(
+                        idToken: Uuid().v4(),
+                        sellerId: sellerUser.idToken,
+                        buyerId: widget.currentUser.idToken,
+                        rentalId: widget.rental.idToken,
+                        dateTime: DateTime.now().toString().substring(0, 10),
+                        unitRented: unitNumber,
+                        price: (unitNumber *
+                            int.parse(widget.rental.dailyCost)) *
+                            daysRent,
+                        days: daysRent,
+                        nameSeller: sellerUser.name,
+                        nameBuyer: widget.currentUser.name,
+                        nameRental: widget.rental.title);
+                    widget.currentUser.addToActiveRentalsBuy(order);
+                    sellerUser.addToActiveRentalsSell(order);
+                    userViewModel.saveUserLocal(widget.currentUser);
+                    userViewModel
+                        .saveActiveRentalsSell(sellerUser)
+                        .then((value) =>
+                        userViewModel .saveActiveRentalsBuy(widget.currentUser));
+                    /*StripeService.stripePaymentCheckout(
                         widget.rental, unitNumber, daysRent, context, mounted,
                         onSuccess: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -184,9 +212,9 @@ class _RentalPaymentState extends State<RentalPayment> {
                       widget.currentUser.addToActiveRentalsBuy(order);
                       sellerUser.addToActiveRentalsSell(order);
                       userViewModel
-                          .saveActiveRentalsBuy(widget.currentUser)
+                          .saveActiveRentalsSell(sellerUser)
                           .then((value) =>
-                              userViewModel.saveActiveRentalsSell(sellerUser));
+                              userViewModel .saveActiveRentalsBuy(widget.currentUser));
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) =>
                             NavigationPage(logoutCallback: () {
@@ -222,7 +250,7 @@ class _RentalPaymentState extends State<RentalPayment> {
                           ));
                         }),
                       ));
-                    }).then((value) => value.call());
+                    }).then((value) => value.call());*/
                   },
                   child: Text(
                     'Pay with Stripe',

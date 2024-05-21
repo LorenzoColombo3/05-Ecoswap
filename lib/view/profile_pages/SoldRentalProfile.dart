@@ -104,10 +104,7 @@ class _SoldRentalProfileState extends State<SoldRentalProfile> {
                         SizedBox(height: 8.0),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).popUntil((route) =>
-                            route.isFirst);
-                            userBuyer!
-                                .removeFromActiveRentalsBuy(widget.order);
+                            userBuyer!.removeFromActiveRentalsBuy(widget.order);
                             userBuyer!.addToFinishedRentalsBuy(widget.order);
                             userViewModel
                                 .saveActiveRentalsBuy(userBuyer!)
@@ -117,6 +114,7 @@ class _SoldRentalProfileState extends State<SoldRentalProfile> {
                                 widget.order);
                             widget.currentUser.addToFinishedRentalsSell(
                                 widget.order);
+                            userViewModel.saveUserLocal(widget.currentUser);
                             userViewModel
                                 .saveActiveRentalsSell(widget.currentUser)
                                 .then((value) =>

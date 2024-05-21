@@ -110,4 +110,8 @@ class UserViewModel{
   void setupFirebaseListener(){
     _userRepository.setupFirebaseListener();
   }
+
+  Future<void> saveUserLocal(UserModel user) async{
+    _userRepository.saveUserLocal(user);
+  }
 }

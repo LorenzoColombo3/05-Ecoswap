@@ -29,6 +29,6 @@ abstract class BaseUserAuthDataSource {
   Future<void> saveFavoriteExchange(UserModel user);
   Future<void> saveFavoriteRentals(UserModel user);
   Future<void> saveReview(String userId, String reviewContent, int stars);
-
+  Future<void> saveUserLocal(UserModel user);
   void setupFirebaseListener();
 }

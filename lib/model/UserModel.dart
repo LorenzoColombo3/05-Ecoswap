@@ -403,4 +403,6 @@ class UserModel {
       favoriteExchanges: map['favoriteExchanges'],
     );
   }
+
+
 }

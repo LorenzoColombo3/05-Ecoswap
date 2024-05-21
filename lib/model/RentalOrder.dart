@@ -95,4 +95,13 @@ class RentalOrder {
       nameRental: map['nameRental'],
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is RentalOrder && other.idToken == idToken;
+  }
+
+  @override
+  int get hashCode => idToken.hashCode;
 }

@@ -272,6 +272,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
+  @override
   Future<void> saveUserLocal(UserModel user) async {
     SharedPreferences prefs;
     prefs = await SharedPreferences.getInstance();
@@ -409,7 +410,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       final DatabaseReference _databaseReference =
           FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
-      saveUserLocal(user);
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsBuy
           .map((rentalOrder) => rentalOrder.toMap())
           .toList();
@@ -422,7 +422,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> saveActiveRentalsSell(UserModel user) async {
     try {
-      saveUserLocal(user);
       final DatabaseReference _databaseReference =
             FirebaseDatabase.instance.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
@@ -438,28 +437,34 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> saveFinishedRentalsSell(UserModel user) async {
     try {
-      saveUserLocal(user);
+      print("finished rental sell " +user.finishedRentalsSell.length.toString());
       final DatabaseReference _databaseReference =
           FirebaseDatabase.instance.reference();
-      final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
-      await _databaseReference.child(databasePath).set(user.finishedRentalsBuy);
+      final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
+      List<Map<String, dynamic>> rentalsSellMapList = user.finishedRentalsSell
+          .map((rentalOrder) => rentalOrder.toMap())
+          .toList();
+      await _databaseReference.child(databasePath).set(rentalsSellMapList);
     } catch (error) {
-      print('Errore durante il caricamento del rental finito comprato: $error');
+      print('Errore durante il caricamento del rental finito vendita: $error');
     }
   }
 
   @override
   Future<void> saveFinishedRentalsBuy(UserModel user) async {
     try {
+      print("finished rental buy " +user.finishedRentalsBuy.length.toString());
       final DatabaseReference _databaseReference =
           FirebaseDatabase.instance.reference();
-      final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
-      saveUserLocal(user);
+      final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
+      List<Map<String, dynamic>> rentalsSellMapList = user.finishedRentalsBuy
+          .map((rentalOrder) => rentalOrder.toMap())
+          .toList();
       await _databaseReference
           .child(databasePath)
-          .set(user.finishedRentalsSell);
+          .set(rentalsSellMapList);
     } catch (error) {
-      print('Errore durante il caricamento del rental finito vendita: $error');
+      print('Errore durante il caricamento del rental finito comprato: $error');
     }
   }
 
@@ -568,7 +573,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         if(!controllo){
             //contains non funzionante
             currentUser.addToActiveRentalsSell(order);
-            await saveUserLocal(currentUser);
+             saveUserLocal(currentUser);
             _showNotification(order, _flutterLocalNotificationsPlugin);
           }
     });

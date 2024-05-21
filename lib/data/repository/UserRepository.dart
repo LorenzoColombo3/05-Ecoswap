@@ -142,4 +142,9 @@ Future<Result?> saveData({required String name, required String lastName,
   void setupFirebaseListener(){
    _userAuthDataSource.setupFirebaseListener();
   }
+
+  @override
+  Future<void> saveUserLocal(UserModel user) async {
+   _userAuthDataSource.saveUserLocal(user);
+  }
 }

@@ -103,16 +103,10 @@ class _BoughtRentalProfileState extends State<BoughtRentalProfile> {
                         ),
                         SizedBox(height: 8.0),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .popUntil((route) => route.isFirst);
-                            print(sellerUser!.activeRentalsSell.toString());
-                            sellerUser!
-                                .removeFromActiveRentalsSell(widget.order);
-                            print(sellerUser!.activeRentalsSell.toString());
+                          onPressed: () async{
+                            sellerUser!.removeFromActiveRentalsSell(widget.order);
                             sellerUser!.addToFinishedRentalsSell(widget.order);
-                            print(sellerUser!.finishedRentalsSell.toString());
-                            userViewModel
+                             userViewModel
                                 .saveActiveRentalsSell(sellerUser!)
                                 .then((value) => userViewModel
                                     .saveFinishedRentalsSell(sellerUser!));
@@ -120,12 +114,11 @@ class _BoughtRentalProfileState extends State<BoughtRentalProfile> {
                                 .removeFromActiveRentalsBuy(widget.order);
                             widget.currentUser
                                 .addToFinishedRentalsBuy(widget.order);
+                            userViewModel.saveUserLocal(widget.currentUser);
                             userViewModel
-                                .saveActiveRentalsSell(widget.currentUser)
+                                .saveActiveRentalsBuy(widget.currentUser)
                                 .then((value) => () {
-                                      userViewModel
-                                          .saveFinishedRentalsSell(
-                                              widget.currentUser)
+                                      userViewModel.saveFinishedRentalsBuy(widget.currentUser)
                                           .then((value) => Navigator.of(context)
                                               .popUntil(
                                                   (route) => route.isFirst));
