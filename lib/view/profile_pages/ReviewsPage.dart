@@ -42,7 +42,7 @@ class _ReviewsPageState extends State<ReviewsPage> {
   List<Widget> _buildStarRating(int numberOfStars) {
     List<Widget> starWidgets = [];
     for (int i = 1; i <= 5; i++) {
-      IconData iconData = numberOfStars >= i ? Icons.star : Icons.star_border;
+      IconData iconData = numberOfStars >= i ? Icons.star_rounded : Icons.star_border_rounded;
       Color starColor = numberOfStars >= i ? Colors.yellow : Colors.grey;
       starWidgets.add(
         Icon(

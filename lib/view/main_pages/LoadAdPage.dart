@@ -25,6 +25,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme= Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
@@ -50,7 +51,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
                     },
                     child: Text(
                       'Rental',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: _selectedIndex == 0 ? Colors.black : colorScheme.onPrimary),
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => rentalButtonColor),
@@ -68,7 +69,7 @@ class _LoadAdPageState extends State<LoadAdPage> {
                     },
                     child: Text(
                       'Exchange',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: _selectedIndex == 1 ? Colors.black : colorScheme.onPrimary),
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.resolveWith<Color>((states) => exchangeButtonColor),

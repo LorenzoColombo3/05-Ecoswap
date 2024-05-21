@@ -54,6 +54,7 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -134,6 +135,9 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
           ),
           SizedBox(height: 24.0),
           ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+            ),
             onPressed: () {
               if (imagePath == "" ||
                   _titleInputController.value.text == "" ||
@@ -173,7 +177,11 @@ class _LoadExchangePageState extends State<LoadExchangePage> {
                 }
               }
             },
-            child: Text('Save'),
+            child: Text('Save',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
       ),

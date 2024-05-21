@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../model/Exchange.dart';
+import '../../model/ReviewModel.dart';
 import '../../model/UserModel.dart';
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
@@ -46,7 +48,10 @@ class _ExchangePageState extends State<ExchangePage> {
     return Scaffold(
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
-        title: Text(widget.exchange.title),
+        title: Text(widget.exchange.title,
+        style: TextStyle(
+          color: Colors.black,
+        ),),
         backgroundColor: colorScheme.background,
       ),
       body: SingleChildScrollView(
@@ -144,8 +149,12 @@ class _ExchangePageState extends State<ExchangePage> {
                                       ),
                                     ).then((value) => setState(() {}));
                                   },
-                                  title: Text(snapshot.data!.name),
-                                  subtitle: Text("addStarsRating"),
+                                  title: Text(snapshot.data!.name,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  subtitle: Row(children: _buildStarRating(ratingUser(snapshot.data!))),
                                   leading:
                                   img != null
                                   ? CircleAvatar(
@@ -167,7 +176,9 @@ class _ExchangePageState extends State<ExchangePage> {
                           ),
                           child: Text(
                             'Start a Chat',
-                            style: TextStyle(color: colorScheme.onPrimary),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8.0),
@@ -183,11 +194,12 @@ class _ExchangePageState extends State<ExchangePage> {
                                 color: Colors.black, // Colore del testo normale
                               ),
                               children: [
-                                const TextSpan(
+                                 TextSpan(
                                   text: "Description:\n",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20.0, // Testo in grassetto
+                                    color: colorScheme.onPrimary
                                   ),
                                 ),
                                 TextSpan(
@@ -263,4 +275,39 @@ class _ExchangePageState extends State<ExchangePage> {
     );
   }
 
+  int ratingUser(UserModel user){
+    int rating=0;
+    List<Review> reviews = getAllReviews(user.reviews);
+    if (reviews.isNotEmpty) {
+      int totalRating = reviews.map((review) => review.stars).reduce((a, b) => a + b);
+      rating = totalRating ~/ reviews.length;
+    }
+    return rating;
+  }
+
+  List<Review> getAllReviews(Map<dynamic, dynamic> reviewsMap) {
+    List<Review> reviews = [];
+
+    reviewsMap.forEach((key, value) {
+      Review review = Review.fromMap(value as Map<dynamic, dynamic>);
+      reviews.add(review);
+    });
+
+    return reviews;
+  }
+
+  List<Widget> _buildStarRating(int numberOfStars) {
+    List<Widget> starWidgets = [];
+    for (int i = 1; i <= 5; i++) {
+      IconData iconData = numberOfStars >= i ? Icons.star_rounded : Icons.star_border_rounded;
+      Color starColor = numberOfStars >= i ? Colors.yellow : Colors.black;
+      starWidgets.add(
+        Icon(
+          iconData,
+          color: starColor,
+        ),
+      );
+    }
+    return starWidgets;
+  }
 }

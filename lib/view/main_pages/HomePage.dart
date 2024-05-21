@@ -137,23 +137,30 @@ class _HomePageState extends State<HomePage> {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 50.0),
+          SizedBox(height: 60.0),
           Container(
-            padding: EdgeInsets.all(4.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30.0),
-              color: colorScheme.background,
+              color: colorScheme.primary,
+              border: Border.all( // Imposta il bordo del Container
+                color: colorScheme.onPrimary, // Colore del bordo
+                width: 1.0, // Spessore del bordo in pixel
+              ),
             ),
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextFormField(
+                    textAlignVertical: TextAlignVertical.center,
                     controller: _searchController,
-                    style: TextStyle(color: colorScheme.onPrimary),
-                    decoration: const InputDecoration(
+                    style: TextStyle(
+                        color: colorScheme.onPrimary,
+                    ),
+                    decoration:  InputDecoration(
                       hintText: 'Search...',
                       prefixIcon: Icon(Icons.search),
+                      prefixIconColor: colorScheme.onPrimary,
                       border: InputBorder.none,
                     ),
                     onEditingComplete: () async {
@@ -188,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: Text(
                       'Rental',
-                      style: TextStyle(color: colorScheme.onPrimary),
+                      style: TextStyle(color: _selectedIndex == 0 ? Colors.black : colorScheme.onPrimary,),
                     ),
                     style: ButtonStyle(
                       backgroundColor:
@@ -209,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: Text(
                       'Exchange',
-                      style: TextStyle(color: colorScheme.onPrimary),
+                      style: TextStyle(color: _selectedIndex == 1 ? Colors.black : colorScheme.onPrimary,),
                     ),
                     style: ButtonStyle(
                       backgroundColor:
@@ -226,6 +233,7 @@ class _HomePageState extends State<HomePage> {
                 index: _selectedIndex,
                 children: <Widget>[
                   GridView.builder(
+                    padding: EdgeInsets.zero,
                     controller: _scrollControllerRental,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -247,6 +255,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   GridView.builder(
+                    padding: EdgeInsets.zero,
                     controller: _scrollControllerExchange,
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
@@ -305,12 +314,10 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(10.0),
               child: FadeInImage(
                 placeholder: AssetImage('assets/image/loading_indicator.gif'),
-                // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
-                height: 200,
                 image: NetworkImage(rental.imageUrl),
-                // URL dell'immagine principale
-                fit: BoxFit.cover, // Adatta l'immagine all'interno del container
-
+                fit: BoxFit.cover,
+                height: 200,
+                width: 180,
               ),
             ),
             Stack(
@@ -319,10 +326,16 @@ class _HomePageState extends State<HomePage> {
                   title: Text(
                     rental.title,
                     overflow: TextOverflow.ellipsis, // Testo non va a capo
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
                   ),
                   subtitle: Text(
                     "€${rental.dailyCost}",
                     overflow: TextOverflow.ellipsis, // Testo non va a capo
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -393,6 +406,7 @@ class _HomePageState extends State<HomePage> {
               child: FadeInImage(
                 placeholder: AssetImage('assets/image/loading_indicator.gif'), // Immagine di placeholder (un'animazione di caricamento circolare, ad esempio)
                 height: 200,
+                width: 180,
                 image: NetworkImage(exchange.imageUrl), // URL dell'immagine principale
                 fit: BoxFit.cover, // Adatta l'immagine all'interno del container
               ),
@@ -404,10 +418,9 @@ class _HomePageState extends State<HomePage> {
                   title: Text(
                     exchange.title,
                     overflow: TextOverflow.ellipsis, // Testo non va a capo
-                  ),
-                  subtitle: Text(
-                    "inserire qualcosa",
-                    overflow: TextOverflow.ellipsis, // Testo non va a capo
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
                   ),
                 ),
                 Positioned(

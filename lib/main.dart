@@ -33,6 +33,8 @@ class _MyAppState extends State<MyApp> {
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = UserViewModelFactory(userRepository).create();
     checkCredentials();
+    userRepository = ServiceLocator().getUserRepository();
+    userViewModel = UserViewModelFactory(userRepository).create();
     WidgetsFlutterBinding.ensureInitialized();
     userViewModel.setupFirebaseListener();
   }

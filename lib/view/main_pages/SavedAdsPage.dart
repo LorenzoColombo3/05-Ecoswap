@@ -96,7 +96,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
                       ),
                       child: Text(
                         'Rental',
-                        style: TextStyle(color: colorScheme.onPrimary),
+                        style: TextStyle(color: _selectedIndex == 0 ? Colors.black : colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -116,7 +116,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
                       ),
                       child: Text(
                         'Exchange',
-                        style: TextStyle(color: colorScheme.onPrimary),
+                        style: TextStyle(color: _selectedIndex == 1 ? Colors.black : colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -149,6 +149,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
           } else {
             List<Rental> rentals = snapshot.data ?? [];
             return ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: rentals.length,
               itemBuilder: (context, index) {
                 final rental = rentals[index];
@@ -194,6 +195,7 @@ class _SavedAdsPageState extends State<SavedAdsPage> {
         } else {
           List<Exchange> exchanges = snapshot.data ?? [];
           return ListView.builder(
+            padding: EdgeInsets.zero,
             itemCount: exchanges.length,
             itemBuilder: (context, index) {
               final exchange = exchanges[index];

@@ -58,6 +58,7 @@ class _LoadRentalState extends State<LoadRentalPage> {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme= Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -183,6 +184,9 @@ class _LoadRentalState extends State<LoadRentalPage> {
           ),
           SizedBox(height: 24.0),
           ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+            ),
             onPressed: () {
               if (imagePath == "" ||
                   _titleInputController.value.text == "" ||
@@ -227,7 +231,12 @@ class _LoadRentalState extends State<LoadRentalPage> {
                 }
               }
             },
-            child: Text('Save'),
+            child: Text(
+                'Save',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
       ),
