@@ -106,10 +106,15 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSearchTopBar() {
+    final colorScheme= Theme.of(context).colorScheme;
     return Column(
       children: [
         TextFormField(
+          textAlignVertical: TextAlignVertical.center,
           controller: _searchController,
+          style: TextStyle(
+            color: colorScheme.onPrimary,
+          ),
           decoration: const InputDecoration(
             hintText: 'Search...',
             prefixIcon: Icon(Icons.search),
@@ -130,7 +135,7 @@ class _SearchPageState extends State<SearchPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Divider(
-            color: Colors.black,
+            color: colorScheme.onPrimary,
             thickness: 1.0,
           ),
         ),
@@ -226,6 +231,7 @@ class _SearchPageState extends State<SearchPage> {
 
 
   Widget _buildExchangeItem(Exchange exchange, BuildContext context) {
+    final colorScheme= Theme.of(context).colorScheme;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -282,7 +288,7 @@ class _SearchPageState extends State<SearchPage> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Divider(
-              color: Colors.black,
+              color: colorScheme.onPrimary,
               thickness: 1.0,
             ),
           ),

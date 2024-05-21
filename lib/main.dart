@@ -61,20 +61,15 @@ class _MyAppState extends State<MyApp> {
         future: checkCredentials(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/image/logoApp.png', // Percorso dell'immagine asset
-                        width: 100, // Larghezza dell'immagine
-                        height: 100, // Altezza dell'immagine
-                        fit: BoxFit.contain,
-                      ),
-                                  ),
+            return Center(
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/image/logoApp.png', // Percorso dell'immagine asset
+                    width: 50, // Larghezza dell'immagine
+                    height: 50, // Altezza dell'immagine
+                    fit: BoxFit.contain,
                   ),
-                ),
+              ),
             );
           } else {
             if (snapshot.data == true) {
