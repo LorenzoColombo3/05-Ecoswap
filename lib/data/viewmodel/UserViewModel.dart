@@ -83,7 +83,7 @@ class UserViewModel{
   }
 
   Future<void> saveFinishedRentalsSell(UserModel user) async{
-    _userRepository.saveActiveRentalsSell(user);
+    _userRepository.saveFinishedRentalsSell(user);
   }
 
   Future<void> savePublishedExchanges(UserModel user) async{

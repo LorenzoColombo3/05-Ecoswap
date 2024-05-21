@@ -106,23 +106,25 @@ class _BoughtRentalProfileState extends State<BoughtRentalProfile> {
                           onPressed: () async{
                             sellerUser!.removeFromActiveRentalsSell(widget.order);
                             sellerUser!.addToFinishedRentalsSell(widget.order);
-                             userViewModel
-                                .saveActiveRentalsSell(sellerUser!)
-                                .then((value) => userViewModel
-                                    .saveFinishedRentalsSell(sellerUser!));
-                            widget.currentUser
-                                .removeFromActiveRentalsBuy(widget.order);
-                            widget.currentUser
-                                .addToFinishedRentalsBuy(widget.order);
-                            userViewModel.saveUserLocal(widget.currentUser);
-                            userViewModel
-                                .saveActiveRentalsBuy(widget.currentUser)
-                                .then((value) => () {
-                                      userViewModel.saveFinishedRentalsBuy(widget.currentUser)
-                                          .then((value) => Navigator.of(context)
-                                              .popUntil(
-                                                  (route) => route.isFirst));
-                                    });
+                            userViewModel.saveActiveRentalsSell(sellerUser!)
+                                .then((_) {
+                              return userViewModel.saveFinishedRentalsSell(sellerUser!);
+                            }).then((_) {
+                              widget.currentUser
+                                  .removeFromActiveRentalsBuy(widget.order);
+                              widget.currentUser
+                                  .addToFinishedRentalsBuy(widget.order);
+                              userViewModel.saveUserLocal(widget.currentUser);
+                              userViewModel.saveActiveRentalsBuy(widget.currentUser)
+                                  .then((_) {
+                                return userViewModel.saveFinishedRentalsBuy(widget.currentUser);
+                              }).then((_) {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              })
+                                  .catchError((error) {
+                                print('Errore durante il salvataggio: $error');
+                              });
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor:

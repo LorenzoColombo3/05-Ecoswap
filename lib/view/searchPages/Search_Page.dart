@@ -69,8 +69,10 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme= Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: colorScheme.primary,
         title: _buildSearchTopBar(),
         automaticallyImplyLeading: false,
         actions: [
@@ -82,6 +84,7 @@ class _SearchPageState extends State<SearchPage> {
               'Delete',
               style: TextStyle(
                 fontSize: 16.0,
+                color: Colors.blue,
               ),
             ),
           ),
@@ -89,7 +92,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
 
       body: Container(
-        color: Colors.white,
+        color: colorScheme.primary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -103,7 +106,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSearchTopBar() {
-    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         TextFormField(

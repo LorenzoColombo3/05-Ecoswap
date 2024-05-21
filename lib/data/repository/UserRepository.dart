@@ -119,7 +119,7 @@ Future<Result?> saveData({required String name, required String lastName,
 
   @override
   Future<void> saveFinishedRentalsSell(UserModel user) async{
-    _userAuthDataSource.saveActiveRentalsSell(user);
+    _userAuthDataSource.saveFinishedRentalsSell(user);
   }
 
 

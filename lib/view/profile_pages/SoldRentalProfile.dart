@@ -104,26 +104,25 @@ class _SoldRentalProfileState extends State<SoldRentalProfile> {
                         SizedBox(height: 8.0),
                         ElevatedButton(
                           onPressed: () {
-                            userBuyer!.removeFromActiveRentalsBuy(widget.order);
+                           userBuyer!.removeFromActiveRentalsBuy(widget.order);
                             userBuyer!.addToFinishedRentalsBuy(widget.order);
                             userViewModel
                                 .saveActiveRentalsBuy(userBuyer!)
                                 .then((value) => userViewModel
                                 .saveFinishedRentalsBuy(userBuyer!));
-                            widget.currentUser.removeFromActiveRentalsSell(
-                                widget.order);
-                            widget.currentUser.addToFinishedRentalsSell(
-                                widget.order);
+                            widget.currentUser.removeFromActiveRentalsSell(widget.order);
+                            widget.currentUser.addToFinishedRentalsSell(widget.order);
                             userViewModel.saveUserLocal(widget.currentUser);
-                            userViewModel
-                                .saveActiveRentalsSell(widget.currentUser)
-                                .then((value) =>
-                                () {
-                              userViewModel.saveFinishedRentalsSell(
-                                  widget.currentUser).then((value) =>
-                                  Navigator.of(context).popUntil((
-                                      route) => route.isFirst));
+                            userViewModel.saveActiveRentalsSell(widget.currentUser)
+                                .then((_) {
+                              return userViewModel.saveFinishedRentalsSell(widget.currentUser);
+                            }).then((_) {
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            })
+                                .catchError((error) {
+                              print('Errore durante il salvataggio: $error');
                             });
+
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith<
