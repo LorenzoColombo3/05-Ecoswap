@@ -3,10 +3,12 @@ import 'package:eco_swap/data/repository/AdRepository.dart';
 import 'package:eco_swap/data/repository/IAdRepository.dart';
 import 'package:eco_swap/data/repository/UserRepository.dart';
 import 'package:eco_swap/data/repository/IUserRepository.dart';
+import 'package:eco_swap/data/source/BaseChatDataSource.dart';
 import 'package:eco_swap/data/source/BaseExchangeDataSource.dart';
 import 'package:eco_swap/data/source/BaseExchangeLocalDataSource.dart';
 import 'package:eco_swap/data/source/BaseRentalDataSource.dart';
 import 'package:eco_swap/data/source/BaseUserAuthDataSource.dart';
+import 'package:eco_swap/data/source/ChatDataSource.dart';
 import 'package:eco_swap/data/source/ExchangeDataSource.dart';
 import 'package:eco_swap/data/source/ExchangeLocalDataSource.dart';
 import 'package:eco_swap/data/source/RentalDataSource.dart';
@@ -28,7 +30,8 @@ class ServiceLocator {
 
    IUserRepository getUserRepository(){
     BaseUserAuthDataSource userAuthDataSource = new UserAuthDataSource();
-    return new UserRepository(userAuthDataSource);
+    BaseChatDataSource chatDataSource = ChatDataSource();
+    return new UserRepository(userAuthDataSource, chatDataSource);
   }
 
   IAdRepository getAdRepository(){
@@ -36,6 +39,7 @@ class ServiceLocator {
      BaseExchangeDataSource exchangeDataSource = ExchangeDataSource();
      BaseExchangeLocalDataSource localExchangeDataSource = ExchangeLocalDataSource();
      BaseRentalLocalDataSource localRentalDataSource = RentalLocalDataSource();
+
      return new AdRepository(exchangeDataSource, rentalDataSource, localExchangeDataSource, localRentalDataSource);
   }
 

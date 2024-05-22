@@ -1,5 +1,7 @@
 import 'package:eco_swap/data/repository/IUserRepository.dart';
+import 'package:firebase_database/firebase_database.dart';
 
+import '../../model/Chat.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
@@ -113,5 +115,25 @@ class UserViewModel{
 
   Future<void> saveUserLocal(UserModel user) async{
     _userRepository.saveUserLocal(user);
+  }
+
+  Stream<List<DatabaseEvent>> getChatsStream(String userId){
+    return _userRepository.getChatsStream(userId);
+  }
+
+  void markMessages(String chatId){
+    return _userRepository.markMessages(chatId);
+  }
+
+  void saveChat(Chat chat){
+    _userRepository.saveChat(chat);
+  }
+
+  Stream<DatabaseEvent> getMessageStream(Chat chat) {
+    return _userRepository.getMessageStream(chat);
+  }
+
+  Future<Chat?> getChat(String userId, String itemId) async{
+    return _userRepository.getChat(userId, itemId);
   }
 }

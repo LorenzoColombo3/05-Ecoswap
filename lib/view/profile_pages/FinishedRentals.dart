@@ -49,6 +49,7 @@ class _FinishedRentalsState extends State<FinishedRentals> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Past Orders'),
+        backgroundColor: colorScheme.primary,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -85,7 +86,7 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                       ),
                       child: Text(
                         'Items sold',
-                        style: TextStyle(color: colorScheme.onPrimary),
+                        style: TextStyle(color: _selectedIndex == 0 ? Colors.black : colorScheme.onPrimary,),
                       ),
                     ),
                   ),
@@ -105,7 +106,7 @@ class _FinishedRentalsState extends State<FinishedRentals> {
                       ),
                       child: Text(
                         'Items bought',
-                        style: TextStyle(color: colorScheme.onPrimary),
+                        style: TextStyle(color: _selectedIndex == 1 ? Colors.black : colorScheme.onPrimary,),
                       ),
                     ),
                   ),

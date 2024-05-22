@@ -1,5 +1,7 @@
 import 'package:eco_swap/view/welcome/ForgotPasswordPage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../data/repository/IAdRepository.dart';
 import '../../data/repository/IUserRepository.dart';
@@ -39,27 +41,35 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.primary,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                margin: const EdgeInsets.all(20.0),
-                child: Image.asset(
-                  'assets/image/login_image.jpeg',
-                  width: 200,
-                  height: 200,
+                height: 200,
+                width: 200,
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: Image.asset(
+                      'assets/image/img.png',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'Login:',
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onPrimary,
                   ),
                 ),
               ),
@@ -120,7 +130,15 @@ class _LoginPageState extends State<LoginPage>{
                       }
                     });
                   },
-                  child: const Text('Login'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.background,
+                  ),
+                  child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                  ),
                 ),
               ),
               const SizedBox(height: 10.0),
@@ -129,12 +147,17 @@ class _LoginPageState extends State<LoginPage>{
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => const ForgotPasswordPage()));
                 },
-                child: const Text('Forgot password?'),
+                child: const Text(
+                  'Forgot password?',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
               ),
               const SizedBox(height: 20.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: OutlinedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     userViewModel.signInWithGoogle().then((value) {
                       if (value!.contains('Nuovo')) {
@@ -156,12 +179,20 @@ class _LoginPageState extends State<LoginPage>{
                     });
 
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.background,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset('assets/image/google_logo.webp', height: 20.0),
                       const SizedBox(width: 10.0),
-                      const Text('Accedi con Google'),
+                      const Text(
+                        'Accedi con Google',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -176,7 +207,12 @@ class _LoginPageState extends State<LoginPage>{
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) => const RegistrationPage()));
                     },
-                    child: const Text('Registrati'),
+                    child: const Text(
+                      'Registrati',
+                      style: TextStyle(
+                        color: Colors.blue
+                      ),
+                    ),
                   ),
                 ],
               ),

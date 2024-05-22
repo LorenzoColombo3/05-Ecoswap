@@ -46,20 +46,23 @@ class _RegistryPageState extends State<RegistryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Column(
+      backgroundColor: colorScheme.primary,
+        appBar:AppBar(
+          backgroundColor: colorScheme.primary,
+        ),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 20.0),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
                 'Registry:',
                 style: TextStyle(
                   fontSize: 30.0,
                   fontWeight: FontWeight.bold,
+                  color: colorScheme.onPrimary,
                 ),
               ),
             ),
@@ -111,8 +114,11 @@ class _RegistryPageState extends State<RegistryPage> {
             ),
             const SizedBox(height: 20.0),
             Container(
-              margin: const EdgeInsets.only(bottom: 30.0),
+              margin: EdgeInsets.all(10.0),
               child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                ),
                 onPressed: () {
                   if(_nameController.text != "" && _lastnameController.text != "" &&
                       selectedDate.toString() != "" && _phoneController.text != "") {
@@ -148,12 +154,16 @@ class _RegistryPageState extends State<RegistryPage> {
                     );
                   }
                 },
-                child: const Text('Register now'),
+                child: const Text(
+                    'Register now',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ),
           ],
         ),
-      ),
     );
   }
 

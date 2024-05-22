@@ -51,7 +51,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
         backgroundColor: colorScheme.background,
-        title: Text('Seller Profile'),
+        title: const Text(
+          'Seller Profile',
+          style: TextStyle(
+              color: Colors.black,
+          ),
+        ),
       ),
       body: FutureBuilder<UserModel?>(
         future: userViewModel.getUserData(widget.sellerId),
@@ -69,47 +74,81 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ClipOval(
-                    child: Image.network(
-                      sellerUser.imageUrl ?? '',
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
+                  Container(
+                    height: 150,
+                    width: 150,
+                    child: Center(
+                      child: ClipOval(
+                        child: Image.network(
+                          sellerUser.imageUrl,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Text(
                     sellerUser.name ?? '', // Assicurati di avere il nome dell'utente
+                    textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 24),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReviewsPage(
-                            currentUser: sellerUser,
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewsPage(
+                              currentUser: sellerUser,
+                            ),
                           ),
-                        ),
-                      ).then((value) => setState(() {}));
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                        ).then((value) => setState(() {}));
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                      ),
+                      child: Text("${sellerUser.name}'s reviews",
+                      style: TextStyle(color: Colors.black)),
                     ),
-                    child: Text("${sellerUser.name}'s reviews"),
                   ),
-                  Text("Published exchanges"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child: _buildExchangeList(context, widget.currentUser.publishedExchange),
-                  ),
-                  Text("Published rentals"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child: _buildRentalList(context, widget.currentUser.publishedRentals, 0),
+                  const SizedBox(height: 10),
+                  Column(
+                    mainAxisSize:MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Published exchanges",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child: _buildExchangeList(context, sellerUser.publishedExchange),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Published rentals",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child:  _buildRentalList(context, sellerUser.publishedRentals, 0),
+                      ),
+                    ],
                   ),
                 ],
               ),

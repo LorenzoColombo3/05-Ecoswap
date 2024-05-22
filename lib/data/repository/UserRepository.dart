@@ -1,4 +1,7 @@
 import 'package:eco_swap/data/repository/IUserRepository.dart';
+import 'package:eco_swap/data/source/BaseChatDataSource.dart';
+import 'package:eco_swap/model/Chat.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 import '../source/BaseUserAuthDataSource.dart';
@@ -6,9 +9,11 @@ import '../source/BaseUserAuthDataSource.dart';
 class UserRepository implements IUserRepository{
 
  final BaseUserAuthDataSource _userAuthDataSource;
+ final BaseChatDataSource _chatDataSource;
 
-  UserRepository(BaseUserAuthDataSource userAuthDataSource)
-     : _userAuthDataSource=userAuthDataSource;
+  UserRepository(BaseUserAuthDataSource userAuthDataSource, BaseChatDataSource chatDataSource)
+     : _userAuthDataSource=userAuthDataSource,
+     _chatDataSource = chatDataSource;
 
 
   @override
@@ -146,5 +151,30 @@ Future<Result?> saveData({required String name, required String lastName,
   @override
   Future<void> saveUserLocal(UserModel user) async {
    _userAuthDataSource.saveUserLocal(user);
+  }
+
+  @override
+  Stream<List<DatabaseEvent>> getChatsStream(String userId) {
+    return _chatDataSource.getChatsStream(userId);
+  }
+
+  @override
+  void markMessages(String chatId) {
+    _chatDataSource.markMessages(chatId);
+  }
+
+  @override
+  void saveChat(Chat chat) {
+    _chatDataSource.saveChat(chat);
+  }
+
+  @override
+  Stream<DatabaseEvent> getMessageStream(Chat chat) {
+    return _chatDataSource.getMessageStream(chat);
+  }
+
+  @override
+  Future<Chat?> getChat(String userId, String itemId) async{
+    return _chatDataSource.getChat(userId, itemId);
   }
 }

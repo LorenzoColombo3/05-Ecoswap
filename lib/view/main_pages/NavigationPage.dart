@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eco_swap/view/main_pages/HomePage.dart';
 import 'package:eco_swap/view/main_pages/SavedAdsPage.dart';
 import 'package:eco_swap/view/main_pages/LoadAdPage.dart';
-import 'package:eco_swap/view/main_pages/MessagePage.dart';
+import 'package:eco_swap/view/main_pages/ChatsPage.dart';
 import 'package:eco_swap/view/main_pages/ProfilePage.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _NavigationPageState extends State<NavigationPage> {
     HomePage(),
     SavedAdsPage(),
     LoadAdPage(),
-    MessagePage(),
+    ChatsPage(),
     ProfilePage(),
   ];
 

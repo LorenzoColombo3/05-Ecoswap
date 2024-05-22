@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../model/Chat.dart';
 import '../../model/Exchange.dart';
 import '../../model/ReviewModel.dart';
 import '../../model/UserModel.dart';
@@ -11,6 +12,7 @@ import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
+import '../chatPages/UserChatPage.dart';
 import '../main_pages/LeaveReviewPage.dart';
 import '../profile_pages/SellerProfilePage.dart';
 
@@ -168,7 +170,30 @@ class _ExchangePageState extends State<ExchangePage> {
                         SizedBox(height: 8.0),
                         ElevatedButton(
                           onPressed: () {
-                            // Logica per avviare la chat
+                            onPressed: () async {
+                              Chat? chat = await userViewModel.getChat(
+                                  widget.currentUser.idToken, widget.exchange.idToken);
+                              bool firstLoad = false;
+                              if (chat == null) {
+                                firstLoad = true;
+                                chat = Chat(
+                                    id: '${widget.currentUser.idToken}-${widget.exchange.idToken}',
+                                    mainUser:  widget.currentUser.idToken,
+                                    notMainUser: snapshot.data!.idToken,
+                                    adModel: widget.exchange.idToken);
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UserChatPage(
+                                        user: widget.currentUser,
+                                        chat: chat!,
+                                        firstLoad: firstLoad,
+                                      ),
+                                ),
+                              );
+                            };
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith<

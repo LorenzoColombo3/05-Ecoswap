@@ -68,60 +68,114 @@ class _ProfilePageState extends State<ProfilePage> {
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize:MainAxisSize.min,
                 children: [
-                  ClipOval(
-                    child: Image.network(
-                      currentUser.imageUrl,
-                      width: 150,
-                      height: 150,
-                      fit: BoxFit.cover,
+                  Container(
+                    height: 150,
+                    width: 150,
+                    child: Center(
+                      child: ClipOval(
+                        child: Image.network(
+                          currentUser.imageUrl,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Text(
+                    textAlign: TextAlign.center,
                     currentUser.name, // Sostituisci con il nome utente reale
                     style: const TextStyle(fontSize: 24),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReviewsPage(
-                            currentUser: currentUser,
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewsPage(
+                              currentUser: currentUser,
+                            ),
                           ),
-                        ),
-                      ).then((value) => setState(() {}));
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                        ).then((value) => setState(() {}));
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(colorScheme.background),
+                      ),
+                      child: const Text(
+                          "My reviews",
+                          style: TextStyle(
+                            color: Colors.black,
+                          )
+                      ),
                     ),
-                    child: const Text("My reviews"),
                   ),
-                  Text("Published exchanges"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child: _buildExchangeList(context, currentUser.publishedExchange),
-                  ),
-                  Text("Published rentals"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child:  _buildRentalList(context, currentUser.publishedRentals, 0),
-                  ),
-                  Text("Items Sold (To Be Returned)"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child: _buildRentalList(context, currentUser.activeRentalsSell, 1),
-                  ),
-                  Text("Items Purchased (To Return)"),
-                  _buildDivider(),
-                  SizedBox(
-                    height: 152,
-                    child:  _buildRentalList(context, currentUser.activeRentalsBuy, 2),
+                  const SizedBox(height: 10),
+                  Column(
+                    mainAxisSize:MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Published exchanges",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child: _buildExchangeList(context, currentUser.publishedExchange),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Published rentals",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child:  _buildRentalList(context, currentUser.publishedRentals, 0),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Items Sold (To Be Returned)",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child: _buildRentalList(context, currentUser.activeRentalsSell, 1),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Items Purchased (To Return)",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onPrimary,
+                        ),
+                      ),
+                      _buildDivider(),
+                      SizedBox(
+                        height: 152,
+                        child:  _buildRentalList(context, currentUser.activeRentalsBuy, 2),
+                      ),
+                    ],
                   ),
                 ],
               ),

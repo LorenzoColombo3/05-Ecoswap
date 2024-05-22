@@ -1,4 +1,5 @@
 import 'package:eco_swap/main.dart';
+import 'package:eco_swap/view/chatPages/UserChatPage.dart';
 import 'package:eco_swap/view/main_pages/LeaveReviewPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ import '../../data/viewmodel/AdViewModel.dart';
 import '../../data/viewmodel/AdViewModelFactory.dart';
 import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
+import '../../model/Chat.dart';
 import '../../model/Rental.dart';
 import '../../model/ReviewModel.dart';
 import '../../model/UserModel.dart';
@@ -23,7 +25,8 @@ import 'RentalPayment.dart';
 class RentalPage extends StatefulWidget {
   final Rental rental;
   final UserModel currentUser;
-  const RentalPage({Key? key,  required this.rental, required this.currentUser})
+
+  const RentalPage({Key? key, required this.rental, required this.currentUser})
       : super(key: key);
 
   @override
@@ -48,12 +51,14 @@ class _RentalPageState extends State<RentalPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme
+        .of(context)
+        .colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
         title: Text(widget.rental.title,
-        style: TextStyle(color: Colors.black),),
+          style: TextStyle(color: Colors.black),),
         backgroundColor: colorScheme.background,
       ),
       body: SingleChildScrollView(
@@ -61,14 +66,15 @@ class _RentalPageState extends State<RentalPage> {
           future: userViewModel.getUserData(widget.rental.userId),
           builder: (context, snapshot) {
             bool isFavorite;
-            isFavorite = widget.currentUser.favoriteRentals.contains(widget.rental.idToken);
+            isFavorite = widget.currentUser.favoriteRentals.contains(
+                widget.rental.idToken);
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
               print("Recensioni${snapshot.data!.reviews}");
-              String? img= snapshot.data?.imageUrl;
+              String? img = snapshot.data?.imageUrl;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -83,7 +89,9 @@ class _RentalPageState extends State<RentalPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => FullScreenImage(imageUrl: widget.rental.imageUrl ?? ''),
+                                builder: (context) =>
+                                    FullScreenImage(
+                                        imageUrl: widget.rental.imageUrl ?? ''),
                               ),
                             );
                           },
@@ -96,21 +104,28 @@ class _RentalPageState extends State<RentalPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            child:  GestureDetector(
+                            child: GestureDetector(
                               onTap: () {
                                 setState(() {
                                   if (isFavorite) {
-                                    widget.currentUser.removeFromFavoriteRentals(widget.rental.idToken);
-                                    isFavorite=false;
+                                    widget.currentUser
+                                        .removeFromFavoriteRentals(
+                                        widget.rental.idToken);
+                                    isFavorite = false;
                                   } else {
-                                    widget.currentUser.addToFavoriteRentals(widget.rental.idToken);
-                                    isFavorite=true;
+                                    widget.currentUser.addToFavoriteRentals(
+                                        widget.rental.idToken);
+                                    isFavorite = true;
                                   }
-                                  if(widget.currentUser.favoriteRentals.contains(" ")) {
-                                    widget.currentUser.removeFromFavoriteRentals(" ");
-                                     userViewModel.saveFavoriteRentals(widget.currentUser);
-                                  }else{
-                                     userViewModel.saveFavoriteRentals(widget.currentUser);
+                                  if (widget.currentUser.favoriteRentals
+                                      .contains(" ")) {
+                                    widget.currentUser
+                                        .removeFromFavoriteRentals(" ");
+                                    userViewModel.saveFavoriteRentals(
+                                        widget.currentUser);
+                                  } else {
+                                    userViewModel.saveFavoriteRentals(
+                                        widget.currentUser);
                                   }
                                 });
                               },
@@ -122,7 +137,8 @@ class _RentalPageState extends State<RentalPage> {
                                     child:
                                     Icon(
                                       Icons.favorite,
-                                      color: isFavorite ? Colors.red : Colors.grey,
+                                      color: isFavorite ? Colors.red : Colors
+                                          .grey,
                                       size: 24.0,
                                     ),
                                   ),
@@ -132,7 +148,8 @@ class _RentalPageState extends State<RentalPage> {
                           ),
                         ),
                         const SizedBox(height: 8.0),
-                        Text("Published on: ${widget.rental.dateLoad.substring(0,10)}"),
+                        Text("Published on: ${widget.rental.dateLoad.substring(
+                            0, 10)}"),
                         Divider(
                           color: colorScheme.onPrimary,
                         ),
@@ -142,36 +159,59 @@ class _RentalPageState extends State<RentalPage> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SellerProfilePage(
-                                            currentUser: widget.currentUser,
-                                            sellerId: snapshot.data!.idToken,
-                                          ),
-                                        ),
-                                      ).then((value) => setState(() {}));
-                                    },
-                                    title: Text(snapshot.data!.name,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),),
-                                    subtitle: Row(children: _buildStarRating(ratingUser(snapshot.data!))),
-                                    leading:
-                                    img != null
-                                        ? CircleAvatar(
-                                      backgroundImage: NetworkImage(img),
-                                    )
-                                        : CircleAvatar(
-                                      child: Icon(Icons.person),
-                                    ),
-                                  ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SellerProfilePage(
+                                        currentUser: widget.currentUser,
+                                        sellerId: snapshot.data!.idToken,
+                                      ),
+                                ),
+                              ).then((value) => setState(() {}));
+                            },
+                            title: Text(snapshot.data!.name,
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),),
+                            subtitle: Row(children: _buildStarRating(
+                                ratingUser(snapshot.data!))),
+                            leading:
+                            img != null
+                                ? CircleAvatar(
+                              backgroundImage: NetworkImage(img),
+                            )
+                                : CircleAvatar(
+                              child: Icon(Icons.person),
+                            ),
                           ),
+                        ),
                         const SizedBox(height: 8.0),
                         ElevatedButton(
-                          onPressed: () {
-                            // Logica per avviare la chat
+                          onPressed: () async {
+                            Chat? chat = await userViewModel.getChat(
+                                widget.currentUser.idToken, widget.rental.idToken);
+                            bool firstLoad = false;
+                            if (chat == null) {
+                              firstLoad = true;
+                              chat = Chat(
+                                  id: '${widget.currentUser.idToken}-${widget.rental.idToken}',
+                                  mainUser:  widget.currentUser.idToken,
+                                  notMainUser: snapshot.data!.idToken,
+                                  adModel: widget.rental.idToken);
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UserChatPage(
+                                      user: widget.currentUser,
+                                      chat: chat!,
+                                      firstLoad: false,
+                                    ),
+                              ),
+                            );
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith<
@@ -197,7 +237,7 @@ class _RentalPageState extends State<RentalPage> {
                                 color: Colors.black, // Colore del testo normale
                               ),
                               children: [
-                                 TextSpan(
+                                TextSpan(
                                   text: "Description:\n",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -209,7 +249,8 @@ class _RentalPageState extends State<RentalPage> {
                                   children: [
                                     WidgetSpan(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 15.0),
+                                        padding: const EdgeInsets.only(
+                                            left: 15.0),
                                         child: Text(
                                           "${widget.rental.description}",
                                         ),
@@ -240,11 +281,13 @@ class _RentalPageState extends State<RentalPage> {
                                   style: const TextStyle(
                                     fontSize: 20.0,
                                     color: Colors.black,
-                                    fontWeight: FontWeight.bold,// Colore del testo normale
+                                    fontWeight: FontWeight
+                                        .bold, // Colore del testo normale
                                   ),
                                   children: [
                                     WidgetSpan(
-                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                      child: SizedBox(
+                                          width: 20), // Spazio vuoto per spostare il testo verso sinistra
                                     ),
                                     const TextSpan(
                                       text: 'Max days of rent: ',
@@ -261,7 +304,8 @@ class _RentalPageState extends State<RentalPage> {
                                       ),
                                     ),
                                     WidgetSpan(
-                                      child: SizedBox(width: 20),// Spazio vuoto per spostare il testo verso sinistra
+                                      child: SizedBox(
+                                          width: 20), // Spazio vuoto per spostare il testo verso sinistra
                                     ),
                                     const TextSpan(
                                       text: 'Daily cost: ',
@@ -278,7 +322,8 @@ class _RentalPageState extends State<RentalPage> {
                                       ),
                                     ),
                                     WidgetSpan(
-                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                      child: SizedBox(
+                                          width: 20), // Spazio vuoto per spostare il testo verso sinistra
                                     ),
                                     const TextSpan(
                                       text: 'Unit remained: ',
@@ -288,14 +333,17 @@ class _RentalPageState extends State<RentalPage> {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: '${widget.rental.unitRented} / ${widget.rental.unitNumber}\n',
+                                      text: '${widget.rental
+                                          .unitRented} / ${widget.rental
+                                          .unitNumber}\n',
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                         fontSize: 16.0,
                                       ),
                                     ),
                                     WidgetSpan(
-                                      child: SizedBox(width: 20), // Spazio vuoto per spostare il testo verso sinistra
+                                      child: SizedBox(
+                                          width: 20), // Spazio vuoto per spostare il testo verso sinistra
                                     ),
                                     const TextSpan(
                                       text: 'Location: ',
@@ -334,10 +382,11 @@ class _RentalPageState extends State<RentalPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RentalPayment(
-                  rental: widget.rental,
-                  currentUser: widget.currentUser,
-                ),
+                builder: (context) =>
+                    RentalPayment(
+                      rental: widget.rental,
+                      currentUser: widget.currentUser,
+                    ),
               ),
             );
           },
@@ -348,7 +397,7 @@ class _RentalPageState extends State<RentalPage> {
 
                 fontSize: 20.0,
                 color: Colors.black,
-                fontWeight: FontWeight.bold,// Colore del testo normale
+                fontWeight: FontWeight.bold, // Colore del testo normale
               ),
             ),
             textAlign: TextAlign.center,
@@ -359,11 +408,12 @@ class _RentalPageState extends State<RentalPage> {
   }
 
 
-  int ratingUser(UserModel user){
-    int rating=0;
+  int ratingUser(UserModel user) {
+    int rating = 0;
     List<Review> reviews = getAllReviews(user.reviews);
     if (reviews.isNotEmpty) {
-      int totalRating = reviews.map((review) => review.stars).reduce((a, b) => a + b);
+      int totalRating = reviews.map((review) => review.stars).reduce((a,
+          b) => a + b);
       rating = totalRating ~/ reviews.length;
     }
     return rating;
@@ -383,7 +433,8 @@ class _RentalPageState extends State<RentalPage> {
   List<Widget> _buildStarRating(int numberOfStars) {
     List<Widget> starWidgets = [];
     for (int i = 1; i <= 5; i++) {
-      IconData iconData = numberOfStars >= i ? Icons.star_rounded : Icons.star_border_rounded;
+      IconData iconData = numberOfStars >= i ? Icons.star_rounded : Icons
+          .star_border_rounded;
       Color starColor = numberOfStars >= i ? Colors.yellow : Colors.black;
       starWidgets.add(
         Icon(

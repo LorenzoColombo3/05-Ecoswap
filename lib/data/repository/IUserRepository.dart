@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
+import '../../model/Chat.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
@@ -31,5 +33,10 @@ abstract class IUserRepository{
   Future<void> savePublishedExchanges(UserModel user);
   Future<void> saveReview(String userId, String reviewContent, int stars);
   Future<void> saveUserLocal(UserModel user);
+  Stream<List<DatabaseEvent>> getChatsStream(String userId);
+  Stream<DatabaseEvent> getMessageStream(Chat chat);
+  Future<Chat?> getChat(String userId, String itemId);
+  void markMessages(String chatId);
   void setupFirebaseListener();
+  void saveChat(Chat chat);
 }
