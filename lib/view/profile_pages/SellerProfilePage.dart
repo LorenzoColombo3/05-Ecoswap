@@ -13,6 +13,8 @@ import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/SettingsMenu.dart';
 import '../main_pages/LeaveReviewPage.dart';
+import '../searchPages/ExchangePage.dart';
+import '../searchPages/RentalPage.dart';
 import 'BoughtRentalProfile.dart';
 import 'ExchangeProfile.dart';
 import 'RentalProfile.dart';
@@ -219,7 +221,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ExchangeProfile(
+                        builder: (context) => ExchangePage(
                           exchange: exchange,
                           currentUser: widget.currentUser,
                         ),
@@ -297,7 +299,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RentalProfile(
+                          builder: (context) => RentalPage(
                             rental: rental,
                             currentUser: widget.currentUser,
                           ),
