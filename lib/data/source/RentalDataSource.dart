@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import '../../model/Rental.dart';
@@ -57,7 +57,6 @@ class RentalDataSource extends BaseRentalDataSource {
 
   @override
   Future<List<Rental>> getAllRentals() async {
-    //TODO non mostrare i rental stessi dello user
     try {
       DataSnapshot snapshot = await _databaseReference
           .child('rentals')
@@ -68,7 +67,7 @@ class RentalDataSource extends BaseRentalDataSource {
         data.forEach((key, data) {
           Map<String, dynamic> data2 =
               Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-          if (data['unitNumber'] != data['unitRented']) {
+          if (data['unitNumber'] != data['unitRented'] && data['userId'] != FirebaseAuth.instance.currentUser!.uid) {
             Rental rental = Rental.fromMap(data2);
             rentals.add(rental);
           }
@@ -241,7 +240,7 @@ class RentalDataSource extends BaseRentalDataSource {
             Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
         if (dataMap['title'].toString().contains(query) ||
             dataMap['description'].toString().contains(query)) {
-          if (data['unitNumber'] != data['unitRented']) {
+          if (data['unitNumber'] != data['unitRented'] &&  data['userId'] != FirebaseAuth.instance.currentUser!.uid) {
             Rental rental = Rental.fromMap(dataMap);
             rentals.add(rental);
           }
@@ -290,7 +289,6 @@ class RentalDataSource extends BaseRentalDataSource {
         DataSnapshot snapshot = await databaseReference.child('rentals').child(idToken).get();
         Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?; // Cast in Map<dynamic, dynamic>?
         if (data != null) {
-          // Converti il Map<dynamic, dynamic> in Map<String, dynamic>
           Map<String, dynamic> rentalData = data.cast<String, dynamic>();
           Rental rental = Rental.fromMap(rentalData);
           rentals.add(rental);

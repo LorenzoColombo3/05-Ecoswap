@@ -242,7 +242,7 @@ class UserModel {
 
   Map<dynamic,dynamic> get reviews{
     if(_reviews==null) {
-      return _reviews!;
+     return  Map<dynamic, dynamic>();
     }else{
       return _reviews!;
     }

@@ -18,7 +18,6 @@ import '../../model/ReviewModel.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 import '../../widget/FullScreenImage.dart';
-import '../../widget/modalBottomSheet.dart';
 import '../profile_pages/SellerProfilePage.dart';
 import 'RentalPayment.dart';
 
@@ -199,7 +198,7 @@ class _RentalPageState extends State<RentalPage> {
                                   id: '${widget.currentUser.idToken}-${widget.rental.idToken}',
                                   mainUser:  widget.currentUser.idToken,
                                   notMainUser: snapshot.data!.idToken,
-                                  adModel: widget.rental.idToken);
+                                  adModel: widget.rental.title);
                             }
                             Navigator.push(
                               context,
@@ -208,7 +207,7 @@ class _RentalPageState extends State<RentalPage> {
                                     UserChatPage(
                                       user: widget.currentUser,
                                       chat: chat!,
-                                      firstLoad: false,
+                                      firstLoad: firstLoad,
                                     ),
                               ),
                             );

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
@@ -52,7 +53,6 @@ class ExchangeDataSource extends BaseExchangeDataSource {
 
   @override
   Future<List<Exchange>> getAllExchanges() async{
-    //TODO non mostrare gli exchange stessi dello user
     try {
       DataSnapshot snapshot = await _databaseReference.child('exchanges').get();
       Map<Object?, Object?>? data =snapshot.value as Map<Object?, Object?>?;
@@ -60,8 +60,10 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       if (data != null) {
         data.forEach((key, data) {
           Map<String, dynamic> data2 = Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-          Exchange exchange = Exchange.fromMap(data2);
-          exchanges.add(exchange);
+          if(data['userId'] != FirebaseAuth.instance.currentUser!.uid) {
+            Exchange exchange = Exchange.fromMap(data2);
+            exchanges.add(exchange);
+          }
         });
         return exchanges;
       } else {
@@ -202,10 +204,12 @@ class ExchangeDataSource extends BaseExchangeDataSource {
       data.forEach((key, data) {
         Map<String, dynamic> dataMap =
         Map<String, dynamic>.from(data as Map<dynamic, dynamic>);
-        if (dataMap['title'].toString().contains(query) ||
-            dataMap['description'].toString().contains(query)) {
-          Exchange exchange = Exchange.fromMap(dataMap);
-          rentals.add(exchange);
+        if(data['userId'] != FirebaseAuth.instance.currentUser!.uid) {
+          if (dataMap['title'].toString().contains(query) ||
+              dataMap['description'].toString().contains(query)) {
+            Exchange exchange = Exchange.fromMap(dataMap);
+            rentals.add(exchange);
+          }
         }
       });
     }

@@ -169,7 +169,7 @@ class _ExchangePageState extends State<ExchangePage> {
                         ),
                         SizedBox(height: 8.0),
                         ElevatedButton(
-                          onPressed: () {
+
                             onPressed: () async {
                               Chat? chat = await userViewModel.getChat(
                                   widget.currentUser.idToken, widget.exchange.idToken);
@@ -180,7 +180,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                     id: '${widget.currentUser.idToken}-${widget.exchange.idToken}',
                                     mainUser:  widget.currentUser.idToken,
                                     notMainUser: snapshot.data!.idToken,
-                                    adModel: widget.exchange.idToken);
+                                    adModel: widget.exchange.title);
                               }
                               Navigator.push(
                                 context,
@@ -193,7 +193,6 @@ class _ExchangePageState extends State<ExchangePage> {
                                       ),
                                 ),
                               );
-                            };
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.resolveWith<

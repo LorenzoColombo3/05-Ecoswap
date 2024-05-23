@@ -15,6 +15,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
+
+
 class UserAuthDataSource extends BaseUserAuthDataSource {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   bool isFirstLoad = true;
@@ -164,7 +166,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String phoneNumber,
   }) async {
     try {
-      List<String> listaVuota = [];
       final DatabaseReference databaseReference =
           FirebaseDatabase.instance.reference();
       final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -178,13 +179,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         'phoneNumber': phoneNumber,
         'imageUrl':
             "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
-        'reviews': listaVuota,
-        'activeRentalsSell': listaVuota,
-        'activeRentalsBuy': listaVuota,
-        'finishedRentalsSell': listaVuota,
-        'finishedRentalsBuy': listaVuota,
-        'favoriteRentals': listaVuota,
-        'favoriteExchanges': listaVuota,
       };
       final String databasePath = 'users';
       await databaseReference
@@ -202,15 +196,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
                 phoneNumber: phoneNumber,
                 imageUrl:
                     "https://firebasestorage.googleapis.com/v0/b/ecoswap-64d07.appspot.com/o/userImage%2Fprofile.jpg?alt=media&token=494b1220-95a0-429a-8dd4-a5bd7ae7a61a",
-                reviews: listaVuota,
-                publishedRentals: listaVuota,
-                publishedExchange: listaVuota,
-                activeRentalsBuy: listaVuota,
-                finishedRentalBuy: listaVuota,
-                activeRentalsSell: listaVuota,
-                finishedRentalsSell: listaVuota,
-                favoriteRentals: listaVuota,
-                favoriteExchanges: listaVuota,
+
               ));
       Result result = UserResponseSuccess(newUser!);
       saveUserLocal(newUser!);
@@ -363,6 +349,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
             favoriteRentals: favoriteRentals,
             favoriteExchanges: favoriteExchanges);
       } else {
+        print("snapshot doesn't exists");
         return null;
       }
     } catch (error) {
@@ -568,12 +555,12 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
           }
         });
         if(!controllo){
-            //contains non funzionante
             currentUser.addToActiveRentalsSell(order);
              saveUserLocal(currentUser);
             _showNotification(order, _flutterLocalNotificationsPlugin);
           }
     });
+
   }
 
   Future<void> _requestPermissionsOnce(FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin) async {
@@ -606,7 +593,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     }
   }
 
-  Future<void> _showNotification(RentalOrder order, FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin) async {
+  Future<void> _showNotification(RentalOrder order, FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
     const androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'new_order_channel', 'New Order Notifications',
         importance: Importance.max, priority: Priority.high, showWhen: false, );
@@ -615,7 +602,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );
-     _flutterLocalNotificationsPlugin.show(
+     flutterLocalNotificationsPlugin.show(
       0,
       'New Order from: ${order.nameBuyer}',
       'You have a new order: ${order.nameRental}',
@@ -623,4 +610,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       payload: 'item x',
     );
   }
+
+
+
 }

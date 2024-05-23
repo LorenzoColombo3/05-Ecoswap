@@ -44,9 +44,7 @@ class _ChatsPageState extends State<ChatsPage> {
         if (snapshot.connectionState == ConnectionState.done) {
           currentUser = snapshot.data!;
           return Scaffold(
-            appBar: AppBar(
-              title: Text('Chats'),
-            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
             body: StreamBuilder<List<DatabaseEvent>>(
               stream: userViewModel.getChatsStream(currentUser!.idToken),
               builder: (context, snapshot) {
@@ -84,15 +82,15 @@ class _ChatsPageState extends State<ChatsPage> {
                 chatsList.sort((a, b) =>
                     b.lastMessage.timestamp.compareTo(a.lastMessage.timestamp));
 
-                return ListView.builder(
+                return ListView.separated(
                   itemCount: chatsList.length,
                   itemBuilder: (context, index) {
                     Chat chat = chatsList[index];
-                    String otherUserId = chat.chatMainUser == currentUser!.idToken
+                    String otherUserId = chat.chatMainUser != currentUser!.idToken
                         ? chat.chatMainUser : chat.chatNotMainUser;
                     Message lastMessage = chat.lastMessage;
                     return FutureBuilder<UserModel?>(
-                      future: userViewModel.getUserData(chat.chatNotMainUser), // Ottieni l'utente
+                      future: userViewModel.getUserData(otherUserId), // Ottieni l'utente
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           chatUser = snapshot.data!;
@@ -101,33 +99,56 @@ class _ChatsPageState extends State<ChatsPage> {
                               backgroundImage: NetworkImage(chatUser!.imageUrl),
                             ),
                             title: Text(
-                              'User $otherUserId',
+                              chatUser!.name,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            subtitle: Text(
-                              lastMessage.text,
-                              style: TextStyle(
-                                fontWeight: lastMessage.isRead && lastMessage.senderId != currentUser!.idToken
-                                    ? FontWeight.normal
-                                    : FontWeight.bold,
-                              ),
+                            subtitle: Stack(
+                              children: [
+                                Text(
+                                  lastMessage.text,
+                                  style: TextStyle(
+                                    fontWeight: lastMessage.isRead || lastMessage.senderId == currentUser!.idToken
+                                        ? FontWeight.normal
+                                        : FontWeight.bold,
+                                  ),
+                                ),
+                                if (!lastMessage.isRead && lastMessage.senderId != currentUser!.idToken)
+                                  Positioned(
+                                    right: 0,
+                                    bottom: 3,
+                                    child: Icon(
+                                      Icons.circle,
+                                      color: Colors.blueAccent,
+                                      size: 10,
+                                    ),
+                                  ),
+
+                              ],
                             ),
+
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      UserChatPage(chat: chat, user: currentUser!, firstLoad: false),
+                                  builder: (context) => UserChatPage(chat: chat, user: currentUser!, firstLoad: false),
                                 ),
                               );
                             },
                           );
+
                         } else {
                           return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
                         }
                       },
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Colors.grey,
                     );
                   },
                 );
@@ -138,6 +159,17 @@ class _ChatsPageState extends State<ChatsPage> {
           return const CircularProgressIndicator(); // Visualizza un indicatore di caricamento in attesa
         }
       },
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: Colors.grey,
+      ),
     );
   }
 }

@@ -17,7 +17,11 @@ class UserChatPage extends StatefulWidget {
   final UserModel? user;
   final bool firstLoad;
 
-  const UserChatPage({super.key, required this.chat, required this.user, required this.firstLoad});
+  const UserChatPage(
+      {super.key,
+      required this.chat,
+      required this.user,
+      required this.firstLoad});
 
   @override
   State<UserChatPage> createState() => _UserChatPageState();
@@ -37,7 +41,7 @@ class _UserChatPageState extends State<UserChatPage> {
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
     adViewModel = AdViewModelFactory(adRepository).create();
-    if(!widget.firstLoad) {
+    if (!widget.firstLoad) {
       if (widget.chat.lastMessage.senderId != widget.user!.idToken) {
         userViewModel.markMessages(widget.chat.chatId);
       }
@@ -53,7 +57,6 @@ class _UserChatPageState extends State<UserChatPage> {
         timestamp: DateTime.now().millisecondsSinceEpoch,
         isRead: false,
       );
-
       widget.chat.addMessage(message);
       widget.chat.lastMessage = message;
       userViewModel.saveChat(widget.chat);
@@ -63,8 +66,11 @@ class _UserChatPageState extends State<UserChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
         title: Text(widget.chat.adModel),
       ),
       body: Column(
@@ -83,10 +89,15 @@ class _UserChatPageState extends State<UserChatPage> {
                     snapshot.data!.snapshot.value == null) {
                   return Center(child: Text('No messages available'));
                 }
-                Map<dynamic, dynamic> messagesMap =
+                /* Map<dynamic, dynamic> messagesMap =
                     snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
                 List<Message> messagesList = messagesMap.entries.map((entry) {
                   return Message.fromMap(entry.value);
+                }).toList();*/
+                List<dynamic> messagesData =
+                    snapshot.data!.snapshot.value as List<dynamic>;
+                List<Message> messagesList = messagesData.map((messageData) {
+                  return Message.fromMap(messageData as Map<dynamic, dynamic>);
                 }).toList();
                 messagesList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
                 return ListView.builder(
@@ -106,9 +117,9 @@ class _UserChatPageState extends State<UserChatPage> {
                                   ? CrossAxisAlignment.end
                                   : CrossAxisAlignment.start,
                           mainAxisAlignment:
-                          (message.senderId == widget.user!.idToken)
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
+                              (message.senderId == widget.user!.idToken)
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
                           children: [
                             const SizedBox(height: 5),
                             ChatBubble(message: message.text),
@@ -121,25 +132,34 @@ class _UserChatPageState extends State<UserChatPage> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      labelText: 'Enter message',
+          Column(
+            children: [
+              Divider(
+                height: 1,
+                thickness: 2,
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          labelText: 'Enter message',
+                        ),
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      icon: Icon(Icons.send, size: 30),
+                      onPressed: _sendMessage,
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.send, size: 40,),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          )
         ],
       ),
     );
