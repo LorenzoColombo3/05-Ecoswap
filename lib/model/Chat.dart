@@ -22,7 +22,9 @@ class Chat {
       mainUser: data['mainUser'],
       notMainUser: data['notMainUser'],
       messages: data['messages'] != null
-          ? List<Message>.from(data['messages'].map((messageData) => Message.fromMap(messageData)))
+          ? (data['messages'] as Map<dynamic, dynamic>).entries.map((entry) {
+        return Message.fromMap(entry.value as Map<dynamic, dynamic>);
+      }).toList()
           : [],
       lastMessage: Message.fromMap(data['lastMessage']),
       adModel: data['adModel'],
@@ -34,6 +36,9 @@ class Chat {
     return {
       'mainUser': _mainUser,
       'notMainUser': _notMainUser,
+      'messages': _messages != null
+          ? {for (var message in _messages!) message.idMessage: message.toMap()}
+          : {},
       'lastMessage': _lastMessage!.toMap(),
       'adModel' : _adModel,
     };

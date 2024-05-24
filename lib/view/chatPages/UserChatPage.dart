@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eco_swap/widget/ChatBubble.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +67,6 @@ class _UserChatPageState extends State<UserChatPage> {
       widget.chat.lastMessage = message;
       if(saveChat) {
         userViewModel.saveChat(widget.chat);
-        userViewModel.saveMessage(widget.chat, message);
         saveChat = false;
       }else{
         userViewModel.saveMessage(widget.chat, message);
@@ -99,10 +100,11 @@ class _UserChatPageState extends State<UserChatPage> {
                     snapshot.data!.snapshot.value == null) {
                   return Center(child: Text('No messages available'));
                 }
-                List<dynamic> messagesData =
-                    snapshot.data!.snapshot.value as List<dynamic>;
-                List<Message> messagesList = messagesData.map((messageData) {
-                  return Message.fromMap( messageData as Map<dynamic, dynamic>);
+
+               Map<dynamic, dynamic> messagesData =
+                snapshot.data!.snapshot.value as  Map<dynamic, dynamic>;
+                List<Message> messagesList = messagesData.entries.map((entry) {
+                  return Message.fromMap(entry.value as Map<dynamic, dynamic>);
                 }).toList();
                 messagesList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
                 return ListView.builder(
