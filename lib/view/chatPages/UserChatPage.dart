@@ -65,6 +65,7 @@ class _UserChatPageState extends State<UserChatPage> {
       widget.chat.lastMessage = message;
       if(saveChat) {
         userViewModel.saveChat(widget.chat);
+        userViewModel.saveMessage(widget.chat, message);
         saveChat = false;
       }else{
         userViewModel.saveMessage(widget.chat, message);

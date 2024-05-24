@@ -34,7 +34,6 @@ class Chat {
     return {
       'mainUser': _mainUser,
       'notMainUser': _notMainUser,
-      'messages': _messages!.map((message) => message.toMap()).toList(),
       'lastMessage': _lastMessage!.toMap(),
       'adModel' : _adModel,
     };
