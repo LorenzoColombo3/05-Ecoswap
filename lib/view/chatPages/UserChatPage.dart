@@ -9,6 +9,7 @@ import '../../data/viewmodel/UserViewModel.dart';
 import '../../data/viewmodel/UserViewModelFactory.dart';
 import '../../model/Chat.dart';
 import '../../model/Message.dart';
+import 'package:uuid/uuid.dart';
 import '../../model/UserModel.dart';
 import '../../util/ServiceLocator.dart';
 
@@ -33,10 +34,12 @@ class _UserChatPageState extends State<UserChatPage> {
   late UserViewModel userViewModel;
   late IAdRepository adRepository;
   late AdViewModel adViewModel;
+  late bool saveChat;
 
   @override
   void initState() {
     super.initState();
+    saveChat = widget.firstLoad;
     userRepository = ServiceLocator().getUserRepository();
     userViewModel = new UserViewModelFactory(userRepository).create();
     adRepository = ServiceLocator().getAdRepository();
@@ -52,6 +55,7 @@ class _UserChatPageState extends State<UserChatPage> {
     String text = _controller.text.trim();
     if (text.isNotEmpty) {
       Message message = Message(
+        idMessage: Uuid().v4(),
         text: text,
         senderId: widget.user!.idToken,
         timestamp: DateTime.now().millisecondsSinceEpoch,
@@ -59,7 +63,12 @@ class _UserChatPageState extends State<UserChatPage> {
       );
       widget.chat.addMessage(message);
       widget.chat.lastMessage = message;
-      userViewModel.saveChat(widget.chat);
+      if(saveChat) {
+        userViewModel.saveChat(widget.chat);
+        saveChat = false;
+      }else{
+        userViewModel.saveMessage(widget.chat, message);
+      }
       _controller.clear();
     }
   }
@@ -89,15 +98,10 @@ class _UserChatPageState extends State<UserChatPage> {
                     snapshot.data!.snapshot.value == null) {
                   return Center(child: Text('No messages available'));
                 }
-                /* Map<dynamic, dynamic> messagesMap =
-                    snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-                List<Message> messagesList = messagesMap.entries.map((entry) {
-                  return Message.fromMap(entry.value);
-                }).toList();*/
                 List<dynamic> messagesData =
                     snapshot.data!.snapshot.value as List<dynamic>;
                 List<Message> messagesList = messagesData.map((messageData) {
-                  return Message.fromMap(messageData as Map<dynamic, dynamic>);
+                  return Message.fromMap( messageData as Map<dynamic, dynamic>);
                 }).toList();
                 messagesList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
                 return ListView.builder(

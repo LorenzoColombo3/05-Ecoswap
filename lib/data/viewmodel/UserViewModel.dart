@@ -2,6 +2,7 @@ import 'package:eco_swap/data/repository/IUserRepository.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../../model/Chat.dart';
+import '../../model/Message.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
@@ -135,5 +136,9 @@ class UserViewModel{
 
   Future<Chat?> getChat(String userId, String itemId) async{
     return _userRepository.getChat(userId, itemId);
+  }
+
+  void saveMessage(Chat chat, Message message){
+    _userRepository.saveChat(chat);
   }
 }

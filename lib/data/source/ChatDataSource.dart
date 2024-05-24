@@ -1,4 +1,5 @@
 import 'package:eco_swap/data/source/BaseChatDataSource.dart';
+import 'package:eco_swap/model/Message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../model/Chat.dart';
@@ -40,6 +41,8 @@ class ChatDataSource extends BaseChatDataSource{
     _database.child('chats').child(chat.chatId).set(chat.toMap());
   }
 
+  
+
   @override
   Stream<DatabaseEvent> getMessageStream(Chat chat) {
     return _database.child('chats')
@@ -63,6 +66,12 @@ class ChatDataSource extends BaseChatDataSource{
       print(e.toString());
       return null;
     }
+  }
+
+  @override
+  void saveMessage(Chat chat, Message message) {
+    _database.child('chats').child(chat.chatId).child("messages").push();
+    _database.child('chats').child(chat.chatId).child("lastMessage").set(message);
   }
 
 

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../../model/Chat.dart';
+import '../../model/Message.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
 
@@ -39,4 +40,5 @@ abstract class IUserRepository{
   void markMessages(String chatId);
   void setupFirebaseListener();
   void saveChat(Chat chat);
+  void saveMessage(Chat chat, Message message);
 }

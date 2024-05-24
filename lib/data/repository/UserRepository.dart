@@ -1,6 +1,7 @@
 import 'package:eco_swap/data/repository/IUserRepository.dart';
 import 'package:eco_swap/data/source/BaseChatDataSource.dart';
 import 'package:eco_swap/model/Chat.dart';
+import 'package:eco_swap/model/Message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../model/UserModel.dart';
 import '../../util/Result.dart';
@@ -176,5 +177,10 @@ Future<Result?> saveData({required String name, required String lastName,
   @override
   Future<Chat?> getChat(String userId, String itemId) async{
     return _chatDataSource.getChat(userId, itemId);
+  }
+
+  @override
+  void saveMessage(Chat chat, Message message) {
+    _chatDataSource.saveMessage(chat, message);
   }
 }
