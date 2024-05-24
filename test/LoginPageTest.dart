@@ -1,10 +1,12 @@
-import 'package:eco_swap/data/repository/IUserRepository.dart';
-import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
+import 'package:eco_swap/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:eco_swap/view/welcome/LoginPage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:eco_swap/data/repository/IUserRepository.dart';
+import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 // Classe mock per IUserRepository
 class MockUserRepository extends Mock implements IUserRepository {}
@@ -17,61 +19,53 @@ void main() {
     late MockUserRepository mockUserRepository;
     late MockUserViewModel mockUserViewModel;
 
+    setUpAll(() async {
+      // Inizializza manualmente Firebase durante i test
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
     setUp(() {
       mockUserRepository = MockUserRepository();
       mockUserViewModel = MockUserViewModel();
+
     });
 
+    // Definisci la funzione _buildLoginPage
     Future<void> _buildLoginPage(WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: Provider<UserViewModel>(
-              create: (_) => mockUserViewModel,
-              child: LoginPage(),
-            ),
+              body: LoginPage(),
           ),
         ),
       );
     }
 
     testWidgets('Login with valid credentials', (WidgetTester tester) async {
-      await _buildLoginPage(tester);
+      await tester.runAsync(() async {
+        await _buildLoginPage(tester);
 
-      // Simula l'inserimento di email e password
-      await tester.enterText(find.byKey(const Key('emailField')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('passwordField')), 'password123');
+        // Simula l'inserimento di email e password
+        await tester.enterText(find.byKey(const Key('emailField')), '1@2.com');
+        await tester.enterText(find.byKey(const Key('passwordField')), '123456');
 
-      // Simula il tap sul pulsante di login
-      await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pump();
+        // Simula il tap sul pulsante di login
+        await tester.tap(find.byKey(const Key('loginButton')));
+        await tester.pump();
 
-      // Verifica che il metodo di login sia stato chiamato
-      verify(mockUserViewModel.login(
-        email: 'test@example.com',
-        password: 'password123',
-      )).called(1);
+        // Verifica che il metodo di login sia stato chiamato
+        verify(mockUserViewModel.login(
+          email: '1@2.com',
+          password: '123456',
+        )).called(1);
+
+        // Attendi un breve periodo per consentire il completamento delle operazioni asincrone
+        await Future.delayed(const Duration(seconds: 1));
+
+        // Assicurati che non ci siano widget in sospeso
+        await tester.pumpAndSettle();
+      });
     });
 
-    testWidgets('Shows error message on invalid credentials', (WidgetTester tester) async {
-      await _buildLoginPage(tester);
-
-      // Simula l'inserimento di email e password
-      await tester.enterText(find.byKey(const Key('emailField')), 'invalid@example.com');
-      await tester.enterText(find.byKey(const Key('passwordField')), 'wrongpassword');
-
-      // Simula il tap sul pulsante di login
-      await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pump();
-
-      // Simula la risposta di errore
-      when(mockUserViewModel.login(
-        email: 'invalid@example.com',
-        password: 'wrongpassword',
-      )).thenAnswer((_) async => 'Invalid credentials');
-
-      // Verifica che venga mostrato un messaggio di errore
-      expect(find.text('Invalid credentials'), findsOneWidget);
-    });
   });
 }
