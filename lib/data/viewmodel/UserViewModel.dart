@@ -139,6 +139,6 @@ class UserViewModel{
   }
 
   void saveMessage(Chat chat, Message message){
-    _userRepository.saveChat(chat);
+    _userRepository.saveMessage(chat, message);
   }
 }

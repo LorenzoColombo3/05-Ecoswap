@@ -76,6 +76,7 @@ class _LoginPageState extends State<LoginPage>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
+                  key: const Key('emailField'),
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -88,6 +89,7 @@ class _LoginPageState extends State<LoginPage>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextFormField(
+                  key: const Key('passwordField'),
                   controller: _passwordController,
                   obscureText: obscurePassword,
                   decoration: InputDecoration(
@@ -108,6 +110,7 @@ class _LoginPageState extends State<LoginPage>{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: ElevatedButton(
+                  key: Key('passwordField'),
                   onPressed: () {
                     userViewModel.login(
                       email: _emailController.text,

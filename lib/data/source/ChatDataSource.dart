@@ -70,8 +70,15 @@ class ChatDataSource extends BaseChatDataSource{
 
   @override
   void saveMessage(Chat chat, Message message) {
-    _database.child('chats').child(chat.chatId).child("messages").child(message.idMessage).set(message.toMap());
-    _database.child('chats').child(chat.chatId).child("lastMessage").set(message);
+    try {
+      print("aa");
+      _database.child('chats').child(chat.chatId).child("messages").child(
+          message.idMessage).set(message.toMap());
+      _database.child('chats').child(chat.chatId).child("lastMessage").set(
+          message.toMap());
+    }catch(e){
+      print(e.toString());
+    }
   }
 
 
