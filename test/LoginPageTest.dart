@@ -1,71 +1,36 @@
-import 'package:eco_swap/firebase_options.dart';
-import 'package:flutter/material.dart';
+import 'package:eco_swap/data/source/UserAuthDataSource.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:eco_swap/view/welcome/LoginPage.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
-import 'package:eco_swap/data/repository/IUserRepository.dart';
-import 'package:eco_swap/data/viewmodel/UserViewModel.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// Classe mock per IUserRepository
-class MockUserRepository extends Mock implements IUserRepository {}
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
-// Classe mock per UserViewModel
-class MockUserViewModel extends Mock implements UserViewModel {}
+class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
-  group('LoginPage Widget Test', () {
-    late MockUserRepository mockUserRepository;
-    late MockUserViewModel mockUserViewModel;
-
-    setUpAll(() async {
-      // Inizializza manualmente Firebase durante i test
-      TestWidgetsFlutterBinding.ensureInitialized();
-    });
+  group('Login', () {
+    late UserAuthDataSource userAuthDataSource;
+    late MockFirebaseAuth mockFirebaseAuth;
 
     setUp(() {
-      mockUserRepository = MockUserRepository();
-      mockUserViewModel = MockUserViewModel();
-
+      mockFirebaseAuth = MockFirebaseAuth();
+      userAuthDataSource = UserAuthDataSource.test(mockFirebaseAuth);
     });
 
-    // Definisci la funzione _buildLoginPage
-    Future<void> _buildLoginPage(WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-              body: LoginPage(),
-          ),
-        ),
+    test('Login utente con credenziali valide', () async {
+      when(mockFirebaseAuth.signInWithEmailAndPassword(
+        email: '1@2.com',
+        password: '123456',
+      )).thenAnswer((_) async => MockUserCredential());
+
+      // Esegui il login utilizzando le credenziali valide
+      final result = await userAuthDataSource.login(
+        email: '1@2.com',
+        password: '123456',
       );
-    }
 
-    testWidgets('Login with valid credentials', (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        await _buildLoginPage(tester);
-
-        // Simula l'inserimento di email e password
-        await tester.enterText(find.byKey(const Key('emailField')), '1@2.com');
-        await tester.enterText(find.byKey(const Key('passwordField')), '123456');
-
-        // Simula il tap sul pulsante di login
-        await tester.tap(find.byKey(const Key('loginButton')));
-        await tester.pump();
-
-        // Verifica che il metodo di login sia stato chiamato
-        verify(mockUserViewModel.login(
-          email: '1@2.com',
-          password: '123456',
-        )).called(1);
-
-        // Attendi un breve periodo per consentire il completamento delle operazioni asincrone
-        await Future.delayed(const Duration(seconds: 1));
-
-        // Assicurati che non ci siano widget in sospeso
-        await tester.pumpAndSettle();
-      });
+      // Verifica se il risultato è "Success"
+      expect(result, 'Success');
     });
-
   });
 }

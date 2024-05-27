@@ -20,12 +20,23 @@ import 'dart:io';
 class UserAuthDataSource extends BaseUserAuthDataSource {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   bool isFirstLoad = true;
+  late FirebaseAuth firebaseAuth;
+  late FirebaseStorage firebaseStorage;
+  late FirebaseDatabase firebaseDatabase;
+
+  UserAuthDataSource(){
+    firebaseAuth= FirebaseAuth.instance;
+    firebaseStorage= FirebaseStorage.instance;
+    firebaseDatabase= FirebaseDatabase.instance;
+  }
+
+  UserAuthDataSource.test(this.firebaseAuth);
 
   @override
   Future<String?> registration(
       {required String email, required String password}) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -46,7 +57,6 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<String?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     try {
       final GoogleSignInAccount? googleSignInAccount =
@@ -65,7 +75,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         if (authResult.additionalUserInfo!.isNewUser) {
           return "Nuovo utente creato con successo.";
         } else {
-          final User? currentUser = FirebaseAuth.instance.currentUser;
+          final User? currentUser = firebaseAuth.currentUser;
           String idToken = currentUser!.uid;
           UserModel? user = await getUserDataFirebase(idToken);
           saveUserLocal(user!);
@@ -84,15 +94,15 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<String> setProfileImage(String imagePath) async {
     try {
-      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final User? currentUser = firebaseAuth.currentUser;
       File imageFile = File(imagePath);
       String fileName = currentUser!.uid;
       String filePath = 'userImage/$fileName';
-      await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
+      await firebaseStorage.ref().child(filePath).putFile(imageFile);
       String downloadURL =
-          await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+          await firebaseStorage.ref(filePath).getDownloadURL();
       DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference();
+        firebaseDatabase.reference();
       final String idToken = currentUser.uid;
       databaseReference
           .child('users')
@@ -107,9 +117,9 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }
 
   Future<String?> getProfileImage() async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+    final User? currentUser = firebaseAuth.currentUser;
     final String idToken = currentUser!.uid;
-    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+    DatabaseReference databaseReference = firebaseDatabase.reference();
     try {
       DataSnapshot snapshot = await databaseReference
           .child('users')
@@ -134,13 +144,13 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     required String email,
     required String password,
   }) async {
-    saveCredential(email, password);
+    //saveCredential(email, password);
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final User? currentUser = FirebaseAuth.instance.currentUser;
+      final User? currentUser = firebaseAuth.currentUser;
       String idToken = currentUser!.uid;
       UserModel? user = await getUserDataFirebase(idToken);
       saveUserLocal(user!);
@@ -167,8 +177,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   }) async {
     try {
       final DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference();
-      final User? currentUser = FirebaseAuth.instance.currentUser;
+      firebaseDatabase.reference();
+      final User? currentUser = firebaseAuth.currentUser;
       UserModel? newUser;
       final String idToken = currentUser!.uid;
       final Map<String, dynamic> userData = {
@@ -210,7 +220,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
 
   @override
   void deleteUser() {
-    FirebaseAuth.instance.currentUser?.delete();
+    firebaseAuth.currentUser?.delete();
   }
 
   @override
@@ -223,8 +233,8 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         desiredAccuracy: LocationAccuracy.high,
       );
       final DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference();
-      final User? currentUser = FirebaseAuth.instance.currentUser;
+      firebaseDatabase.reference();
+      final User? currentUser = firebaseAuth.currentUser;
       final String idToken = currentUser!.uid;
       databasePath = 'users/$idToken/lat';
       await databaseReference
@@ -248,7 +258,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<bool> signOutFromGoogle() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await firebaseAuth.signOut();
       return true;
     } on Exception catch (_) {
       return false;
@@ -302,7 +312,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<UserModel?> getUserDataFirebase(String idToken) async {
     try {
-      final ref = FirebaseDatabase.instance.ref();
+      final ref = firebaseDatabase.ref();
       final snapshot = await ref.child('users/$idToken').get();
       if (snapshot.exists) {
         Map<dynamic, dynamic>? userData =
@@ -381,7 +391,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> resetPassword(String email) async {
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      await firebaseAuth.sendPasswordResetEmail(email: email);
     } catch (e) {
       print(e.toString());
       rethrow;
@@ -392,7 +402,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> saveActiveRentalsBuy(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsBuy';
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsBuy
           .map((rentalOrder) => rentalOrder.toMap())
@@ -407,7 +417,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> saveActiveRentalsSell(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-            FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/activeRentalsSell';
       List<Map<String, dynamic>> rentalsSellMapList = user.activeRentalsSell
           .map((rentalOrder) => rentalOrder.toMap())
@@ -423,7 +433,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     try {
       print("finished rental sell " +user.finishedRentalsSell.length.toString());
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsSell';
       List<Map<String, dynamic>> rentalsSellMapList = user.finishedRentalsSell
           .map((rentalOrder) => rentalOrder.toMap())
@@ -439,7 +449,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     try {
       print("finished rental buy " +user.finishedRentalsBuy.length.toString());
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/finishedRentalsBuy';
       List<Map<String, dynamic>> rentalsSellMapList = user.finishedRentalsBuy
           .map((rentalOrder) => rentalOrder.toMap())
@@ -456,7 +466,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> savePublishedRentals(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/publishedRentals';
       saveUserLocal(user);
       await _databaseReference.child(databasePath).set(user.publishedRentals);
@@ -469,7 +479,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   Future<void> savePublishedExchanges(UserModel user) async {
     try {
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/publishedExchanges';
       saveUserLocal(user);
       await _databaseReference.child(databasePath).set(user.publishedExchange);
@@ -483,7 +493,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     try {
       saveUserLocal(user);
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/favoriteRentals';
       await _databaseReference.child(databasePath).set(user.favoriteRentals);
     } catch (error) {
@@ -496,7 +506,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     try {
       saveUserLocal(user);
       final DatabaseReference _databaseReference =
-          FirebaseDatabase.instance.reference();
+      firebaseDatabase.reference();
       final String databasePath = 'users/${user.idToken}/favoriteExchanges';
       await _databaseReference.child(databasePath).set(user.favoriteExchange);
     } catch (error) {
@@ -507,10 +517,10 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
   @override
   Future<void> saveReview(String userId /*id user che riceve la recensione*/,
       String reviewContent, int stars) async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+    final User? currentUser = firebaseAuth.currentUser;
     String idToken = currentUser!.uid;
     final DatabaseReference _databaseReference =
-        FirebaseDatabase.instance.reference();
+    firebaseDatabase.reference();
     final String databasePath = 'users/$userId/reviews';
     try {
       await _databaseReference.child(databasePath).push().set({
@@ -545,7 +555,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     // Richiedi permessi solo una volta
     await _requestPermissionsOnce(_flutterLocalNotificationsPlugin);
 
-    var userRef = FirebaseDatabase.instance.ref().child('users').child(currentUser!.idToken).child("activeRentalsSell");
+    var userRef = firebaseDatabase.ref().child('users').child(currentUser!.idToken).child("activeRentalsSell");
     userRef.onChildAdded.listen((event) async {
       bool controllo=false;
         final RentalOrder order = RentalOrder.fromMap(event.snapshot.value as Map<dynamic, dynamic>);
@@ -610,7 +620,4 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
       payload: 'item x',
     );
   }
-
-
-
 }

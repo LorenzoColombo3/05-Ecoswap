@@ -63,6 +63,7 @@ class _MyAppState extends State<MyApp> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
                 child: ClipOval(
+
                   child: Image.asset(
                     'assets/image/logoApp.png', // Percorso dell'immagine asset
                     width: 50, // Larghezza dell'immagine
