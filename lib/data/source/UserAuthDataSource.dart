@@ -30,7 +30,7 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
     firebaseDatabase= FirebaseDatabase.instance;
   }
 
-  UserAuthDataSource.test(this.firebaseAuth);
+  UserAuthDataSource.test(this.firebaseAuth, this.firebaseStorage, this.firebaseDatabase);
 
   @override
   Future<String?> registration(
@@ -151,9 +151,12 @@ class UserAuthDataSource extends BaseUserAuthDataSource {
         password: password,
       );
       final User? currentUser = firebaseAuth.currentUser;
-      String idToken = currentUser!.uid;
-      UserModel? user = await getUserDataFirebase(idToken);
-      saveUserLocal(user!);
+      if(currentUser!=null){
+        String idToken = currentUser.uid;
+        print(idToken);
+        UserModel? user = await getUserDataFirebase(idToken);
+        saveUserLocal(user!);
+      }
       return 'Success';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

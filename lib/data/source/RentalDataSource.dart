@@ -11,9 +11,16 @@ import '../../model/Rental.dart';
 import 'BaseRentalDataSource.dart';
 
 class RentalDataSource extends BaseRentalDataSource {
-  final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.reference();
   int _lastPositionSeach = 0;
+  late FirebaseStorage firebaseStorage;
+  late FirebaseDatabase firebaseDatabase;
+
+  RentalDataSource(){
+    firebaseStorage= FirebaseStorage.instance;
+    firebaseDatabase= FirebaseDatabase.instance;
+  }
+
+  RentalDataSource.test(this.firebaseStorage, this.firebaseDatabase);
 
   @override
   Future<String?> loadRental(Rental rental) async {
@@ -23,7 +30,7 @@ class RentalDataSource extends BaseRentalDataSource {
       rental.imageUrl = imageUrl;
       rental.position =
           (await _getAddressFromLatLng(rental.latitude, rental.longitude))!;
-      await _databaseReference
+      await firebaseDatabase.reference()
           .child(databasePath)
           .child(rental.idToken)
           .set(rental.toMap());
@@ -40,9 +47,9 @@ class RentalDataSource extends BaseRentalDataSource {
       File imageFile = File(imagePath);
       String fileName = basename(imagePath);
       String filePath = 'rental/$fileName';
-      await FirebaseStorage.instance.ref().child(filePath).putFile(imageFile);
+      await firebaseStorage.ref().child(filePath).putFile(imageFile);
       String downloadURL =
-          await FirebaseStorage.instance.ref(filePath).getDownloadURL();
+          await firebaseStorage.ref(filePath).getDownloadURL();
       return downloadURL;
     } catch (e) {
       rethrow;
@@ -58,7 +65,7 @@ class RentalDataSource extends BaseRentalDataSource {
   @override
   Future<List<Rental>> getAllRentals() async {
     try {
-      DataSnapshot snapshot = await _databaseReference
+      DataSnapshot snapshot = await firebaseDatabase.reference()
           .child('rentals')
           .get();
       Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
@@ -86,7 +93,7 @@ class RentalDataSource extends BaseRentalDataSource {
   @override
   Future<List<Rental>> getAllUserRentals(String userId) async {
     try {
-      DataSnapshot snapshot = await _databaseReference
+      DataSnapshot snapshot = await firebaseDatabase.reference()
           .child('rentals')
           .orderByChild('userId')
           .equalTo(userId)
@@ -115,7 +122,7 @@ class RentalDataSource extends BaseRentalDataSource {
   Future<Rental?> getRental(String idToken) async {
     Rental rental;
     try {
-      final snapshot = await _databaseReference.child("rentals").child(idToken).get();
+      final snapshot = await firebaseDatabase.reference().child("rentals").child(idToken).get();
       if (snapshot.exists) {
         Map<dynamic, dynamic>? exchangeData =
             snapshot.value as Map<dynamic, dynamic>?;
@@ -230,7 +237,7 @@ class RentalDataSource extends BaseRentalDataSource {
 
   Future<List<Rental>> _searchOnKeyword(String query) async {
     List<Rental> rentals = [];
-    DataSnapshot snapshot = await _databaseReference
+    DataSnapshot snapshot = await firebaseDatabase.reference()
         .child('rentals')
         .get();
     Map<Object?, Object?>? data = snapshot.value as Map<Object?, Object?>?;
@@ -272,7 +279,7 @@ class RentalDataSource extends BaseRentalDataSource {
         'unitNumber': rental.unitNumber,
         'unitRented': rental.unitRented,
       };
-      _databaseReference.child('rentals').child(rental.idToken).update(
+      firebaseDatabase.reference().child('rentals').child(rental.idToken).update(
           updateData);
       onUpdateFinished(rental);
     }catch(e){
@@ -303,7 +310,7 @@ class RentalDataSource extends BaseRentalDataSource {
 
   @override
   Future<void> removeRental(String idToken) async{
-    _databaseReference.child("rentals").child(idToken).remove();
+    firebaseDatabase.reference().child("rentals").child(idToken).remove();
   }
 
 
