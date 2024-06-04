@@ -1,7 +1,10 @@
-
 import 'package:eco_swap/data/source/UserAuthDataSource.dart';
+import 'package:eco_swap/main.dart';
+import 'package:eco_swap/view/welcome/LoginPage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
@@ -39,7 +42,7 @@ void main() {
   late MockUserCredential userCredential;
   late MockUser mockUser;
 
-  setUp(() {
+  setUp(() async {
     mockFirebaseAuth = MockFirebaseAuth();
     mockFirebaseStorage = MockFirebaseStorage();
     mockFirebaseDatabase = MockFirebaseDatabase();
@@ -49,8 +52,8 @@ void main() {
     when(userCredential.user).thenReturn(mockUser);
   });
 
-  group('UserAuthDataSource', () {
-    test('registration should return success message on successful registration', () async {
+  group('Registration', () {
+    test('registration should return: success message on successful registration', () async {
       // Arrange
       final email = 'test@example.com';
       final password = 'password123';
@@ -58,7 +61,7 @@ void main() {
 
       when(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password))
           .thenAnswer((_) async {
-       return mockUserCredential;});
+        return mockUserCredential;});
 
       // Act
       final result = await userAuthDataSource.registration(email: email, password: password);
@@ -68,7 +71,7 @@ void main() {
       verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
     });
 
-    test('registration should return weak password error message', () async {
+    test('registration should return: weak password error message', () async {
       // Arrange
       final email = 'test@example.com';
       final password = '123';
@@ -84,7 +87,7 @@ void main() {
       verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
     });
 
-    test('registration should return email already in use error message', () async {
+    test('registration should return: email already in use error message', () async {
       // Arrange
       final email = 'test@example.com';
       final password = 'password123';
@@ -100,7 +103,7 @@ void main() {
       verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
     });
 
-    test('registration should return generic error message', () async {
+    test('registration should return: generic error message', () async {
       // Arrange
       final email = 'test@example.com';
       final password = 'password123';
@@ -116,7 +119,7 @@ void main() {
       verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
     });
 
-    test('registration should return exception message for non-FirebaseAuthException', () async {
+    test('registration should return: non-FirebaseAuthException', () async {
       // Arrange
       final email = 'test@example.com';
       final password = 'password123';
@@ -136,7 +139,7 @@ void main() {
   group('Login', () {
 
 
-    test('Login con credenziali valide', () async {
+    test('Login with valid credential', () async {
       // Configura il mock per restituire un utente autenticato quando vengono fornite credenziali valide
       when(mockFirebaseAuth.signInWithEmailAndPassword(
         email: "1@2.com",
@@ -153,7 +156,7 @@ void main() {
       expect(result, 'Success');
     });
 
-    test('Login con credenziali non valide', () async {
+    test('Login with wrong credential', () async {
       // Configura il mock per restituire un errore quando vengono fornite credenziali non valide
       when(mockFirebaseAuth.signInWithEmailAndPassword(
         email: "invalid@example.com",
@@ -170,4 +173,16 @@ void main() {
       expect(result, 'Wrong password provided for that user.');
     });
   });
+
+  testWidgets('LoginPage should display email and password fields', (WidgetTester tester) async {
+    setUp(() async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp();
+      runApp(MyApp());
+    });
+    await tester.pumpWidget(MaterialApp(home: LoginPage()));
+    expect(find.byKey(const Key('emailField')), findsOneWidget);
+    expect(find.byKey(const Key('passwordField')), findsOneWidget);
+  });
+
 }
